@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .glass {
+        @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-glass;
+    }
+    .glass-dark {
+        @apply bg-unsoed-blue/90 backdrop-blur-md border border-white/10;
+    }
+    .text-gradient {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-unsoed-yellow to-yellow-300;
+    }
+    .btn-primary {
+        @apply bg-unsoed-yellow text-white px-6 py-3 rounded-full font-semibold shadow-lg shadow-unsoed-yellow/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-unsoed-yellow/40 transition-all duration-300;
+    }
+    /* Swiper custom styling */
+    .swiper-button-next, .swiper-button-prev {
+        @apply text-unsoed-blue bg-white w-12 h-12 rounded-full shadow-md transition-colors duration-300;
+    }
+    .swiper-button-next:hover, .swiper-button-prev:hover {
+        @apply bg-unsoed-yellow text-white;
+    }
+    .swiper-button-next::after, .swiper-button-prev::after {
+        @apply text-lg font-bold;
+    }
+    .swiper-pagination-bullet-active {
+        @apply bg-unsoed-yellow;
+    }
+}

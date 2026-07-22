@@ -90,7 +90,7 @@
                                     <h3 class="font-bold text-gray-800 text-sm leading-snug mb-2 line-clamp-2" title="<?= esc($ebook['title']) ?>">
                                         <?= esc($ebook['title']) ?>
                                     </h3>
-                                    <p class="text-xs text-gray-500 mt-auto"><i class="fas fa-pen-nib mr-1 text-gray-300"></i> <?= esc($ebook['author']) ?></p>
+                                    <p class="text-xs text-gray-500 mt-auto"><i class="fas fa-pen-nib mr-1 text-gray-300"></i> <?= esc($ebook['author'] ?? $ebook['book_author'] ?? 'Penulis') ?></p>
                                 </div>
                             </div>
                         <?php endforeach; ?>

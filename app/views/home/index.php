@@ -82,7 +82,7 @@ if (!function_exists('renderBookCard')) {
             <div class="swiper-slide relative">
                 <div class="absolute inset-0 bg-gradient-to-r from-unsoed-darkblue/95 via-unsoed-darkblue/80 to-unsoed-blue/30 z-10"></div>
                 <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80" alt="Library" class="absolute inset-0 w-full h-full object-cover">
-                <div class="relative z-20 container mx-auto px-4 lg:px-12 h-full flex items-center">
+                <div class="relative z-20 container mx-auto px-4 md:px-24 lg:px-32 h-full flex items-center">
                     <div class="max-w-2xl text-white transform translate-y-8 p-6 md:p-10 rounded-3xl backdrop-blur-md bg-white/5 border border-white/10 shadow-2xl" data-aos="fade-up">
                         <span class="inline-block py-1.5 px-4 rounded-full bg-unsoed-yellow/20 border border-unsoed-yellow/50 text-unsoed-yellow text-xs font-bold tracking-widest mb-6">UNIVERSITAS JENDERAL SOEDIRMAN</span>
                         <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6 text-gradient drop-shadow-xl">
@@ -107,8 +107,8 @@ if (!function_exists('renderBookCard')) {
             <div class="swiper-slide relative">
                 <div class="absolute inset-0 bg-gradient-to-l from-unsoed-darkblue/95 via-unsoed-darkblue/80 to-unsoed-blue/30 z-10"></div>
                 <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80" alt="Study" class="absolute inset-0 w-full h-full object-cover">
-                <div class="relative z-20 container mx-auto px-4 lg:px-12 h-full flex items-center justify-end text-left md:text-right">
-                    <div class="max-w-2xl text-white p-6 md:p-10 rounded-3xl backdrop-blur-md bg-white/5 border border-white/10 shadow-2xl transform md:-translate-x-12" data-aos="fade-left" data-aos-delay="200">
+                <div class="relative z-20 container mx-auto px-4 md:px-24 lg:px-32 h-full flex items-center justify-end text-left md:text-right">
+                    <div class="max-w-2xl text-white p-6 md:p-10 rounded-3xl backdrop-blur-md bg-white/5 border border-white/10 shadow-2xl" data-aos="fade-left" data-aos-delay="200">
                         <span class="inline-block py-1.5 px-4 rounded-full bg-white/20 border border-white/50 text-white text-xs font-bold tracking-widest mb-6 md:ml-auto">LAYANAN PUBLIKASI</span>
                         <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6 drop-shadow-xl">
                             Wujudkan Naskah Anda Menjadi <span class="text-unsoed-yellow">Buku Berkualitas</span>
@@ -127,8 +127,6 @@ if (!function_exists('renderBookCard')) {
         </div>
         <!-- Pagination & Navigation -->
         <div class="swiper-pagination !bottom-10"></div>
-        <div class="swiper-button-prev !left-8 !w-12 !h-12 !hidden md:!flex bg-white/10 backdrop-blur rounded-full hover:bg-unsoed-yellow hover:text-white transition-all text-white border border-white/20"></div>
-        <div class="swiper-button-next !right-8 !w-12 !h-12 !hidden md:!flex bg-white/10 backdrop-blur rounded-full hover:bg-unsoed-yellow hover:text-white transition-all text-white border border-white/20"></div>
     </div>
 </section>
 <!-- Features Section -->
@@ -187,7 +185,7 @@ if (!function_exists('renderBookCard')) {
             </div>
             <a href="<?= BASEURL; ?>/book" class="text-xs text-unsoed-blue hover:text-unsoed-yellow transition-colors font-semibold bg-unsoed-blue/5 hover:bg-unsoed-blue/10 px-4 py-2 rounded-full flex items-center gap-2">Lihat semua <i class="fas fa-arrow-right text-[10px]"></i></a>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-10" data-aos="fade-up" data-aos-delay="150">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-10" data-aos="fade-up" data-aos-delay="150">
             <?php foreach ($buku_terbaru as $buku) { renderBookCard($buku); } ?>
         </div>
     </section>
@@ -201,7 +199,7 @@ if (!function_exists('renderBookCard')) {
             </div>
             <a href="<?= BASEURL; ?>/book" class="text-xs text-unsoed-blue hover:text-unsoed-yellow transition-colors font-semibold bg-unsoed-blue/5 hover:bg-unsoed-blue/10 px-4 py-2 rounded-full flex items-center gap-2">Lihat semua <i class="fas fa-arrow-right text-[10px]"></i></a>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-10" data-aos="fade-up" data-aos-delay="150">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-10" data-aos="fade-up" data-aos-delay="150">
             <?php foreach ($buku_terpopuler as $buku) { renderBookCard($buku); } ?>
         </div>
     </section>
@@ -215,7 +213,7 @@ if (!function_exists('renderBookCard')) {
             </div>
             <a href="<?= BASEURL; ?>/book" class="text-xs text-unsoed-blue hover:text-unsoed-yellow transition-colors font-semibold bg-unsoed-blue/5 hover:bg-unsoed-blue/10 px-4 py-2 rounded-full flex items-center gap-2">Lihat semua <i class="fas fa-arrow-right text-[10px]"></i></a>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-10" data-aos="fade-up" data-aos-delay="150">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-10" data-aos="fade-up" data-aos-delay="150">
             <?php foreach ($buku_terlaris as $buku) { renderBookCard($buku); } ?>
         </div>
     </section>
@@ -231,7 +229,7 @@ if (!function_exists('renderBookCard')) {
                 </div>
                 <a href="<?= BASEURL; ?>/ebook" class="text-xs text-unsoed-blue hover:text-unsoed-yellow transition-colors font-semibold bg-white shadow-sm hover:shadow-md px-4 py-2 rounded-full flex items-center gap-2">Lihat semua <i class="fas fa-arrow-right text-[10px]"></i></a>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-10" data-aos="fade-up" data-aos-delay="150">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-10" data-aos="fade-up" data-aos-delay="150">
             <?php 
             $latest_ebooks = !empty($data['latest_ebooks']) ? $data['latest_ebooks'] : [];
             if(empty($latest_ebooks)): ?>
@@ -337,9 +335,9 @@ if (!function_exists('renderBookCard')) {
         <div class="swiper testimoni-swiper overflow-visible pb-12" data-aos="fade-up" data-aos-delay="150">
             <div class="swiper-wrapper">
                 <!-- Testimoni 1 -->
-                <div class="swiper-slide h-auto">
-                    <div class="bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl border border-gray-100 relative transition-all duration-300 h-full flex flex-col group">
-                        <i class="fas fa-quote-right text-6xl text-gray-50 absolute top-6 right-6 group-hover:text-unsoed-yellow/10 transition-colors"></i>
+                <div class="swiper-slide h-auto p-2 pb-4">
+                    <div class="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md border border-gray-100 relative transition-all duration-300 h-full flex flex-col group">
+                        <i class="fas fa-quote-right text-6xl text-gray-100 absolute top-6 right-6 transition-colors"></i>
                         <div class="flex items-center gap-4 mb-6 relative z-10">
                             <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80" alt="Siti Rahma" class="w-14 h-14 rounded-full object-cover border-2 border-unsoed-yellow p-0.5">
                             <div>
@@ -355,9 +353,9 @@ if (!function_exists('renderBookCard')) {
                 </div>
 
                 <!-- Testimoni 2 -->
-                <div class="swiper-slide h-auto">
-                    <div class="bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl border border-gray-100 relative transition-all duration-300 h-full flex flex-col group">
-                        <i class="fas fa-quote-right text-6xl text-gray-50 absolute top-6 right-6 group-hover:text-unsoed-blue/10 transition-colors"></i>
+                <div class="swiper-slide h-auto p-2 pb-4">
+                    <div class="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md border border-gray-100 relative transition-all duration-300 h-full flex flex-col group">
+                        <i class="fas fa-quote-right text-6xl text-gray-100 absolute top-6 right-6 transition-colors"></i>
                         <div class="flex items-center gap-4 mb-6 relative z-10">
                             <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80" alt="Dr. Budi Santoso" class="w-14 h-14 rounded-full object-cover border-2 border-unsoed-blue p-0.5">
                             <div>
@@ -373,9 +371,9 @@ if (!function_exists('renderBookCard')) {
                 </div>
 
                 <!-- Testimoni 3 -->
-                <div class="swiper-slide h-auto">
-                    <div class="bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl border border-gray-100 relative transition-all duration-300 h-full flex flex-col group">
-                        <i class="fas fa-quote-right text-6xl text-gray-50 absolute top-6 right-6 group-hover:text-green-500/10 transition-colors"></i>
+                <div class="swiper-slide h-auto p-2 pb-4">
+                    <div class="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md border border-gray-100 relative transition-all duration-300 h-full flex flex-col group">
+                        <i class="fas fa-quote-right text-6xl text-gray-100 absolute top-6 right-6 transition-colors"></i>
                         <div class="flex items-center gap-4 mb-6 relative z-10">
                             <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80" alt="Amanda Wijaya" class="w-14 h-14 rounded-full object-cover border-2 border-green-500 p-0.5">
                             <div>

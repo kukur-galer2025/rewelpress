@@ -122,16 +122,12 @@
                     loop: true,
                     effect: 'fade',
                     autoplay: {
-                        delay: 6000,
+                        delay: 5000,
                         disableOnInteraction: false,
                     },
                     pagination: {
                         el: '.swiper-pagination',
                         clickable: true,
-                    },
-                    navigation: {
-                        nextEl: '.swiper-button-next',
-                        prevEl: '.swiper-button-prev',
                     },
                 });
             }

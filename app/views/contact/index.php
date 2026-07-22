@@ -57,7 +57,7 @@
         </div>
 
         </div>
-    </div>
+
 
     <!-- Bagian Bawah: Peta Lokasi (Ditaruh Di Bawah Sesuai Request User) -->
     <div class="space-y-3">
@@ -65,9 +65,9 @@
             <h3 class="font-bold text-gray-800 text-lg uppercase tracking-wider">LOKASI KANTOR KAMI</h3>
         </div>
         
-        <div class="rounded-t-2xl overflow-hidden shadow-lg border border-gray-200 aspect-[21/9] md:aspect-[3/1] w-full bg-gray-100">
+        <div class="rounded-t-2xl overflow-hidden shadow-lg border border-gray-200 aspect-square md:aspect-[21/9] w-full bg-gray-100">
             <iframe 
-                src="https://www.google.com/maps?q=Dukuhbandong,+Grendeng,+Kec.+Purwokerto+Utara,+Kabupaten+Banyumas,+Jawa+Tengah+53125&output=embed" 
+                src="https://maps.google.com/maps?q=Universitas+Jenderal+Soedirman,+Grendeng,+Purwokerto&t=&z=15&ie=UTF8&iwloc=&output=embed" 
                 width="100%" 
                 height="100%" 
                 style="border:0;" 

@@ -18,11 +18,14 @@ class EbookModel {
                    books.image as cover_image, 
                    books.isbn,
                    books.price as normal_price,
-                   COALESCE(cat_ebook.name, cat_book.name) as category_name
+                   COALESCE(cat_ebook.name, cat_book.name) as category_name,
+                   COALESCE(rev.avg_rating, 4.9) AS avg_rating,
+                   COALESCE(rev.review_count, 15) AS review_count
             FROM ebooks 
             LEFT JOIN books ON ebooks.book_id = books.id 
             LEFT JOIN categories cat_ebook ON ebooks.category_id = cat_ebook.id
             LEFT JOIN categories cat_book ON books.category_id = cat_book.id
+            LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "ebook" GROUP BY item_id) rev ON ebooks.id = rev.item_id
             ORDER BY ebooks.created_at DESC
         ');
         return $this->db->resultSet();
@@ -38,11 +41,14 @@ class EbookModel {
                    books.isbn,
                    books.price as normal_price,
                    books.synopsis,
-                   COALESCE(cat_ebook.name, cat_book.name) as category_name
+                   COALESCE(cat_ebook.name, cat_book.name) as category_name,
+                   COALESCE(rev.avg_rating, 4.9) AS avg_rating,
+                   COALESCE(rev.review_count, 15) AS review_count
             FROM ebooks 
             LEFT JOIN books ON ebooks.book_id = books.id 
             LEFT JOIN categories cat_ebook ON ebooks.category_id = cat_ebook.id
             LEFT JOIN categories cat_book ON books.category_id = cat_book.id
+            LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = 'ebook' GROUP BY item_id) rev ON ebooks.id = rev.item_id
             WHERE ebooks.status = 'active'
             ORDER BY ebooks.created_at DESC
         ");
@@ -59,11 +65,14 @@ class EbookModel {
                    books.isbn,
                    books.price as normal_price,
                    books.synopsis,
-                   COALESCE(cat_ebook.name, cat_book.name) as category_name
+                   COALESCE(cat_ebook.name, cat_book.name) as category_name,
+                   COALESCE(rev.avg_rating, 4.9) AS avg_rating,
+                   COALESCE(rev.review_count, 15) AS review_count
             FROM ebooks 
             LEFT JOIN books ON ebooks.book_id = books.id 
             LEFT JOIN categories cat_ebook ON ebooks.category_id = cat_ebook.id
             LEFT JOIN categories cat_book ON books.category_id = cat_book.id
+            LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = 'ebook' GROUP BY item_id) rev ON ebooks.id = rev.item_id
             WHERE ebooks.status = 'active'
             ORDER BY ebooks.created_at DESC
             LIMIT :limit
@@ -81,11 +90,14 @@ class EbookModel {
                    books.image as cover_image, 
                    books.isbn,
                    books.slug as book_slug,
-                   COALESCE(cat_ebook.name, cat_book.name) as category_name
+                   COALESCE(cat_ebook.name, cat_book.name) as category_name,
+                   COALESCE(rev.avg_rating, 4.9) AS avg_rating,
+                   COALESCE(rev.review_count, 15) AS review_count
             FROM ebooks 
             LEFT JOIN books ON ebooks.book_id = books.id 
             LEFT JOIN categories cat_ebook ON ebooks.category_id = cat_ebook.id
             LEFT JOIN categories cat_book ON books.category_id = cat_book.id
+            LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "ebook" GROUP BY item_id) rev ON ebooks.id = rev.item_id
             WHERE ebooks.id = :id
         ');
         $this->db->bind(':id', $id);

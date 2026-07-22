@@ -150,6 +150,10 @@
                                                    class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm whitespace-nowrap">
                                                     <i class="fas fa-cloud-download-alt text-lg"></i> Unduh File E-Book
                                                 </a>
+                                                <a href="<?= BASEURL ?>/ebook/detail/<?= esc($eo['ebook_id']) ?>#reviews-section" onclick="sessionStorage.setItem('openReviewModal', '1');"
+                                                   class="w-full sm:w-auto px-5 py-3 bg-unsoed-yellow hover:bg-yellow-500 text-gray-900 font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm whitespace-nowrap">
+                                                    <i class="fas fa-star"></i> Tulis Ulasan
+                                                </a>
                                             <?php elseif($eo['status'] == 'pending'): ?>
                                                 <a href="<?= BASEURL ?>/ebook/pay/<?= esc($eo['id']) ?>"
                                                    class="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm whitespace-nowrap">
@@ -240,6 +244,31 @@
                                     </div>
                                     <?php endif; ?>
                                 </div>
+                                
+                                <!-- Daftar Buku & Ulasan -->
+                                <?php if(!empty($order['items'])): ?>
+                                <div class="mt-4 mb-4 space-y-3">
+                                    <p class="text-xs text-gray-500 font-bold uppercase">Item Pesanan</p>
+                                    <?php foreach($order['items'] as $item): ?>
+                                    <div class="flex items-center justify-between bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-14 bg-gray-100 border border-gray-200 rounded flex-shrink-0 overflow-hidden shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
+                                                <img src="<?= !empty($item['image']) ? $item['image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400' ?>" class="w-full h-full object-cover">
+                                            </div>
+                                            <div>
+                                                <a href="<?= BASEURL ?>/book/detail/<?= $item['book_id'] ?>" class="text-sm font-bold text-gray-800 hover:text-unsoed-blue line-clamp-1"><?= htmlspecialchars($item['title']) ?></a>
+                                                <p class="text-xs text-gray-500 mt-0.5"><?= $item['quantity'] ?> x Rp <?= number_format($item['price'], 0, ',', '.') ?></p>
+                                            </div>
+                                        </div>
+                                        <?php if($order['status'] == 'confirmed'): ?>
+                                        <a href="<?= BASEURL ?>/book/detail/<?= $item['book_id'] ?>#reviews-section" onclick="sessionStorage.setItem('openReviewModal', '1');" class="px-4 py-2 bg-unsoed-yellow hover:bg-yellow-500 text-gray-900 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-sm whitespace-nowrap">
+                                            <i class="fas fa-star"></i> Tulis Ulasan
+                                        </a>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+                                <?php endif; ?>
                                 
                                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 gap-4">
                                     <div>

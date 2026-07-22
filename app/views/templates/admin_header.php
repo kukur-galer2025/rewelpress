@@ -137,24 +137,12 @@
                 </a>
 
                 <?php
-                    require_once dirname(dirname(dirname(__FILE__))) . '/models/ContactModel.php';
                     require_once dirname(dirname(dirname(__FILE__))) . '/models/NotificationModel.php';
-                    $contactModelInstance = new ContactModel();
-                    $unreadMessagesCount = $contactModelInstance->getUnreadCount();
                     
                     $adminNotifModel = new NotificationModel();
                     $adminUnreadNotif = $adminNotifModel->getAdminUnreadCount();
                     $adminNotifs = $adminNotifModel->getAdminNotifications(7);
                 ?>
-                <a href="<?= BASEURL; ?>/admin/messages" class="flex items-center justify-between px-3.5 h-11 rounded-xl text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 transition-all <?= (strpos($uri, '/admin/messages') !== false) ? 'bg-unsoed-blue font-bold text-white shadow-md' : '' ?>">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <i class="fas fa-envelope-open-text w-5 text-center flex-shrink-0"></i>
-                        <span class="truncate whitespace-nowrap">Pesan Kontak</span>
-                    </div>
-                    <?php if($unreadMessagesCount > 0): ?>
-                        <span class="bg-red-500 text-white font-extrabold text-[10px] px-2 py-0.5 rounded-full flex-shrink-0 ml-1 animate-pulse shadow-sm"><?= esc($unreadMessagesCount) ?> Baru</span>
-                    <?php endif; ?>
-                </a>
                 
                 <p class="text-[11px] font-extrabold text-gray-400 uppercase tracking-wider mb-1.5 px-3 mt-5">Sistem & Pengguna</p>
                 

@@ -22,6 +22,7 @@
                 <tr class="bg-gray-50 border-b border-gray-100 text-xs uppercase text-gray-500 font-bold tracking-wider">
                     <th class="p-4 pl-6">Info Buku</th>
                     <th class="p-4">Kategori</th>
+                    <th class="p-4 text-center">Stok</th>
                     <th class="p-4">Harga</th>
                     <th class="p-4 text-center">Aksi</th>
                 </tr>
@@ -35,6 +36,11 @@
                         <div>
                             <p class="font-bold text-gray-800 line-clamp-1"><?= esc($buku['title']) ?></p>
                             <p class="text-sm text-gray-500"><?= esc($buku['author']) ?></p>
+                            <?php if(isset($buku['avg_rating'])): ?>
+                            <p class="text-[11px] font-bold text-amber-500 mt-1 flex items-center gap-1">
+                                <i class="fas fa-star"></i> <?= $buku['avg_rating'] ?> (<?= $buku['review_count'] ?> ulasan)
+                            </p>
+                            <?php endif; ?>
                         </div>
                     </td>
                     <td class="p-4">
@@ -42,6 +48,22 @@
                             <?= !empty($buku['parent_category_name']) ? $buku['parent_category_name'] . ' <i class="fas fa-chevron-right text-[10px] mx-1 opacity-50"></i> ' : '' ?>
                             <?= esc($buku['category_name']) ?>
                         </span>
+                    </td>
+                    <td class="p-4 text-center">
+                        <?php $stok = isset($buku['stock']) ? (int)$buku['stock'] : 0; ?>
+                        <?php if($stok <= 0): ?>
+                            <span class="px-3 py-1 bg-red-100 text-red-700 text-xs font-extrabold rounded-full border border-red-200 inline-flex items-center gap-1 shadow-sm">
+                                <i class="fas fa-exclamation-circle"></i> Habis (0)
+                            </span>
+                        <?php elseif($stok <= 5): ?>
+                            <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-extrabold rounded-full border border-amber-200 inline-flex items-center gap-1 shadow-sm animate-pulse">
+                                <i class="fas fa-exclamation-triangle"></i> Sisa <?= $stok ?>
+                            </span>
+                        <?php else: ?>
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-extrabold rounded-full border border-emerald-200 inline-flex items-center gap-1 shadow-sm">
+                                <i class="fas fa-boxes"></i> <?= $stok ?> pcs
+                            </span>
+                        <?php endif; ?>
                     </td>
                     <td class="p-4">
                         <p class="font-bold text-gray-800">Rp <?= number_format($buku['price'], 0, ',', '.') ?></p>
@@ -55,7 +77,7 @@
                     </td>
                     <td class="p-4 text-center">
                         <div class="flex justify-center gap-2">
-                            <a href="<?= BASEURL; ?>/admin/edit_book/<?= esc($buku['id']) ?>" class="w-8 h-8 rounded bg-gray-100 hover:bg-unsoed-yellow hover:text-white flex items-center justify-center text-gray-500 transition" title="Edit">
+                            <a href="<?= BASEURL; ?>/admin/edit_book/<?= esc($buku['id']) ?>" class="w-8 h-8 rounded bg-gray-100 hover:bg-unsoed-yellow hover:text-white flex items-center justify-center text-gray-500 transition" title="Edit Stok & Info">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <a href="<?= BASEURL; ?>/admin/delete_book/<?= esc($buku['id']) ?>" class="w-8 h-8 rounded bg-gray-100 hover:bg-red-500 hover:text-white flex items-center justify-center text-gray-500 transition" onclick="return confirmAction(this.href, 'Hapus Buku', 'Yakin ingin menghapus buku ini? Data tidak dapat dikembalikan.')" title="Hapus">
@@ -68,7 +90,7 @@
                 
                 <?php if(empty($data['books'])): ?>
                 <tr>
-                    <td colspan="4" class="p-8 text-center text-gray-500">Belum ada data buku.</td>
+                    <td colspan="5" class="p-8 text-center text-gray-500">Belum ada data buku.</td>
                 </tr>
                 <?php endif; ?>
             </tbody>

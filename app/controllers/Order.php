@@ -14,7 +14,16 @@ class Order extends Controller {
     public function index()
     {
         $data['judul'] = 'Riwayat Pesanan - Unsoed Press';
-        $data['orders'] = $this->model('OrderModel')->getOrdersByUserId($_SESSION['user_id']);
+        
+        $orderModel = $this->model('OrderModel');
+        $orders = $orderModel->getOrdersByUserId($_SESSION['user_id']);
+        // Populate items for each order
+        foreach ($orders as &$order) {
+            $fullOrder = $orderModel->getOrderById($order['id']);
+            $order['items'] = $fullOrder['items'] ?? [];
+        }
+        $data['orders'] = $orders;
+        
         $data['ebook_orders'] = $this->model('EbookOrderModel')->getEbookOrdersByUserId($_SESSION['user_id']);
         
         $this->view('templates/header', $data);

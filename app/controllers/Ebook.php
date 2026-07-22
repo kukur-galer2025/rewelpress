@@ -43,7 +43,17 @@ class Ebook extends Controller {
         }
 
         $data['judul'] = $ebook['title'] . ' - E-Book Unsoed Press';
+        
+        // Get reviews & rating stats
+        $reviewModel = $this->model('ReviewModel');
+        $data['reviews'] = $reviewModel->getReviewsByItem('ebook', $ebook['id']);
+        $stats = $reviewModel->getRatingStats('ebook', $ebook['id']);
+        $ebook['avg_rating'] = $stats['avg_rating'];
+        $ebook['review_count'] = $stats['total_reviews'];
         $data['ebook'] = $ebook;
+
+        $user_id = isset($_SESSION['user']['id']) ? (int)$_SESSION['user']['id'] : (isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0);
+        $data['can_review'] = $reviewModel->canUserReview($user_id, 'ebook', $ebook['id']);
 
         // Increment view counter
         $this->model('EbookModel')->incrementViews($id);

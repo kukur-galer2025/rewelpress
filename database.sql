@@ -546,6 +546,38 @@ LOCK TABLES `vouchers` WRITE;
 INSERT INTO `vouchers` VALUES (1,'UNSOED2026','Diskon Grand Launching Unsoed Press','Potongan Rp 15.000 untuk pembelian semua produk (buku fisik maupun e-book).','nominal',15000.00,20000.00,NULL,'all',100,0,'2026-01-01 00:00:00','2026-12-31 23:59:59',1,'2026-07-22 01:44:19'),(2,'EBOOKHEMAT','Diskon Spesial Publikasi Digital (E-Book)','Diskon 25% khusus untuk pembelian semua e-book digital tanpa minimum transaksi.','percent',25.00,0.00,50000.00,'ebook',200,0,'2026-01-01 00:00:00','2026-12-31 23:59:59',1,'2026-07-22 01:44:19'),(3,'BUKUCETAK','Potongan Pengiriman & Belanja Buku Fisik','Potongan Rp 20.000 untuk setiap pembelian buku fisik cetak dengan minimum transaksi Rp 75.000.','nominal',20000.00,75000.00,NULL,'book',50,2,'2026-01-01 00:00:00','2026-12-31 23:59:59',1,'2026-07-22 01:44:19');
 /*!40000 ALTER TABLE `vouchers` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `reviews`
+--
+
+DROP TABLE IF EXISTS `reviews`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `reviews` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT NULL,
+  `user_name` varchar(150) DEFAULT NULL,
+  `item_type` enum('book','ebook') NOT NULL DEFAULT 'book',
+  `item_id` int NOT NULL,
+  `rating` int NOT NULL DEFAULT '5',
+  `comment` text,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_item` (`item_type`,`item_id`),
+  KEY `idx_user` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reviews`
+--
+
+LOCK TABLES `reviews` WRITE;
+/*!40000 ALTER TABLE `reviews` DISABLE KEYS */;
+INSERT INTO `reviews` VALUES (1,NULL,'Dr. Hendra Saputra, M.P.','book',7,5,'Buku referensi pertanian tropis terbaik yang pernah saya baca. Sangat komprehensif untuk mahasiswa dan peneliti.','2026-07-22 10:20:00'),(2,NULL,'Siti Nurhaliza','book',7,5,'Bahasa mudah dipahami, kualitas cetakan sangat baik.','2026-07-22 10:20:00'),(3,NULL,'Ahmad Fauzi, S.H.','book',8,5,'Metodologinya dijelaskan sangat terstruktur dan aplikatif untuk tesis hukum modern.','2026-07-22 10:20:00'),(4,NULL,'Rina Wati','book',8,4,'Sangat membantu penelitian hukum saya. Terimakasih Unsoed Press!','2026-07-22 10:20:00'),(5,NULL,'Prof. Budi Santoso','book',9,5,'Bioteknologi dijelaskan dengan contoh nyata di Indonesia. Luar biasa.','2026-07-22 10:20:00'),(6,NULL,'Dani Kurniawan','book',9,5,'Buku wajib untuk mahasiswa biologi sains!','2026-07-22 10:20:00'),(7,NULL,'Farah Diba','book',10,5,'Analisis ekonomi daerahnya sangat mendalam dan kritis.','2026-07-22 10:20:00'),(8,NULL,'Gunawan Wibisono','book',11,5,'Sosiologi pedesaan dijelaskan secara akurat dengan data lapangan UGM & Unsoed.','2026-07-22 10:20:00'),(9,NULL,'dr. Anisa Rahma','book',12,5,'Sangat direkomendasikan untuk tenaga medis di wilayah pedesaan.','2026-07-22 10:20:00'),(10,NULL,'Mahasiswa Kedokteran','book',12,4,'Buku saku yang sangat informatif dan padat ilmunya.','2026-07-22 10:20:00'),(11,NULL,'Bambang Pamungkas','ebook',1,5,'E-Book sangat jernih, bisa dibaca lewat HP maupun laptop kapan saja!','2026-07-22 10:20:00'),(12,NULL,'Intan Permatasari','ebook',1,5,'Download cepat, materinya persis versi cetak. Praktis sekali!','2026-07-22 10:20:00'),(13,NULL,'Drs. Haryanto, M.H.','ebook',2,5,'Fitur ebook sangat membantu riset hukum saya saat di luar kota.','2026-07-22 10:20:00'),(14,NULL,'Maya Amelia','ebook',3,5,'PDF full color, diagram bioteknologinya jelas banget!','2026-07-22 10:20:00'),(15,NULL,'Rizky Pratama','ebook',4,5,'Harga e-book hemat dan berkualitas dari Unsoed Press.','2026-07-22 10:20:00');
+/*!40000 ALTER TABLE `reviews` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

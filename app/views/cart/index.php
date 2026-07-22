@@ -24,7 +24,7 @@
                 <!-- Cart Items List -->
                 <div class="lg:w-2/3">
                     <form action="<?= BASEURL; ?>/cart/update" method="POST" id="cartForm">
-<?= csrf_field() ?><div class="glass rounded-3xl p-6 shadow-xl border border-white mb-6">
+<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><div class="glass rounded-3xl p-6 shadow-xl border border-white mb-6">
                             <div class="flex justify-between items-center border-b border-gray-200 pb-4 mb-6">
                                 <h3 class="font-bold text-lg text-gray-800">Daftar Produk (<?= count($data['cart_items']) ?>)</h3>
                                 <a href="<?= BASEURL; ?>/cart/clear" class="text-sm text-red-500 hover:text-red-700 font-medium transition" onclick="return confirm('Apakah Anda yakin ingin mengosongkan keranjang?')">
@@ -116,7 +116,7 @@
                         <?php else: ?>
                             <!-- Form Input Voucher -->
                             <form action="<?= BASEURL; ?>/cart/apply_voucher" method="POST" class="flex gap-2 mb-4">
-<?= csrf_field() ?><input type="text" name="voucher_code" placeholder="Ketik kode promo..." uppercase
+<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><input type="text" name="voucher_code" placeholder="Ketik kode promo..." uppercase
                                        class="flex-1 px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-unsoed-blue text-xs font-mono font-bold uppercase text-gray-800">
                                 <button type="submit" class="bg-unsoed-blue hover:bg-blue-800 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow transition">
                                     Pakai
@@ -136,7 +136,7 @@
                                                     <p class="text-[10px] text-gray-500">Min. Belanja: Rp <?= number_format($av['min_purchase'], 0, ',', '.') ?></p>
                                                 </div>
                                                 <form action="<?= BASEURL; ?>/cart/apply_voucher" method="POST">
-<?= csrf_field() ?><input type="hidden" name="voucher_code" value="<?= htmlspecialchars($av['code']) ?>">
+<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><input type="hidden" name="voucher_code" value="<?= htmlspecialchars($av['code']) ?>">
                                                     <button type="submit" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-extrabold rounded-lg shadow-sm transition whitespace-nowrap">
                                                         Klaim
                                                     </button>
@@ -182,8 +182,8 @@
                             </div>
                         </div>
 
-                        <form action="<?= BASEURL; ?>/order/checkout" method="POST" class="mb-0">
-<?= csrf_field() ?><!-- Metode Pengiriman -->
+                        <form action="<?= BASEURL; ?>/order/checkout" method="POST" class="mb-0" onsubmit="document.getElementById('checkoutBtn').disabled = true; document.getElementById('checkoutBtn').innerHTML = '<i class=\'fas fa-spinner fa-spin mr-2\'></i> Memproses...';">
+<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><!-- Metode Pengiriman -->
                             <div class="mb-6 bg-gray-50 p-4 rounded-2xl border border-gray-200">
                                 <h4 class="font-bold text-gray-800 text-sm mb-3">Metode Pengiriman Buku Fisik</h4>
                                 <div class="space-y-3">
@@ -207,7 +207,7 @@
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn-primary w-full text-center block text-lg py-4 shadow-xl">
+                            <button type="submit" id="checkoutBtn" class="btn-primary w-full text-center block text-lg py-4 shadow-xl">
                                 Lanjut ke Pembayaran <i class="fas fa-chevron-right ml-2 text-sm"></i>
                             </button>
                         </form>
@@ -222,4 +222,4 @@
 
     </div>
 </section>
-<?= csrf_field() ?>
+<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">

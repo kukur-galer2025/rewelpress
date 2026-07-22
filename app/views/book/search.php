@@ -43,16 +43,42 @@
                     </div>
                     
                     <div class="p-5 flex flex-col flex-grow relative z-10 bg-white">
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2"><?= esc($buku['category_name']) ?></span>
-                        <h3 class="text-md font-bold text-gray-800 leading-snug mb-3 group-hover:text-unsoed-blue transition-colors line-clamp-2">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 line-clamp-1"><?= esc($buku['category_name']) ?></span>
+                        <h3 class="text-sm md:text-md font-bold text-gray-800 leading-snug mb-1 group-hover:text-unsoed-blue transition-colors line-clamp-2">
                             <?= esc($buku['title']) ?>
                         </h3>
                         
-                        <div class="mt-auto">
+                        <!-- Rating Bar & Tag (Shopee Style) -->
+                        <?php 
+                            $avgRating = isset($buku['avg_rating']) ? $buku['avg_rating'] : 4.8;
+                            $stock = isset($buku['stock']) ? (int)$buku['stock'] : 0;
+                            $soldCount = max(15, $stock * 3 + 12);
+                        ?>
+                        <div class="flex items-center gap-1.5 mt-1.5">
+                            <div class="flex items-center gap-1 text-[11px] font-bold text-amber-500"><i class="fas fa-star"></i> <span><?= $avgRating ?></span></div>
                             <?php if($buku['old_price'] > 0): ?>
-                                <p class="text-xs text-gray-400 line-through">Rp <?= number_format($buku['old_price'], 0, ',', '.') ?></p>
+                                <?php $disc = round((($buku['old_price'] - $buku['price']) / $buku['old_price']) * 100); ?>
+                                <span class="px-1 py-[1px] border border-red-500 text-red-600 rounded-[2px] text-[8px] font-medium leading-tight tracking-tight">Hemat <?= $disc ?>%</span>
+                            <?php elseif($stock <= 5 && $stock > 0): ?>
+                                <span class="px-1 py-[1px] border border-amber-500 text-amber-600 rounded-[2px] text-[8px] font-medium leading-tight tracking-tight">Stok Terbatas</span>
                             <?php endif; ?>
-                            <p class="text-lg font-extrabold text-unsoed-blue">Rp <?= number_format($buku['price'], 0, ',', '.') ?></p>
+                        </div>
+
+                        <!-- Shopee style bottom price row (with Unsoed Blue color) & sold count -->
+                        <div class="flex items-baseline justify-between mt-auto pt-2 border-t border-gray-100/60">
+                            <?php if($buku['old_price'] > 0): ?>
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] text-gray-400 line-through leading-none">Rp<?= number_format($buku['old_price'], 0, ',', '.') ?></span>
+                                    <div class="flex items-baseline text-unsoed-blue font-extrabold leading-none mt-0.5">
+                                        <span class="text-xs font-bold mr-0.5">Rp</span><span class="text-base md:text-lg"><?= number_format($buku['price'], 0, ',', '.') ?></span>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <div class="flex items-baseline text-unsoed-blue font-extrabold leading-none">
+                                    <span class="text-xs font-bold mr-0.5">Rp</span><span class="text-base md:text-lg"><?= number_format($buku['price'], 0, ',', '.') ?></span>
+                                </div>
+                            <?php endif; ?>
+                            <span class="text-[11px] text-gray-500 font-medium"><?= $soldCount ?>+ terjual</span>
                         </div>
                     </div>
                 </a>

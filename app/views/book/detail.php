@@ -81,6 +81,7 @@
                     <!-- Action Buttons -->
                     <div class="flex flex-wrap gap-4 mb-10 pb-10 border-b border-gray-200">
                         <form action="<?= BASEURL; ?>/cart/add/<?= $data['buku']['id'] ?>" method="POST" class="flex items-center gap-4">
+                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <div class="flex items-center border border-gray-300 rounded-full bg-white px-2 py-1 h-12 w-32">
                                 <button type="button" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600 transition" onclick="document.getElementById('qty').value = Math.max(1, parseInt(document.getElementById('qty').value) - 1)">
                                     <i class="fas fa-minus text-xs"></i>
@@ -160,8 +161,139 @@
                         </div>
                     </div>
 
+                    <!-- Ulasan Produk -->
+                    <div class="mt-12 pt-8 border-t border-gray-200">
+                        <div class="flex items-center justify-between mb-8">
+                            <h3 class="text-2xl font-serif font-bold text-gray-900 border-l-4 border-unsoed-yellow pl-4">Ulasan Pembeli</h3>
+                            <div class="flex items-center gap-2">
+                                <span class="text-2xl font-bold text-gray-900"><?= number_format($data['buku']['avg_rating'], 1) ?></span>
+                                <div class="text-unsoed-yellow text-xl">
+                                    <?php
+                                    $rating = round($data['buku']['avg_rating']);
+                                    for ($i = 1; $i <= 5; $i++) {
+                                        if ($i <= $rating) echo '<i class="fas fa-star"></i>';
+                                        else echo '<i class="far fa-star"></i>';
+                                    }
+                                    ?>
+                                </div>
+                                <span class="text-gray-500 ml-2">(<?= $data['buku']['review_count'] ?> ulasan)</span>
+                            </div>
+                        </div>
+
+                        <?php if (isset($_SESSION['flash_success'])): ?>
+                            <div class="mb-6 p-4 bg-green-50 text-green-700 rounded-xl border border-green-200 flex items-center gap-3">
+                                <i class="fas fa-check-circle"></i> <?= $_SESSION['flash_success']; unset($_SESSION['flash_success']); ?>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (isset($_SESSION['flash_error'])): ?>
+                            <div class="mb-6 p-4 bg-red-50 text-red-700 rounded-xl border border-red-200 flex items-center gap-3">
+                                <i class="fas fa-exclamation-circle"></i> <?= $_SESSION['flash_error']; unset($_SESSION['flash_error']); ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="mb-8">
+                            <?php if ($data['can_review']['can_review']): ?>
+                                <button onclick="document.getElementById('reviewModal').classList.remove('hidden')" class="btn-primary flex items-center gap-2">
+                                    <i class="fas fa-edit"></i> Tulis Ulasan
+                                </button>
+                            <?php else: ?>
+                                <div class="p-4 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-600 flex items-start gap-3">
+                                    <i class="fas fa-info-circle text-unsoed-blue mt-0.5"></i>
+                                    <p>Anda hanya dapat memberikan ulasan pada produk yang telah Anda beli dan pesanan telah selesai.</p>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="space-y-6">
+                            <?php if (empty($data['reviews'])): ?>
+                                <p class="text-gray-500 italic text-center py-8">Belum ada ulasan untuk produk ini.</p>
+                            <?php else: ?>
+                                <?php foreach ($data['reviews'] as $rev): ?>
+                                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex gap-4">
+                                        <div class="w-12 h-12 rounded-full bg-unsoed-blue text-white flex items-center justify-center font-bold text-xl shrink-0">
+                                            <?= strtoupper(substr(htmlspecialchars($rev['user_name']), 0, 1)) ?>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <div>
+                                                    <h4 class="font-bold text-gray-900"><?= htmlspecialchars($rev['user_name']) ?></h4>
+                                                    <span class="text-xs text-gray-500"><?= date('d M Y', strtotime($rev['created_at'])) ?></span>
+                                                </div>
+                                                <div class="text-unsoed-yellow text-sm">
+                                                    <?php
+                                                    for ($i = 1; $i <= 5; $i++) {
+                                                        if ($i <= $rev['rating']) echo '<i class="fas fa-star"></i>';
+                                                        else echo '<i class="far fa-star"></i>';
+                                                    }
+                                                    ?>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-700 leading-relaxed"><?= nl2br(htmlspecialchars($rev['comment'])) ?></p>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Review Modal -->
+<div id="reviewModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden transform transition-all">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-xl font-bold text-gray-900">Tulis Ulasan</h3>
+            <button type="button" onclick="document.getElementById('reviewModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 transition">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <div class="p-6">
+            <form action="<?= BASEURL; ?>/review/submit" method="POST" class="space-y-4">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                <input type="hidden" name="item_type" value="book">
+                <input type="hidden" name="item_id" value="<?= $data['buku']['id'] ?>">
+                <input type="hidden" name="slug" value="<?= htmlspecialchars($data['buku']['slug'] ?? '') ?>">
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Penilaian Anda</label>
+                    <select name="rating" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-unsoed-blue/20 outline-none">
+                        <option value="5">5 Bintang - Sangat Bagus</option>
+                        <option value="4">4 Bintang - Bagus</option>
+                        <option value="3">3 Bintang - Cukup</option>
+                        <option value="2">2 Bintang - Kurang</option>
+                        <option value="1">1 Bintang - Sangat Kurang</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Ulasan</label>
+                    <textarea name="comment" rows="4" placeholder="Bagaimana pendapat Anda tentang buku ini?" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-unsoed-blue/20 outline-none resize-none"></textarea>
+                </div>
+
+                <div class="pt-4 flex gap-3">
+                    <button type="button" onclick="document.getElementById('reviewModal').classList.add('hidden')" class="w-1/2 py-3 px-4 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition text-center">Batal</button>
+                    <button type="submit" class="w-1/2 btn-primary py-3 text-center">Kirim Ulasan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if (sessionStorage.getItem('openReviewModal') === '1') {
+            sessionStorage.removeItem('openReviewModal');
+            <?php if ($data['can_review']['can_review']): ?>
+                document.getElementById('reviewModal').classList.remove('hidden');
+                // Scroll to reviews section smoothly
+                setTimeout(() => {
+                    document.getElementById('reviewModal').scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            <?php endif; ?>
+        }
+    });
+</script>

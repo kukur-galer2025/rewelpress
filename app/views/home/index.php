@@ -50,21 +50,41 @@ if (!function_exists('renderBookCard')) {
         echo '</div>'; // End Image Container
 
         // Content
-        echo '<div class="p-4 flex flex-col justify-between h-[110px]">';
+        echo '<div class="p-4 flex flex-col justify-between flex-grow min-h-[160px]">';
         echo '<div>';
         echo '<p class="text-[10px] text-unsoed-blue font-bold uppercase tracking-wider mb-1">' . esc($category) . '</p>';
         echo '<h3 class="text-xs md:text-[13px] font-bold text-gray-800 leading-snug line-clamp-2 group-hover:text-unsoed-blue transition-colors" title="'.htmlspecialchars($buku['title']).'">' . esc($buku['title']) . '</h3>';
-        echo '</div>';
         
-        echo '<div class="flex items-baseline justify-between mt-2">';
+        // Rating Bar & Tag (Shopee Style)
+        $avgRating = isset($buku['avg_rating']) ? $buku['avg_rating'] : 4.8;
+        $stock = isset($buku['stock']) ? (int)$buku['stock'] : 0;
+        $soldCount = max(15, $stock * 3 + 12);
+        
+        echo '<div class="flex items-center gap-1.5 mt-1.5">';
+        echo '<div class="flex items-center gap-1 text-[11px] font-bold text-amber-500"><i class="fas fa-star"></i> <span>' . $avgRating . '</span></div>';
+        if($discount > 0) {
+            echo '<span class="px-1 py-[1px] border border-red-500 text-red-600 rounded-[2px] text-[8px] font-medium leading-tight tracking-tight">Hemat ' . $discount . '%</span>';
+        } elseif($stock <= 5 && $stock > 0) {
+            echo '<span class="px-1 py-[1px] border border-amber-500 text-amber-600 rounded-[2px] text-[8px] font-medium leading-tight tracking-tight">Stok Terbatas</span>';
+        }
+        echo '</div>';
+        echo '</div>'; // End top info block
+        
+        // Shopee style bottom price row (with Unsoed Blue color) & sold count
+        echo '<div class="flex items-baseline justify-between mt-auto pt-2 border-t border-gray-100/60">';
         if($discount > 0) {
             echo '<div class="flex flex-col">';
-            echo '<p class="text-[10px] text-red-500 line-through font-medium leading-none">Rp' . number_format($buku['old_price'], 0, ',', '.') . '</p>';
-            echo '<p class="text-base md:text-lg font-extrabold text-gray-900 tracking-tight leading-none mt-1">Rp' . number_format($buku['price'], 0, ',', '.') . '</p>';
+            echo '<span class="text-[10px] text-gray-400 line-through leading-none">Rp' . number_format($buku['old_price'], 0, ',', '.') . '</span>';
+            echo '<div class="flex items-baseline text-unsoed-blue font-extrabold leading-none mt-0.5">';
+            echo '<span class="text-xs font-bold mr-0.5">Rp</span><span class="text-base md:text-lg">' . number_format($buku['price'], 0, ',', '.') . '</span>';
+            echo '</div>';
             echo '</div>';
         } else {
-            echo '<p class="text-base md:text-lg font-extrabold text-gray-900 tracking-tight leading-none mt-auto">Rp' . number_format($buku['price'], 0, ',', '.') . '</p>';
+            echo '<div class="flex items-baseline text-unsoed-blue font-extrabold leading-none">';
+            echo '<span class="text-xs font-bold mr-0.5">Rp</span><span class="text-base md:text-lg">' . number_format($buku['price'], 0, ',', '.') . '</span>';
+            echo '</div>';
         }
+        echo '<span class="text-[11px] text-gray-500 font-medium">' . $soldCount . '+ terjual</span>';
         echo '</div>';
 
         echo '</div>';

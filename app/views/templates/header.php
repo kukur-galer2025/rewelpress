@@ -11,7 +11,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -291,31 +294,31 @@
                     </button>
                 </form>
                 
-                <div class="flex flex-col space-y-2 font-bold text-sm text-unsoed-darkblue">
-                    <a href="<?= BASEURL; ?>/book/promo" class="py-2 flex items-center justify-between text-unsoed-blue border-b border-gray-100">
+                <div class="flex flex-col space-y-1 font-bold text-sm text-unsoed-darkblue pb-24">
+                    <a href="<?= BASEURL; ?>/book/promo" class="py-3 flex items-center justify-between text-unsoed-blue border-b border-gray-100 hover:bg-gray-50 px-2 rounded transition">
                         <span>SUPER SALE (Flash Sale)</span>
                         <span class="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full">SALE</span>
                     </a>
                     <?php foreach($navCategories as $cat): ?>
-                        <div class="py-2 border-b border-gray-100">
+                        <div class="py-3 border-b border-gray-100 px-2 hover:bg-gray-50 transition rounded">
                             <a href="<?= BASEURL; ?>/book/category/<?= esc($cat['slug']) ?>" class="block uppercase tracking-wide text-unsoed-blue font-bold"><?= esc($cat['name']) ?></a>
                             <?php if(!empty($cat['children'])): ?>
-                                <div class="pl-4 mt-2 grid grid-cols-2 gap-1.5 font-normal text-xs text-gray-600">
+                                <div class="pl-4 mt-3 grid grid-cols-2 gap-2 font-normal text-xs text-gray-600">
                                     <?php foreach($cat['children'] as $child): ?>
-                                        <a href="<?= BASEURL; ?>/book/category/<?= esc($child['slug']) ?>" class="hover:text-unsoed-yellow py-0.5">• <?= esc($child['name']) ?></a>
+                                        <a href="<?= BASEURL; ?>/book/category/<?= esc($child['slug']) ?>" class="hover:text-unsoed-yellow py-1 flex items-center"><i class="fas fa-caret-right mr-1.5 text-gray-300"></i> <?= esc($child['name']) ?></a>
                                     <?php endforeach; ?>
                                 </div>
                             <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
-                    <a href="<?= BASEURL; ?>/profile" class="py-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold">PROFILE / TENTANG KAMI</a>
-                    <a href="<?= BASEURL; ?>/penerbitan" class="py-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold">LAYANAN PENERBITAN</a>
-                    <a href="<?= BASEURL; ?>/carabelanja" class="py-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold">CARA BELANJA</a>
-                    <a href="<?= BASEURL; ?>/ebook" class="py-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold">E-BOOK & DIGITAL</a>
-                    <a href="<?= BASEURL; ?>/book" class="py-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold">KATALOG BUKU</a>
-                    <a href="<?= BASEURL; ?>/news" class="py-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold">BERITA UNSOED PRESS</a>
-                    <a href="<?= BASEURL; ?>/gallery" class="py-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold">GALLERY FOTO & VIDEO</a>
-                    <a href="<?= BASEURL; ?>/contact" class="py-2 block text-unsoed-blue uppercase tracking-wide font-bold">CONTACT US</a>
+                    <a href="<?= BASEURL; ?>/profile" class="py-3 px-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold hover:bg-gray-50 transition rounded">PROFILE / TENTANG KAMI</a>
+                    <a href="<?= BASEURL; ?>/penerbitan" class="py-3 px-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold hover:bg-gray-50 transition rounded">LAYANAN PENERBITAN</a>
+                    <a href="<?= BASEURL; ?>/carabelanja" class="py-3 px-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold hover:bg-gray-50 transition rounded">CARA BELANJA</a>
+                    <a href="<?= BASEURL; ?>/ebook" class="py-3 px-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold hover:bg-gray-50 transition rounded">E-BOOK & DIGITAL</a>
+                    <a href="<?= BASEURL; ?>/book" class="py-3 px-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold hover:bg-gray-50 transition rounded">KATALOG BUKU</a>
+                    <a href="<?= BASEURL; ?>/news" class="py-3 px-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold hover:bg-gray-50 transition rounded">BERITA UNSOED PRESS</a>
+                    <a href="<?= BASEURL; ?>/gallery" class="py-3 px-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold hover:bg-gray-50 transition rounded">GALLERY FOTO & VIDEO</a>
+                    <a href="<?= BASEURL; ?>/contact" class="py-3 px-2 block text-unsoed-blue uppercase tracking-wide font-bold hover:bg-gray-50 transition rounded">CONTACT US</a>
                 </div>
             </div>
         </div>

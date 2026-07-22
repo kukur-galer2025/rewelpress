@@ -136,6 +136,33 @@
                 });
             }
 
+            // Initialize Swiper for Testimonial Carousel
+            if(document.querySelector('.testimoni-swiper')) {
+                new Swiper('.testimoni-swiper', {
+                    slidesPerView: 1,
+                    spaceBetween: 20,
+                    loop: true,
+                    autoplay: {
+                        delay: 4000,
+                        disableOnInteraction: false,
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    breakpoints: {
+                        640: {
+                            slidesPerView: 2,
+                            spaceBetween: 20,
+                        },
+                        1024: {
+                            slidesPerView: 3,
+                            spaceBetween: 30,
+                        },
+                    }
+                });
+            }
+
             // Initialize Swiper for Product Carousel
             if(document.querySelector('.product-swiper')) {
                 const productSwipers = document.querySelectorAll('.product-swiper');
@@ -257,6 +284,15 @@
             closeVideoModal();
         }
     });
+    </script>
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100,
+        });
     </script>
 </body>
 </html>

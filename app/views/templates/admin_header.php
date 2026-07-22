@@ -13,38 +13,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
-    <!-- Tailwind CSS (CDN for Development) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'unsoed-yellow': '#F2A900',
-                        'unsoed-blue': '#005587',
-                        'unsoed-darkblue': '#003B5C',
-                    },
-                    fontFamily: {
-                        'sans': ['Outfit', 'sans-serif'],
-                        'serif': ['Playfair Display', 'serif'],
-                    },
-                    boxShadow: {
-                        'card': '0 10px 40px -10px rgba(0,0,0,0.08)',
-                    }
-                }
-            }
-        }
-    </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .glass {
-                @apply bg-white/80 backdrop-blur-lg border border-white/20 shadow-xl;
-            }
-            .btn-primary {
-                @apply bg-unsoed-yellow text-white px-6 py-3 rounded-xl font-bold hover:bg-yellow-500 hover:shadow-lg hover:-translate-y-1 transition-all duration-300;
-            }
-        }
-    </style>
+    <!-- Tailwind CSS (Compiled) -->
+    <link rel="stylesheet" href="<?= BASEURL; ?>/assets/css/style.css">
 </head>
 <body class="bg-gray-100 font-sans antialiased text-gray-800">
 

@@ -36,6 +36,26 @@ class UserModel {
         return $this->db->rowCount();
     }
 
+    public function registerGoogleUser($name, $email)
+    {
+        // Check if exists first
+        $existing = $this->getUserByEmail($email);
+        if($existing) return $existing['id'];
+
+        $this->db->query('INSERT INTO users (name, email, password, role) VALUES (:name, :email, :password, :role)');
+        $this->db->bind(':name', $name);
+        $this->db->bind(':email', $email);
+        
+        // Random password for Google users
+        $random_password = bin2hex(random_bytes(10));
+        $hashed_password = password_hash($random_password, PASSWORD_BCRYPT);
+        $this->db->bind(':password', $hashed_password);
+        $this->db->bind(':role', 'customer');
+        
+        $this->db->execute();
+        return $this->db->lastInsertId();
+    }
+
     public function createPasswordResetToken($email)
     {
         // Delete any existing token for this email

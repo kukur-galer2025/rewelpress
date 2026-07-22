@@ -224,6 +224,22 @@
                                         <?php endif; ?>
                                     </div>
                                 </div>
+
+                                <!-- Detail Pengiriman -->
+                                <div class="mt-2 mb-4 p-4 bg-gray-50 rounded-xl border border-gray-100 text-sm">
+                                    <div class="mb-2">
+                                        <span class="text-gray-500 block text-xs font-bold uppercase mb-1">Metode Penerimaan</span>
+                                        <span class="font-medium text-gray-800">
+                                            <?= $order['delivery_method'] == 'shipping' ? '<i class="fas fa-truck text-unsoed-blue mr-1"></i> Kirim via Kurir (J&T/JNE)' : '<i class="fas fa-store text-amber-500 mr-1"></i> Ambil di Kantor Unsoed Press' ?>
+                                        </span>
+                                    </div>
+                                    <?php if($order['delivery_method'] == 'shipping' && !empty($order['shipping_address'])): ?>
+                                    <div class="mt-3 pt-3 border-t border-gray-200">
+                                        <span class="text-gray-500 block text-xs font-bold uppercase mb-1">Alamat Pengiriman (Ongkir DFOD)</span>
+                                        <span class="font-medium text-gray-800 break-words"><?= nl2br(htmlspecialchars($order['shipping_address'])) ?></span>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
                                 
                                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 gap-4">
                                     <div>

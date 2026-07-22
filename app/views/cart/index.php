@@ -46,7 +46,12 @@
                                     <div class="flex-grow w-full">
                                         <a href="<?= BASEURL; ?>/book/detail/<?= $item['id'] ?>" class="text-lg font-bold text-gray-800 hover:text-unsoed-blue transition line-clamp-2 mb-1"><?= $item['title'] ?></a>
                                         <p class="text-sm text-gray-500 mb-3"><?= $item['author'] ?></p>
-                                        <h4 class="text-unsoed-blue font-extrabold text-lg">Rp <?= number_format($item['price'], 0, ',', '.') ?></h4>
+                                        <div class="flex items-center gap-2">
+                                            <h4 class="text-unsoed-blue font-extrabold text-lg">Rp <?= number_format($item['price'], 0, ',', '.') ?></h4>
+                                            <?php if(isset($item['old_price']) && $item['old_price'] > 0 && $item['old_price'] > $item['price']): ?>
+                                                <span class="text-sm text-gray-400 line-through font-medium">Rp <?= number_format($item['old_price'], 0, ',', '.') ?></span>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
 
                                     <!-- Qty & Action -->
@@ -166,7 +171,7 @@
                             <?php endif; ?>
                             <div class="flex justify-between text-gray-600">
                                 <span>Biaya Pengiriman</span>
-                                <span class="text-green-600 font-bold">Gratis</span>
+                                <span class="text-gray-500 italic text-xs text-right max-w-[150px]">Bayar di Tujuan (Kurir) / Gratis (Ambil Sendiri)</span>
                             </div>
                         </div>
 
@@ -177,9 +182,35 @@
                             </div>
                         </div>
 
-                        <a href="<?= BASEURL; ?>/order/checkout" class="btn-primary w-full text-center block text-lg py-4">
-                            Lanjut ke Pembayaran <i class="fas fa-chevron-right ml-2 text-sm"></i>
-                        </a>
+                        <form action="<?= BASEURL; ?>/order/checkout" method="POST" class="mb-0">
+                            <!-- Metode Pengiriman -->
+                            <div class="mb-6 bg-gray-50 p-4 rounded-2xl border border-gray-200">
+                                <h4 class="font-bold text-gray-800 text-sm mb-3">Metode Pengiriman Buku Fisik</h4>
+                                <div class="space-y-3">
+                                    <label class="flex items-center gap-3 cursor-pointer group">
+                                        <input type="radio" name="delivery_method" value="pickup" class="w-4 h-4 text-unsoed-blue bg-white border-gray-300 focus:ring-unsoed-blue" checked onclick="document.getElementById('address_box').classList.add('hidden'); document.getElementById('shipping_address').removeAttribute('required'); document.getElementById('shipping_info').classList.add('hidden');">
+                                        <span class="text-sm font-medium text-gray-700 group-hover:text-unsoed-blue transition">Ambil di Tempat (Kantor Unsoed Press)</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer group">
+                                        <input type="radio" name="delivery_method" value="shipping" class="w-4 h-4 text-unsoed-blue bg-white border-gray-300 focus:ring-unsoed-blue" onclick="document.getElementById('address_box').classList.remove('hidden'); document.getElementById('shipping_address').setAttribute('required', 'required'); document.getElementById('shipping_info').classList.remove('hidden');">
+                                        <span class="text-sm font-medium text-gray-700 group-hover:text-unsoed-blue transition">Kirim via Kurir (J&T/JNE)</span>
+                                    </label>
+                                </div>
+                                
+                                <div id="address_box" class="hidden mt-4 pt-4 border-t border-gray-200">
+                                    <label class="block text-xs font-bold text-gray-700 mb-2">Alamat Pengiriman Lengkap</label>
+                                    <textarea name="shipping_address" id="shipping_address" rows="3" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-unsoed-blue/20 focus:border-unsoed-blue outline-none transition resize-none" placeholder="Masukkan alamat lengkap (Jalan, RT/RW, Desa, Kec, Kab, Kode Pos)"></textarea>
+                                    <div id="shipping_info" class="hidden mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-lg text-xs text-yellow-700 flex gap-2 items-start">
+                                        <i class="fas fa-info-circle mt-0.5"></i>
+                                        <p><strong>Ongkir Bayar di Tujuan (DFOD).</strong> Biaya pengiriman ditanggung oleh Anda dan dibayarkan langsung kepada Kurir saat buku tiba.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-primary w-full text-center block text-lg py-4 shadow-xl">
+                                Lanjut ke Pembayaran <i class="fas fa-chevron-right ml-2 text-sm"></i>
+                            </button>
+                        </form>
                         
                         <div class="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400">
                             <i class="fas fa-lock"></i> Transaksi dijamin 100% aman

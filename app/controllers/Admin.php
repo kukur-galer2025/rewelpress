@@ -254,6 +254,36 @@ class Admin extends Controller {
         exit;
     }
 
+    public function resend_invoice($id)
+    {
+        $order = $this->model('OrderModel')->getOrderById($id);
+        if ($order) {
+            require_once '../app/models/EmailModel.php';
+            $emailModel = new EmailModel();
+            
+            $subject = "Invoice Pesanan #" . $order['id'] . " - Unsoed Press";
+            $message = "Terima kasih telah berbelanja di Unsoed Press.\n\nTotal Tagihan: Rp " . number_format($order['total_amount'], 0, ',', '.') . "\n";
+            if (isset($order['delivery_method']) && $order['delivery_method'] == 'shipping') {
+                $message .= "Metode Pengiriman: Kirim via Kurir (Ongkir Bayar di Tujuan)\nAlamat: " . $order['shipping_address'] . "\n\n";
+            } else {
+                $message .= "Metode Pengiriman: Ambil di Tempat (Kantor Unsoed Press)\n\n";
+            }
+            if ($order['status'] == 'pending') {
+                $message .= "Status Pesanan: BELUM BAYAR\nSilakan selesaikan pembayaran Anda dengan masuk ke menu Riwayat Pesanan di website kami.";
+            } elseif ($order['status'] == 'paid') {
+                $message .= "Status Pesanan: MENUNGGU KONFIRMASI\nPembayaran Anda sedang dalam pengecekan oleh Admin.";
+            } elseif ($order['status'] == 'confirmed') {
+                $message .= "Status Pesanan: LUNAS TERKONFIRMASI\nPembayaran telah diterima! Pesanan Anda sedang disiapkan. Jika ambil di tempat, silakan kunjungi kantor kami.";
+            } else {
+                $message .= "Status Pesanan: DITOLAK\nPesanan ini tidak valid atau telah dibatalkan.";
+            }
+            
+            $emailModel->sendEmail($order['email'], $subject, $message);
+        }
+        header('Location: ' . BASEURL . '/admin/order_detail/' . $id);
+        exit;
+    }
+
     // --- MANAJEMEN BERITA ---
 
     public function news()

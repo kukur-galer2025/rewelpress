@@ -29,6 +29,9 @@ class Order extends Controller {
             exit;
         }
 
+        $delivery_method = isset($_POST['delivery_method']) ? $_POST['delivery_method'] : 'pickup';
+        $shipping_address = (isset($_POST['shipping_address']) && trim($_POST['shipping_address']) !== '') ? trim($_POST['shipping_address']) : null;
+
         $total_amount = 0;
         $cart_items = [];
         $bookModel = $this->model('BookModel');
@@ -57,7 +60,7 @@ class Order extends Controller {
             }
         }
 
-        $order_id = $this->model('OrderModel')->createOrder($_SESSION['user_id'], $total_amount, $cart_items, $voucher_code, $discount_amount);
+        $order_id = $this->model('OrderModel')->createOrder($_SESSION['user_id'], $total_amount, $cart_items, $voucher_code, $discount_amount, $delivery_method, $shipping_address);
 
         if($order_id) {
             // Clear cart & voucher
@@ -67,9 +70,16 @@ class Order extends Controller {
             // Simulate sending invoice email
             $user_email = $this->model('UserModel')->getUserById($_SESSION['user_id'])['email'];
             $subject = "Invoice Pesanan #" . $order_id . " - Unsoed Press";
-            $message = "Terima kasih telah berbelanja di Unsoed Press.\n\nTotal Tagihan: Rp " . number_format($total_amount, 0, ',', '.') . "\nSilakan selesaikan pembayaran Anda dengan masuk ke menu Riwayat Pesanan di website kami.";
+            $message = "Terima kasih telah berbelanja di Unsoed Press.\n\nTotal Tagihan: Rp " . number_format($total_amount, 0, ',', '.') . "\n";
+            if ($delivery_method == 'shipping') {
+                $message .= "Metode Pengiriman: Kirim via Kurir (Ongkir Bayar di Tujuan)\nAlamat: " . $shipping_address . "\n\n";
+            } else {
+                $message .= "Metode Pengiriman: Ambil di Tempat (Kantor Unsoed Press)\n\n";
+            }
+            $message .= "Silakan selesaikan pembayaran Anda dengan masuk ke menu Riwayat Pesanan di website kami.";
             $headers = "From: noreply@unsoedpress.test";
-            @mail($user_email, $subject, $message, $headers);
+            
+            $this->model('EmailModel')->sendEmail($user_email, $subject, $message);
 
             header('Location: ' . BASEURL . '/order/pay/' . $order_id);
         } else {
@@ -92,21 +102,33 @@ class Order extends Controller {
 
         if($_SERVER['REQUEST_METHOD'] == 'POST') {
             if(isset($_FILES['receipt']) && $_FILES['receipt']['error'] == 0) {
-                $target_dir = "../public/assets/uploads/";
-                if(!file_exists($target_dir)) {
-                    mkdir($target_dir, 0777, true);
-                }
+                $allowed_types = ['jpg', 'jpeg', 'png'];
+                $file_extension = strtolower(pathinfo($_FILES["receipt"]["name"], PATHINFO_EXTENSION));
                 
-                $file_extension = pathinfo($_FILES["receipt"]["name"], PATHINFO_EXTENSION);
-                $new_filename = 'receipt_' . $id . '_' . uniqid() . '.' . $file_extension;
-                $target_file = $target_dir . $new_filename;
-                
-                if(move_uploaded_file($_FILES["receipt"]["tmp_name"], $target_file)) {
-                    $receipt_path = BASEURL . '/assets/uploads/' . $new_filename;
-                    $this->model('OrderModel')->uploadReceipt($id, $receipt_path);
-                    header('Location: ' . BASEURL . '/order?msg=success_upload');
-                    exit;
+                if (!in_array($file_extension, $allowed_types)) {
+                    $data['error'] = "Tipe file tidak diizinkan. Hanya JPG, JPEG, dan PNG.";
+                } elseif ($_FILES['receipt']['size'] > 5 * 1024 * 1024) {
+                    $data['error'] = "Ukuran file terlalu besar. Maksimal 5MB.";
+                } else {
+                    $target_dir = "../public/assets/uploads/";
+                    if(!file_exists($target_dir)) {
+                        mkdir($target_dir, 0777, true);
+                    }
+                    
+                    $new_filename = 'receipt_' . $id . '_' . uniqid() . '.' . $file_extension;
+                    $target_file = $target_dir . $new_filename;
+                    
+                    if(move_uploaded_file($_FILES["receipt"]["tmp_name"], $target_file)) {
+                        $receipt_path = BASEURL . '/assets/uploads/' . $new_filename;
+                        $this->model('OrderModel')->uploadReceipt($id, $receipt_path);
+                        header('Location: ' . BASEURL . '/order?msg=success_upload');
+                        exit;
+                    } else {
+                        $data['error'] = "Gagal mengunggah file. Silakan coba lagi.";
+                    }
                 }
+            } else {
+                $data['error'] = "Silakan pilih file bukti bayar terlebih dahulu.";
             }
         }
 

@@ -3,9 +3,14 @@
         <h1 class="text-3xl font-bold text-gray-800">Detail Pesanan #<?= $data['order']['id'] ?></h1>
         <p class="text-gray-500 mt-1">Informasi pelanggan, item, dan bukti pembayaran.</p>
     </div>
-    <a href="<?= BASEURL; ?>/admin/orders" class="text-gray-500 hover:text-unsoed-blue transition font-semibold flex items-center gap-2">
-        <i class="fas fa-arrow-left"></i> Kembali
-    </a>
+    <div class="flex items-center gap-3">
+        <a href="<?= BASEURL; ?>/admin/resend_invoice/<?= $data['order']['id'] ?>" class="bg-unsoed-yellow text-white px-4 py-2 rounded-lg font-bold shadow hover:bg-yellow-600 transition flex items-center gap-2 text-sm" onclick="return confirm('Kirim ulang email invoice ke pelanggan ini?')">
+            <i class="fas fa-envelope"></i> Kirim Invoice
+        </a>
+        <a href="<?= BASEURL; ?>/admin/orders" class="text-gray-500 hover:text-unsoed-blue transition font-semibold flex items-center gap-2">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </a>
+    </div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -33,6 +38,19 @@
                     <span class="text-green-600 font-bold uppercase">Selesai Dikonfirmasi</span>
                 <?php else: ?>
                     <span class="text-red-600 font-bold uppercase">Ditolak</span>
+                <?php endif; ?>
+            </div>
+            <div>
+                <p class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Pengiriman</p>
+                <?php if(isset($data['order']['delivery_method'])): ?>
+                    <p class="font-bold text-gray-800 text-sm mb-1">
+                        <?= $data['order']['delivery_method'] == 'shipping' ? '<i class="fas fa-truck text-unsoed-blue w-4"></i> Kurir (DFOD)' : '<i class="fas fa-store text-amber-500 w-4"></i> Ambil Sendiri' ?>
+                    </p>
+                    <?php if($data['order']['delivery_method'] == 'shipping' && !empty($data['order']['shipping_address'])): ?>
+                        <p class="text-xs text-gray-600 max-w-[200px] leading-relaxed break-words"><?= nl2br(htmlspecialchars($data['order']['shipping_address'])) ?></p>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <p class="text-gray-500 text-sm">-</p>
                 <?php endif; ?>
             </div>
         </div>

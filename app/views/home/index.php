@@ -203,6 +203,53 @@ if (!function_exists('renderBookCard')) {
         </div>
     </section>
 
+    <!-- E-BOOK DIGITAL -->
+    <section class="mb-16">
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center gap-3">
+                <div class="w-1.5 h-6 bg-unsoed-yellow rounded-full"></div>
+                <h2 class="text-base font-bold text-unsoed-darkblue uppercase tracking-wide">E-BOOK DIGITAL</h2>
+            </div>
+            <a href="<?= BASEURL; ?>/ebook" class="text-xs text-unsoed-blue hover:text-unsoed-yellow transition-colors font-semibold bg-unsoed-blue/5 hover:bg-unsoed-blue/10 px-3 py-1.5 rounded-full">Lihat semua</a>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-10">
+            <?php 
+            $latest_ebooks = !empty($data['latest_ebooks']) ? $data['latest_ebooks'] : [];
+            if(empty($latest_ebooks)): ?>
+                <div class="col-span-full text-center py-6 text-gray-400 text-xs italic">Belum ada koleksi E-Book digital.</div>
+            <?php else:
+                foreach ($latest_ebooks as $ebook):
+                    $img_src = !empty($ebook['cover_image']) ? (strpos($ebook['cover_image'], 'http') === 0 ? $ebook['cover_image'] : BASEURL . '/uploads/covers/' . $ebook['cover_image']) : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400';
+            ?>
+            <div class="group">
+                <a href="<?= BASEURL; ?>/ebook/detail/<?= $ebook['id'] ?>" class="block bg-white relative">
+                    <div class="relative overflow-hidden aspect-[3/4] bg-gray-100 rounded-xl shadow-sm border border-gray-100">
+                        <img src="<?= $img_src ?>" alt="<?= htmlspecialchars($ebook['title'] ?? $ebook['book_title'] ?? '') ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-2 left-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow flex items-center gap-1">
+                            <i class="fas fa-tablet-alt"></i> E-BOOK
+                        </div>
+                    </div>
+                    <div class="pt-4">
+                        <h3 class="text-[13px] font-bold text-gray-800 uppercase leading-snug mb-2 line-clamp-2 h-10 group-hover:text-unsoed-blue transition-colors"><?= htmlspecialchars($ebook['title'] ?? $ebook['book_title'] ?? '') ?></h3>
+                        <p class="text-[11px] text-gray-400 mb-2 truncate"><i class="fas fa-user-edit mr-1"></i> <?= htmlspecialchars($ebook['book_author'] ?? 'Penulis') ?></p>
+                        <div class="border-t border-gray-100 pt-2 flex items-baseline justify-between">
+                            <?php 
+                                $isFree = isset($ebook['is_free']) && $ebook['is_free'] == 1;
+                                $harga = isset($ebook['ebook_price']) ? floatval($ebook['ebook_price']) : 0;
+                            ?>
+                            <?php if($isFree || $harga == 0): ?>
+                                <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded border border-green-200">GRATIS</span>
+                            <?php else: ?>
+                                <span class="text-xl font-bold text-gray-900 tracking-tight">Rp<?= number_format($harga, 0, ',', '.') ?></span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <?php endforeach; endif; ?>
+        </div>
+    </section>
+
     <!-- TOKOH PENULIS -->
     <section class="mb-16">
         <div class="flex justify-between items-center mb-6">
@@ -241,14 +288,74 @@ if (!function_exists('renderBookCard')) {
         </div>
     </section>
 
+    <!-- TESTIMONI PEMBACA & PENULIS -->
+    <section class="mb-16">
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center gap-3">
+                <div class="w-1.5 h-6 bg-unsoed-yellow rounded-full"></div>
+                <h2 class="text-base font-bold text-unsoed-darkblue uppercase tracking-wide">ULASAN & TESTIMONI</h2>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Testimoni 1 -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md border border-gray-100 relative transition-all duration-300">
+                <i class="fas fa-quote-right text-5xl text-gray-50 absolute top-4 right-4"></i>
+                <div class="flex items-center gap-4 mb-4 relative z-10">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80" alt="Siti Rahma" class="w-12 h-12 rounded-full object-cover border-2 border-unsoed-yellow p-0.5">
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm">Siti Rahma</h4>
+                        <p class="text-[11px] font-medium text-gray-500 uppercase tracking-wider">Mahasiswa S2</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 leading-relaxed italic relative z-10">"Buku-buku terbitan Unsoed Press sangat membantu untuk referensi tesis saya. Kualitas cetaknya premium dan pengirimannya juga cepat!"</p>
+                <div class="mt-5 flex text-unsoed-yellow text-[10px] gap-1 relative z-10">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Testimoni 2 -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md border border-gray-100 relative transition-all duration-300">
+                <i class="fas fa-quote-right text-5xl text-gray-50 absolute top-4 right-4"></i>
+                <div class="flex items-center gap-4 mb-4 relative z-10">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80" alt="Dr. Budi Santoso" class="w-12 h-12 rounded-full object-cover border-2 border-unsoed-blue p-0.5">
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm">Dr. Budi Santoso</h4>
+                        <p class="text-[11px] font-medium text-gray-500 uppercase tracking-wider">Dosen & Peneliti</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 leading-relaxed italic relative z-10">"Pelayanan penerbitan di sini sangat profesional. Naskah diedit dengan rapi dan proses pengurusan ISBN-nya sangat transparan dan mudah."</p>
+                <div class="mt-5 flex text-unsoed-yellow text-[10px] gap-1 relative z-10">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Testimoni 3 -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md border border-gray-100 relative transition-all duration-300">
+                <i class="fas fa-quote-right text-5xl text-gray-50 absolute top-4 right-4"></i>
+                <div class="flex items-center gap-4 mb-4 relative z-10">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80" alt="Amanda Wijaya" class="w-12 h-12 rounded-full object-cover border-2 border-green-500 p-0.5">
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm">Amanda Wijaya</h4>
+                        <p class="text-[11px] font-medium text-gray-500 uppercase tracking-wider">Pembaca Setia</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 leading-relaxed italic relative z-10">"Pilihan e-book-nya luar biasa. Saya bisa langsung baca materi perkuliahan lewat HP. Harganya pun juga sangat bersahabat untuk kantong mahasiswa."</p>
+                <div class="mt-5 flex text-unsoed-yellow text-[10px] gap-1 relative z-10">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- BOTTOM WIDGETS -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <!-- Video & Gallery -->
-        <div class="border border-gray-200 bg-white shadow-sm">
-            <div class="bg-gray-500 text-white text-center py-2 font-bold text-sm">
-                Video & Gallery
+        <!-- Video & Gallery (Diperbagus) -->
+        <div class="border border-gray-200 bg-white shadow-sm overflow-hidden rounded-xl">
+            <div class="bg-gradient-to-r from-gray-700 to-gray-600 text-white text-center py-3 font-bold text-sm tracking-wide">
+                <i class="fas fa-camera-retro mr-2"></i> GALERI MULTIMEDIA
             </div>
-            <div class="p-4">
+            <div class="p-5">
+                <!-- Video Section -->
                 <?php 
                 $latestVideo = !empty($data['latest_video']) ? $data['latest_video'] : null;
                 if ($latestVideo):
@@ -256,21 +363,35 @@ if (!function_exists('renderBookCard')) {
                     $vidThumb = !empty($latestVideo['thumbnail_url']) ? $latestVideo['thumbnail_url'] : 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=600&q=80';
                     $vidUrl = $latestVideo['youtube_url'];
                 ?>
-                <div onclick="openVideoModal('<?= $vidUrl ?>', '<?= addslashes($vidTitle) ?>')" class="aspect-video bg-gray-900 relative rounded overflow-hidden flex items-center justify-center cursor-pointer group mb-2 shadow-inner">
+                <div onclick="openVideoModal('<?= $vidUrl ?>', '<?= addslashes($vidTitle) ?>')" class="aspect-video bg-gray-900 relative rounded-xl overflow-hidden flex items-center justify-center cursor-pointer group mb-4 shadow-sm border border-gray-200">
                     <img src="<?= $vidThumb ?>" alt="<?= $vidTitle ?>" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500">
-                    <div class="w-12 h-12 bg-red-600 group-hover:bg-red-700 rounded-full flex items-center justify-center text-white z-10 shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-play ml-1 text-sm"></i>
+                    <div class="w-14 h-14 bg-red-600 group-hover:bg-red-700 rounded-full flex items-center justify-center text-white z-10 shadow-lg transform group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-play ml-1 text-lg"></i>
                     </div>
-                    <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-2 pt-6 opacity-90 group-hover:opacity-100 transition-opacity">
-                        <p class="text-[11px] text-white font-medium line-clamp-1 leading-tight"><?= $vidTitle ?></p>
+                    <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 pt-8 opacity-90 group-hover:opacity-100 transition-opacity">
+                        <p class="text-xs text-white font-medium line-clamp-2 leading-tight drop-shadow-md"><?= $vidTitle ?></p>
                     </div>
-                </div>
-                <?php else: ?>
-                <div class="aspect-video bg-gray-100 rounded relative flex items-center justify-center mb-2 border border-dashed border-gray-300 text-gray-400 text-xs text-center p-3">
-                    Belum ada video galeri yang diunggah.
                 </div>
                 <?php endif; ?>
-                <a href="<?= BASEURL; ?>/gallery" class="text-xs text-unsoed-darkblue hover:text-unsoed-yellow font-medium block mt-3"><i class="fas fa-caret-right"></i> Gallery Selengkapnya</a>
+
+                <!-- Photo Section -->
+                <?php $latest_photos = !empty($data['latest_photos']) ? array_slice($data['latest_photos'], 0, 3) : []; ?>
+                <?php if(!empty($latest_photos)): ?>
+                <div class="grid grid-cols-3 gap-2 mb-4">
+                    <?php foreach($latest_photos as $photo): ?>
+                        <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden group cursor-pointer relative shadow-sm border border-gray-200">
+                            <img src="<?= $photo['image_url'] ?>" alt="<?= htmlspecialchars($photo['title']) ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                                <i class="fas fa-search-plus text-white opacity-0 group-hover:opacity-100 transition-opacity scale-50 group-hover:scale-100 transform duration-300"></i>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+                
+                <a href="<?= BASEURL; ?>/gallery" class="w-full text-center text-xs text-unsoed-darkblue hover:text-white border border-unsoed-darkblue hover:bg-unsoed-darkblue font-semibold block py-2.5 rounded-lg transition-colors mt-2">
+                    Jelajahi Semua Galeri &rarr;
+                </a>
             </div>
         </div>
 

@@ -16,75 +16,21 @@
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     
-    <!-- Tailwind CSS (CDN for Development) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        unsoed: {
-                            blue: '#003B5C',
-                            darkblue: '#002840',
-                            yellow: '#F2A900',
-                            lightyellow: '#FCD34D',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        serif: ['Lora', 'serif'],
-                    },
-                    boxShadow: {
-                        'glass': '0 8px 32px 0 rgba(0, 59, 92, 0.1)',
-                        'card': '0 10px 40px -10px rgba(0,0,0,0.08)',
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .glass {
-                @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-glass;
-            }
-            .glass-dark {
-                @apply bg-unsoed-blue/90 backdrop-blur-md border border-white/10;
-            }
-            .text-gradient {
-                @apply bg-clip-text text-transparent bg-gradient-to-r from-unsoed-yellow to-yellow-300;
-            }
-            .btn-primary {
-                @apply bg-unsoed-yellow text-white px-6 py-3 rounded-full font-semibold shadow-lg shadow-unsoed-yellow/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-unsoed-yellow/40 transition-all duration-300;
-            }
-            /* Swiper custom styling */
-            .swiper-button-next, .swiper-button-prev {
-                @apply text-unsoed-blue bg-white w-12 h-12 rounded-full shadow-md transition-colors duration-300;
-            }
-            .swiper-button-next:hover, .swiper-button-prev:hover {
-                @apply bg-unsoed-yellow text-white;
-            }
-            .swiper-button-next::after, .swiper-button-prev::after {
-                @apply text-lg font-bold;
-            }
-            .swiper-pagination-bullet-active {
-                @apply bg-unsoed-yellow;
-            }
-        }
-    </style>
+    <!-- Tailwind CSS (Compiled) -->
+    <link rel="stylesheet" href="<?= BASEURL; ?>/assets/css/style.css">
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased font-sans">
 
     <!-- Top Bar -->
     <div class="bg-unsoed-darkblue text-white/90 text-xs py-2.5 hidden md:block relative z-[60]">
         <div class="container mx-auto px-4 flex justify-between items-center">
-            <div class="flex space-x-5 font-medium tracking-wide">
+            <div class="flex items-center space-x-5 font-medium tracking-wide">
                 <a href="<?= BASEURL; ?>" class="hover:text-unsoed-yellow transition">Home</a>
                 <a href="<?= BASEURL; ?>/profile" class="hover:text-unsoed-yellow transition">Profile</a>
                 <a href="<?= BASEURL; ?>/penerbitan" class="hover:text-unsoed-yellow transition">Penerbitan</a>
                 <a href="<?= BASEURL; ?>/news" class="hover:text-unsoed-yellow transition">Berita Unsoed Press</a>
                 <a href="<?= BASEURL; ?>/carabelanja" class="hover:text-unsoed-yellow transition">Cara Belanja</a>
-                <div class="relative group py-1 inline-block">
+                <div class="relative group inline-block">
                     <a href="<?= BASEURL; ?>/gallery" class="hover:text-unsoed-yellow transition flex items-center gap-1 cursor-pointer">
                         <span>Gallery</span>
                     </a>
@@ -94,6 +40,7 @@
                     </div>
                 </div>
                 <a href="<?= BASEURL; ?>/ebook" class="hover:text-unsoed-yellow transition">E-Book</a>
+                <a href="<?= BASEURL; ?>/book" class="hover:text-unsoed-yellow transition">Katalog Buku</a>
                 <a href="<?= BASEURL; ?>/contact" class="hover:text-unsoed-yellow transition">Contact</a>
             </div>
             <div class="flex space-x-4 font-medium tracking-wide items-center">
@@ -350,6 +297,7 @@
                     <a href="<?= BASEURL; ?>/penerbitan" class="py-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold">LAYANAN PENERBITAN</a>
                     <a href="<?= BASEURL; ?>/carabelanja" class="py-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold">CARA BELANJA</a>
                     <a href="<?= BASEURL; ?>/ebook" class="py-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold">E-BOOK & DIGITAL</a>
+                    <a href="<?= BASEURL; ?>/book" class="py-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold">KATALOG BUKU</a>
                     <a href="<?= BASEURL; ?>/news" class="py-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold">BERITA UNSOED PRESS</a>
                     <a href="<?= BASEURL; ?>/gallery" class="py-2 block text-unsoed-blue border-b border-gray-100 uppercase tracking-wide font-bold">GALLERY FOTO & VIDEO</a>
                     <a href="<?= BASEURL; ?>/contact" class="py-2 block text-unsoed-blue uppercase tracking-wide font-bold">CONTACT US</a>

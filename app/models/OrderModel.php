@@ -10,7 +10,7 @@ class OrderModel {
 
     // -- For Customer --
 
-    public function createOrder($user_id, $total_amount, $cart_items, $voucher_code = null, $discount_amount = 0.00)
+    public function createOrder($user_id, $total_amount, $cart_items, $voucher_code = null, $discount_amount = 0.00, $delivery_method = 'pickup', $shipping_address = null)
     {
         // Begin Transaction natively using PDO
         $this->db->query("START TRANSACTION");
@@ -18,11 +18,13 @@ class OrderModel {
 
         try {
             // 1. Insert Order
-            $this->db->query('INSERT INTO orders (user_id, total_amount, voucher_code, discount_amount, status) VALUES (:user_id, :total_amount, :voucher_code, :discount_amount, :status)');
+            $this->db->query('INSERT INTO orders (user_id, total_amount, voucher_code, discount_amount, delivery_method, shipping_address, status) VALUES (:user_id, :total_amount, :voucher_code, :discount_amount, :delivery_method, :shipping_address, :status)');
             $this->db->bind(':user_id', $user_id);
             $this->db->bind(':total_amount', $total_amount);
             $this->db->bind(':voucher_code', !empty($voucher_code) ? $voucher_code : null);
             $this->db->bind(':discount_amount', floatval($discount_amount));
+            $this->db->bind(':delivery_method', $delivery_method);
+            $this->db->bind(':shipping_address', $shipping_address);
             $this->db->bind(':status', 'pending');
             $this->db->execute();
             
@@ -116,7 +118,9 @@ class OrderModel {
 
         if ($rowCount > 0 && $order && !empty($order['user_id'])) {
             require_once __DIR__ . '/NotificationModel.php';
+            require_once __DIR__ . '/EmailModel.php';
             $notif = new NotificationModel();
+            $emailModel = new EmailModel();
             
             $title = "Status Pesanan Diperbarui";
             $message = "Pesanan #INV-" . $id . " berstatus: " . strtoupper($status);
@@ -130,6 +134,7 @@ class OrderModel {
             }
 
             $notif->addNotification($order['user_id'], $title, $message, BASEURL . "/order");
+            $emailModel->sendEmail($order['email'], $title, $message . "\n\nCek riwayat pesanan Anda di website kami.");
         }
 
         return $rowCount;

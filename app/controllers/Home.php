@@ -13,6 +13,8 @@ class Home extends Controller {
             $data['tokoh_penulis'] = $this->model('AuthorModel')->getFeaturedAuthors(6);
             $data['agenda_terkini'] = $this->model('NewsModel')->getLatestNews(3);
             $data['latest_video'] = $this->model('GalleryModel')->getLatestVideo();
+            $data['latest_ebooks'] = $this->model('EbookModel')->getLatestEbooks(5);
+            $data['latest_photos'] = $this->model('GalleryModel')->getAllPhotos();
         } catch (Exception $e) {
             $data['buku_terbaru'] = [];
             $data['buku_terpopuler'] = [];
@@ -20,6 +22,8 @@ class Home extends Controller {
             $data['tokoh_penulis'] = [];
             $data['agenda_terkini'] = [];
             $data['latest_video'] = null;
+            $data['latest_ebooks'] = [];
+            $data['latest_photos'] = [];
             $data['db_error'] = true;
         }
 

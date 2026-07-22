@@ -43,6 +43,26 @@ class EbookModel {
         return $this->db->resultSet();
     }
 
+    public function getLatestEbooks($limit = 5)
+    {
+        $this->db->query("
+            SELECT ebooks.*, 
+                   books.title as book_title, 
+                   books.author as book_author, 
+                   books.image as cover_image, 
+                   books.isbn,
+                   books.price as normal_price,
+                   books.synopsis
+            FROM ebooks 
+            LEFT JOIN books ON ebooks.book_id = books.id 
+            WHERE ebooks.status = 'active'
+            ORDER BY ebooks.created_at DESC
+            LIMIT :limit
+        ");
+        $this->db->bind(':limit', (int)$limit);
+        return $this->db->resultSet();
+    }
+
     public function getEbookById($id)
     {
         $this->db->query('

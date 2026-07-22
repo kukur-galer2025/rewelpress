@@ -12,24 +12,11 @@
 
 <div class="container mx-auto px-4 max-w-[1200px] py-14 space-y-16">
 
-    <?php if(isset($_GET['msg']) && $_GET['msg'] == 'success'): ?>
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-800 p-4 rounded shadow-sm flex items-center justify-between" role="alert">
-            <div class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-2xl text-green-600"></i>
-                <div>
-                    <p class="font-bold">Pesan Berhasil Terkirim!</p>
-                    <p class="text-sm">Terima kasih telah menghubungi kami. Tim Unsoed Press akan segera menindaklanjuti pesan Anda melalui email.</p>
-                </div>
-            </div>
-            <button onclick="this.parentElement.remove()" class="text-green-700 hover:text-green-900 font-bold text-lg">&times;</button>
-        </div>
-    <?php endif; ?>
-
-    <!-- Bagian Atas: Office Info & Contact Form (Sesuai Contoh UGM Press) -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+    <!-- Bagian Atas: Office Info -->
+    <div class="max-w-4xl mx-auto">
         
-        <!-- Kolom Kiri: OUR OFFICE -->
-        <div class="lg:col-span-1">
+        <!-- Informasi Kantor -->
+        <div>
             <div class="bg-[#0f3460] text-white font-bold px-5 py-3.5 text-sm uppercase tracking-wider rounded-t-lg shadow-sm">
                 OUR OFFICE
             </div>
@@ -69,47 +56,7 @@
             </div>
         </div>
 
-        <!-- Kolom Kanan: CONTACT FORM -->
-        <div class="lg:col-span-2">
-            <div class="border-b-2 border-unsoed-yellow pb-3 mb-6 flex items-center justify-between">
-                <h2 class="font-bold text-gray-800 text-lg uppercase tracking-wider">CONTACT FORM</h2>
-            </div>
-            
-            <p class="text-gray-600 text-sm mb-8">
-                Untuk menghubungi kami, silahkan isi data Anda pada formulir dibawah
-            </p>
-
-            <form action="<?= BASEURL; ?>/contact/send" method="POST" class="space-y-6">
-                <div>
-                    <input type="text" name="full_name" required class="w-full px-4 py-3 bg-gray-100/80 border border-transparent focus:border-unsoed-blue focus:bg-white rounded-lg text-sm transition outline-none" placeholder="Full Name">
-                </div>
-                <div>
-                    <input type="email" name="email" required class="w-full px-4 py-3 bg-gray-100/80 border border-transparent focus:border-unsoed-blue focus:bg-white rounded-lg text-sm transition outline-none" placeholder="Email">
-                </div>
-                <div>
-                    <input type="text" name="subject" required class="w-full px-4 py-3 bg-gray-100/80 border border-transparent focus:border-unsoed-blue focus:bg-white rounded-lg text-sm transition outline-none" placeholder="Subject">
-                </div>
-                <div>
-                    <textarea name="message" rows="5" required class="w-full px-4 py-3 bg-gray-100/80 border border-transparent focus:border-unsoed-blue focus:bg-white rounded-lg text-sm transition outline-none resize-none" placeholder="Message"></textarea>
-                </div>
-
-                <!-- Simulasi reCAPTCHA -->
-                <div class="border border-gray-300 rounded-lg p-3 bg-white shadow-sm flex items-center justify-between max-w-xs">
-                    <label class="flex items-center gap-3 cursor-pointer select-none">
-                        <input type="checkbox" required class="w-5 h-5 text-unsoed-blue rounded focus:ring-unsoed-blue border-gray-300">
-                        <span class="text-sm font-medium text-gray-700">I'm not a robot</span>
-                    </label>
-                    <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" class="h-8 opacity-90">
-                </div>
-
-                <div>
-                    <button type="submit" class="w-full py-4 bg-[#0f3460] text-white font-bold text-sm tracking-widest uppercase hover:bg-blue-900 transition-all duration-300 shadow-lg hover:shadow-xl rounded-lg">
-                        SEND MESSAGE
-                    </button>
-                </div>
-            </form>
         </div>
-
     </div>
 
     <!-- Bagian Bawah: Peta Lokasi (Ditaruh Di Bawah Sesuai Request User) -->

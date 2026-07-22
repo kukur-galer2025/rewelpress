@@ -94,16 +94,40 @@ class Auth extends Controller {
                 // Construct reset link
                 $reset_link = BASEURL . '/auth/reset_password/' . $token;
                 
-                // In a real app, use mail() or PHPMailer.
-                // For this environment, we'll try using mail() which Laragon intercepts to its mail catcher,
-                // BUT we also show it on the UI for easy local testing.
-                $subject = "Reset Password Unsoed Press";
-                $message = "Klik link berikut untuk mereset password Anda:\n\n" . $reset_link;
-                $headers = "From: noreply@unsoedpress.test";
-                
-                @mail($email, $subject, $message, $headers);
-                
-                $data['success'] = 'Link reset password telah dikirim ke email Anda! (Karena ini mode simulasi lokal, linknya adalah: <a href="'.$reset_link.'" class="underline font-bold text-unsoed-blue">Klik Di Sini</a>)';
+                // Load PHPMailer
+                require_once '../vendor/autoload.php';
+                $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+
+                try {
+                    $mail->isSMTP();
+                    $mail->Host       = SMTP_HOST;
+                    $mail->SMTPAuth   = true;
+                    $mail->Username   = SMTP_USER;
+                    $mail->Password   = SMTP_PASS;
+                    $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+                    $mail->Port       = SMTP_PORT;
+
+                    $mail->setFrom(SMTP_USER, 'Unsoed Press');
+                    $mail->addAddress($email);
+
+                    $mail->isHTML(true);
+                    $mail->Subject = 'Reset Kata Sandi Akun Unsoed Press Anda';
+                    $mail->Body    = "
+                        <h3>Halo, {$user['name']}</h3>
+                        <p>Kami menerima permintaan untuk mereset kata sandi akun Unsoed Press Anda.</p>
+                        <p>Silakan klik tautan di bawah ini untuk membuat kata sandi baru:</p>
+                        <br>
+                        <a href='{$reset_link}' style='background-color:#1c3d5a; color:white; padding:10px 20px; text-decoration:none; border-radius:5px; font-weight:bold;'>Reset Kata Sandi</a>
+                        <br><br>
+                        <p>Jika Anda tidak meminta reset kata sandi, abaikan email ini.</p>
+                        <p>Terima kasih,<br>Tim Unsoed Press</p>
+                    ";
+
+                    $mail->send();
+                    $data['success'] = 'Tautan reset sandi telah dikirim ke email Anda! Silakan cek kotak masuk atau folder spam.';
+                } catch (Exception $e) {
+                    $data['error'] = "Gagal mengirim email. Silakan coba lagi nanti. Pesan Error: {$mail->ErrorInfo}";
+                }
             } else {
                 $data['error'] = 'Email tidak ditemukan di sistem kami.';
             }
@@ -146,5 +170,68 @@ class Auth extends Controller {
         $this->view('templates/auth_header', $data);
         $this->view('auth/reset_password', $data);
         $this->view('templates/auth_footer');
+    }
+
+    public function google_login()
+    {
+        require_once '../vendor/autoload.php';
+        $client = new Google_Client();
+        $client->setClientId(GOOGLE_CLIENT_ID);
+        $client->setClientSecret(GOOGLE_CLIENT_SECRET);
+        $client->setRedirectUri(GOOGLE_REDIRECT_URI);
+        $client->addScope("email");
+        $client->addScope("profile");
+
+        $auth_url = $client->createAuthUrl();
+        header('Location: ' . filter_var($auth_url, FILTER_SANITIZE_URL));
+        exit;
+    }
+
+    public function google_callback()
+    {
+        require_once '../vendor/autoload.php';
+        $client = new Google_Client();
+        $client->setClientId(GOOGLE_CLIENT_ID);
+        $client->setClientSecret(GOOGLE_CLIENT_SECRET);
+        $client->setRedirectUri(GOOGLE_REDIRECT_URI);
+
+        // Fix cURL error 60 on localhost Windows
+        $guzzleClient = new \GuzzleHttp\Client(['verify' => false]);
+        $client->setHttpClient($guzzleClient);
+
+        if (isset($_GET['code'])) {
+            $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
+            if(!isset($token['error'])) {
+                $client->setAccessToken($token['access_token']);
+                $google_oauth = new Google_Service_Oauth2($client);
+                $google_account_info = $google_oauth->userinfo->get();
+                
+                $email =  $google_account_info->email;
+                $name =  $google_account_info->name;
+                
+                // Get or create user
+                $user_model = $this->model('UserModel');
+                
+                // If user doesn't exist, it registers and returns ID, if exists, returns existing ID
+                $user_id = $user_model->registerGoogleUser($name, $email);
+                
+                // Get full user data to set session properly
+                $user = $user_model->getUserById($user_id);
+                
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['name'];
+                $_SESSION['user_role'] = $user['role'];
+                
+                header('Location: ' . BASEURL);
+                exit;
+            } else {
+                // Dump the error for debugging
+                $error_msg = is_array($token) ? json_encode($token) : "Unknown error";
+                die("Google API Error: " . $error_msg . " | Check your Client ID, Secret, and Redirect URI match perfectly.");
+            }
+        }
+        
+        header('Location: ' . BASEURL . '/auth/login');
+        exit;
     }
 }

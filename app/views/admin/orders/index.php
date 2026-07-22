@@ -24,8 +24,13 @@
                         <p class="font-bold text-gray-800">#<?= $order['id'] ?></p>
                         <p class="text-xs text-gray-500"><?= date('d M Y, H:i', strtotime($order['created_at'])) ?></p>
                     </td>
-                    <td class="p-4 text-sm font-semibold text-gray-700">
-                        <?= $order['user_name'] ?>
+                    <td class="p-4 text-sm text-gray-700">
+                        <div class="font-semibold text-gray-800"><?= $order['user_name'] ?></div>
+                        <?php if (isset($order['delivery_method'])): ?>
+                            <div class="text-xs text-gray-500 mt-1 font-medium">
+                                <?= $order['delivery_method'] == 'shipping' ? '<i class="fas fa-truck text-unsoed-blue w-4"></i> Kirim' : '<i class="fas fa-store text-amber-500 w-4"></i> Pickup' ?>
+                            </div>
+                        <?php endif; ?>
                     </td>
                     <td class="p-4 font-bold text-unsoed-blue">
                         Rp <?= number_format($order['total_amount'], 0, ',', '.') ?>

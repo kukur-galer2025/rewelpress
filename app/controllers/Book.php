@@ -38,6 +38,19 @@ class Book extends Controller {
         $this->view('templates/footer');
     }
 
+    public function promo()
+    {
+        $data['judul'] = 'Super Sale & Flash Sale - Unsoed Press';
+        $data['buku'] = $this->model('BookModel')->getPromoBooks();
+        $data['categories'] = $this->model('CategoryModel')->getHierarchicalCategories();
+        $data['active_category'] = 'promo';
+        $data['is_promo_page'] = true;
+
+        $this->view('templates/header', $data);
+        $this->view('book/index', $data);
+        $this->view('templates/footer');
+    }
+
     public function detail($id = null)
     {
         if(is_null($id)) {

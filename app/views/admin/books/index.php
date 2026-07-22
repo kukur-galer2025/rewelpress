@@ -3,9 +3,14 @@
         <h1 class="text-3xl font-bold text-gray-800">Kelola Buku</h1>
         <p class="text-gray-500 mt-1">Daftar semua buku yang tersedia di katalog.</p>
     </div>
-    <a href="<?= BASEURL; ?>/admin/create_book" class="bg-unsoed-blue text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-unsoed-darkblue transition shadow-lg flex items-center gap-2">
-        <i class="fas fa-plus"></i> Tambah Buku
-    </a>
+    <div class="flex items-center gap-3">
+        <a href="<?= BASEURL; ?>/book/promo" target="_blank" class="bg-red-50 text-red-600 border border-red-200 px-4 py-2.5 rounded-lg font-semibold hover:bg-red-500 hover:text-white transition flex items-center gap-2">
+            <i class="fas fa-bolt"></i> Cek Super Sale
+        </a>
+        <a href="<?= BASEURL; ?>/admin/create_book" class="bg-unsoed-blue text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-unsoed-darkblue transition shadow-lg flex items-center gap-2">
+            <i class="fas fa-plus"></i> Tambah Buku
+        </a>
+    </div>
 </div>
 
 <?php if(isset($_GET['msg'])): ?>
@@ -54,8 +59,12 @@
                     </td>
                     <td class="p-4">
                         <p class="font-bold text-gray-800">Rp <?= number_format($buku['price'], 0, ',', '.') ?></p>
-                        <?php if($buku['old_price'] > 0): ?>
-                            <p class="text-xs text-red-400 line-through">Rp <?= number_format($buku['old_price'], 0, ',', '.') ?></p>
+                        <?php if($buku['old_price'] > $buku['price']): ?>
+                            <?php $disc = round((($buku['old_price'] - $buku['price']) / $buku['old_price']) * 100); ?>
+                            <div class="flex items-center gap-1.5 mt-1">
+                                <span class="text-xs text-gray-400 line-through">Rp <?= number_format($buku['old_price'], 0, ',', '.') ?></span>
+                                <span class="bg-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded uppercase tracking-wide">🔥 -<?= $disc ?>% PROMO</span>
+                            </div>
                         <?php endif; ?>
                     </td>
                     <td class="p-4 text-center">

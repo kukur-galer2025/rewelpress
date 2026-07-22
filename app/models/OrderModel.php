@@ -10,7 +10,7 @@ class OrderModel {
 
     // -- For Customer --
 
-    public function createOrder($user_id, $total_amount, $cart_items)
+    public function createOrder($user_id, $total_amount, $cart_items, $voucher_code = null, $discount_amount = 0.00)
     {
         // Begin Transaction natively using PDO
         $this->db->query("START TRANSACTION");
@@ -18,9 +18,11 @@ class OrderModel {
 
         try {
             // 1. Insert Order
-            $this->db->query('INSERT INTO orders (user_id, total_amount, status) VALUES (:user_id, :total_amount, :status)');
+            $this->db->query('INSERT INTO orders (user_id, total_amount, voucher_code, discount_amount, status) VALUES (:user_id, :total_amount, :voucher_code, :discount_amount, :status)');
             $this->db->bind(':user_id', $user_id);
             $this->db->bind(':total_amount', $total_amount);
+            $this->db->bind(':voucher_code', !empty($voucher_code) ? $voucher_code : null);
+            $this->db->bind(':discount_amount', floatval($discount_amount));
             $this->db->bind(':status', 'pending');
             $this->db->execute();
             
@@ -39,6 +41,11 @@ class OrderModel {
             // Commit
             $this->db->query("COMMIT");
             $this->db->execute();
+
+            // Trigger Notifikasi untuk Admin (user_id = 0)
+            require_once __DIR__ . '/NotificationModel.php';
+            $notif = new NotificationModel();
+            $notif->addNotification(0, "Pesanan Baru #INV-" . $order_id, "Pesanan baru seharga Rp " . number_format($total_amount, 0, ',', '.') . " menunggu pembayaran.", BASEURL . "/admin/orders");
 
             return $order_id;
         } catch (Exception $e) {
@@ -78,7 +85,15 @@ class OrderModel {
         $this->db->bind(':status', 'paid');
         $this->db->bind(':id', $order_id);
         $this->db->execute();
-        return $this->db->rowCount();
+        $rowCount = $this->db->rowCount();
+
+        if ($rowCount > 0) {
+            require_once __DIR__ . '/NotificationModel.php';
+            $notif = new NotificationModel();
+            $notif->addNotification(0, "Bukti Pembayaran Diunggah #INV-" . $order_id, "Pelanggan telah mengunggah bukti transfer untuk pesanan #INV-" . $order_id, BASEURL . "/admin/orders");
+        }
+
+        return $rowCount;
     }
 
     // -- For Admin --
@@ -91,10 +106,32 @@ class OrderModel {
 
     public function updateOrderStatus($id, $status)
     {
+        $order = $this->getOrderById($id);
+
         $this->db->query('UPDATE orders SET status = :status WHERE id = :id');
         $this->db->bind(':status', $status);
         $this->db->bind(':id', $id);
         $this->db->execute();
-        return $this->db->rowCount();
+        $rowCount = $this->db->rowCount();
+
+        if ($rowCount > 0 && $order && !empty($order['user_id'])) {
+            require_once __DIR__ . '/NotificationModel.php';
+            $notif = new NotificationModel();
+            
+            $title = "Status Pesanan Diperbarui";
+            $message = "Pesanan #INV-" . $id . " berstatus: " . strtoupper($status);
+            
+            if ($status === 'confirmed') {
+                $title = "Pembayaran Diverifikasi!";
+                $message = "Pembayaran untuk pesanan #INV-" . $id . " telah diverifikasi oleh Admin Unsoed Press. Buku segera disiapkan.";
+            } elseif ($status === 'rejected') {
+                $title = "Pesanan Ditolak";
+                $message = "Mohon maaf, pesanan #INV-" . $id . " tidak dapat diproses/ditolak. Silakan hubungi redaksi.";
+            }
+
+            $notif->addNotification($order['user_id'], $title, $message, BASEURL . "/order");
+        }
+
+        return $rowCount;
     }
 }

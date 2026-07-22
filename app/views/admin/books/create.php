@@ -103,8 +103,12 @@
                         <input type="number" name="price" id="price" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" required>
                     </div>
                     <div>
-                        <label for="old_price" class="block text-sm font-bold text-gray-700 mb-2">Harga Coret (Opsional)</label>
-                        <input type="number" name="old_price" id="old_price" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition">
+                        <label for="old_price" class="block text-sm font-bold text-gray-700 mb-1 flex items-center justify-between">
+                            <span>Harga Coret (Opsional)</span>
+                            <span class="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">PROMO</span>
+                        </label>
+                        <input type="number" name="old_price" id="old_price" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" placeholder="Rp">
+                        <p class="text-[11px] text-red-500 mt-1 font-medium"><i class="fas fa-bolt mr-0.5"></i> Isi lebih besar dari Harga Jual untuk otomatis tampil di menu SUPER SALE!</p>
                     </div>
                 </div>
 

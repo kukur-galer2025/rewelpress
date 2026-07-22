@@ -210,31 +210,34 @@ if (!function_exists('renderBookCard')) {
                 <div class="w-1.5 h-6 bg-unsoed-yellow rounded-full"></div>
                 <h2 class="text-base font-bold text-unsoed-darkblue uppercase tracking-wide">TOKOH PENULIS</h2>
             </div>
-            <a href="#" class="text-xs text-unsoed-blue hover:text-unsoed-yellow transition-colors font-semibold bg-unsoed-blue/5 hover:bg-unsoed-blue/10 px-3 py-1.5 rounded-full">Lihat semua</a>
+            <a href="<?= BASEURL; ?>/penulis" class="text-xs text-unsoed-blue hover:text-unsoed-yellow transition-colors font-semibold bg-unsoed-blue/5 hover:bg-unsoed-blue/10 px-3 py-1.5 rounded-full">Lihat semua</a>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <?php 
-            $default_photos = [
-                'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&h=200&q=80',
-                'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&h=200&q=80',
-                'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&h=200&q=80',
-                'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&h=200&q=80',
-                'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&h=200&q=80',
-                'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&h=200&q=80'
-            ];
-            
-            foreach ($tokoh_penulis as $index => $penulis): 
-                $photo = $default_photos[$index % count($default_photos)];
+            if(empty($tokoh_penulis)): ?>
+                <div class="col-span-full text-center py-6 text-gray-400 text-xs italic">Belum ada data tokoh penulis.</div>
+            <?php else:
+                foreach ($tokoh_penulis as $index => $penulis): 
+                    $author_name = $penulis['name'] ?? $penulis['author'] ?? 'Penulis';
+                    $photo = !empty($penulis['photo']) ? $penulis['photo'] : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&h=300&q=80';
+                    $affiliation = $penulis['affiliation'] ?? '';
+                    $author_param = !empty($penulis['id']) ? $penulis['id'] : urlencode($author_name);
             ?>
-            <div class="text-center group cursor-pointer">
-                <div class="text-[11px] font-bold text-gray-700 uppercase mb-3 h-8 flex items-center justify-center">
-                    <?= $penulis['author'] ?>
+            <a href="<?= BASEURL; ?>/penulis/detail/<?= $author_param ?>" class="text-center group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg border border-gray-100 transition-all duration-300 p-3">
+                <div class="aspect-square overflow-hidden rounded-xl bg-gray-100 relative mb-3">
+                    <img src="<?= $photo ?>" alt="<?= htmlspecialchars($author_name) ?>" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105">
+                    <?php if(!empty($affiliation)): ?>
+                        <div class="absolute inset-0 bg-gradient-to-t from-unsoed-darkblue/90 via-unsoed-darkblue/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2 text-left">
+                            <p class="text-[10px] text-white font-medium leading-tight line-clamp-3"><?= htmlspecialchars($affiliation) ?></p>
+                        </div>
+                    <?php endif; ?>
                 </div>
-                <div class="aspect-square overflow-hidden bg-gray-200">
-                    <img src="<?= $photo ?>" alt="<?= $penulis['author'] ?>" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105">
+                <div class="text-[12px] font-bold text-gray-800 uppercase line-clamp-2 leading-snug group-hover:text-unsoed-blue transition-colors min-h-[34px] flex items-center justify-center">
+                    <?= htmlspecialchars($author_name) ?>
                 </div>
-            </div>
-            <?php endforeach; ?>
+            </a>
+            <?php endforeach; 
+            endif; ?>
         </div>
     </section>
 
@@ -246,13 +249,28 @@ if (!function_exists('renderBookCard')) {
                 Video & Gallery
             </div>
             <div class="p-4">
-                <div class="aspect-video bg-gray-800 relative flex items-center justify-center cursor-pointer group mb-2">
-                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=600&q=80" alt="Video cover" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity">
-                    <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white z-10">
-                        <i class="fas fa-play ml-1"></i>
+                <?php 
+                $latestVideo = !empty($data['latest_video']) ? $data['latest_video'] : null;
+                if ($latestVideo):
+                    $vidTitle = htmlspecialchars($latestVideo['title']);
+                    $vidThumb = !empty($latestVideo['thumbnail_url']) ? $latestVideo['thumbnail_url'] : 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=600&q=80';
+                    $vidUrl = $latestVideo['youtube_url'];
+                ?>
+                <div onclick="openVideoModal('<?= $vidUrl ?>', '<?= addslashes($vidTitle) ?>')" class="aspect-video bg-gray-900 relative rounded overflow-hidden flex items-center justify-center cursor-pointer group mb-2 shadow-inner">
+                    <img src="<?= $vidThumb ?>" alt="<?= $vidTitle ?>" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500">
+                    <div class="w-12 h-12 bg-red-600 group-hover:bg-red-700 rounded-full flex items-center justify-center text-white z-10 shadow-lg transform group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-play ml-1 text-sm"></i>
+                    </div>
+                    <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-2 pt-6 opacity-90 group-hover:opacity-100 transition-opacity">
+                        <p class="text-[11px] text-white font-medium line-clamp-1 leading-tight"><?= $vidTitle ?></p>
                     </div>
                 </div>
-                <a href="#" class="text-xs text-unsoed-darkblue hover:text-unsoed-yellow"><i class="fas fa-caret-right"></i> Gallery Selengkapnya</a>
+                <?php else: ?>
+                <div class="aspect-video bg-gray-100 rounded relative flex items-center justify-center mb-2 border border-dashed border-gray-300 text-gray-400 text-xs text-center p-3">
+                    Belum ada video galeri yang diunggah.
+                </div>
+                <?php endif; ?>
+                <a href="<?= BASEURL; ?>/gallery" class="text-xs text-unsoed-darkblue hover:text-unsoed-yellow font-medium block mt-3"><i class="fas fa-caret-right"></i> Gallery Selengkapnya</a>
             </div>
         </div>
 

@@ -3,4 +3,4 @@ define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'press_unsoed_db');
-define('BASEURL', 'http://localhost/press-unsoed/public');
+define('BASEURL', 'http://localhost/rewelpress/public');

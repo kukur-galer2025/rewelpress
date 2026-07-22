@@ -5,8 +5,16 @@
     <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
     
     <div class="container mx-auto px-4 relative z-10 text-center">
-        <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Katalog Buku</h1>
-        <p class="text-blue-100 max-w-2xl mx-auto">Jelajahi koleksi literatur akademik dan referensi terbaik yang diterbitkan oleh Unsoed Press.</p>
+        <?php if(isset($data['is_promo_page']) && $data['is_promo_page']): ?>
+            <div class="inline-flex items-center gap-2 bg-red-500 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider mb-3 animate-bounce shadow-lg">
+                <i class="fas fa-bolt"></i> Flash Sale & Promo Spesial
+            </div>
+            <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">SUPER SALE BUKU</h1>
+            <p class="text-blue-100 max-w-2xl mx-auto">Nikmati penawaran diskon terbaik untuk literatur akademik pilihan. Waktu terbatas!</p>
+        <?php else: ?>
+            <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4"><?= !empty($data['active_category']) && $data['active_category'] !== 'promo' ? htmlspecialchars($data['judul']) : 'Katalog Buku' ?></h1>
+            <p class="text-blue-100 max-w-2xl mx-auto">Jelajahi koleksi literatur akademik dan referensi terbaik yang diterbitkan oleh Unsoed Press.</p>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -125,11 +133,17 @@
                     <div id="bookGrid" class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         <?php foreach($data['buku'] as $buku): ?>
                             <a href="<?= BASEURL; ?>/book/detail/<?= $buku['id'] ?>" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col group border border-gray-100 relative">
-                                <!-- Badge Kategori Overlay -->
-                                <div class="absolute top-3 left-3 z-20">
+                                <!-- Badge Kategori & Promo Overlay -->
+                                <div class="absolute top-3 left-3 right-3 z-20 flex justify-between items-start pointer-events-none">
                                     <span class="bg-unsoed-yellow/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider shadow-sm">
                                         <?= !empty($buku['parent_category_name']) ? $buku['parent_category_name'] . ' &bull; ' : '' ?><?= $buku['category_name'] ?>
                                     </span>
+                                    <?php if($buku['old_price'] > $buku['price']): ?>
+                                        <?php $disc = round((($buku['old_price'] - $buku['price']) / $buku['old_price']) * 100); ?>
+                                        <span class="bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded-md shadow-md animate-pulse">
+                                            -<?= $disc ?>%
+                                        </span>
+                                    <?php endif; ?>
                                 </div>
                                 
                                 <div class="relative w-full pt-[140%] bg-gray-100 overflow-hidden">

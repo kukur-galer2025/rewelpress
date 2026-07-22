@@ -81,30 +81,99 @@
                     </form>
                 </div>
 
-                <!-- Order Summary -->
-                <div class="lg:w-1/3">
+                <!-- Order Summary & Voucher -->
+                <div class="lg:w-1/3 space-y-6">
+                    
+                    <!-- Kotak Input & Widget Voucher -->
+                    <div class="glass rounded-3xl p-6 shadow-xl border border-white">
+                        <h3 class="font-bold text-base text-gray-800 flex items-center gap-2 mb-4">
+                            <i class="fas fa-ticket-alt text-amber-500 text-lg"></i> Kode Voucher & Promo
+                        </h3>
+
+                        <?php if(isset($_GET['voucher_err']) || isset($data['voucher_error'])): ?>
+                            <div class="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-2xl text-xs flex items-center justify-between">
+                                <span><i class="fas fa-exclamation-circle mr-1"></i> <?= htmlspecialchars($_GET['voucher_err'] ?? $data['voucher_error']) ?></span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if(!empty($data['applied_voucher'])): ?>
+                            <!-- Voucher Terpasang -->
+                            <div class="p-4 bg-green-50 border-2 border-green-300 rounded-2xl flex items-center justify-between gap-2">
+                                <div>
+                                    <span class="text-[10px] font-extrabold text-green-600 uppercase tracking-wider block">Voucher Digunakan:</span>
+                                    <span class="font-mono font-bold text-sm text-green-900"><?= htmlspecialchars($data['applied_voucher']['code']) ?></span>
+                                    <p class="text-xs text-green-700 font-semibold mt-0.5">Hemat Rp <?= number_format($data['applied_voucher']['discount_amount'], 0, ',', '.') ?></p>
+                                </div>
+                                <a href="<?= BASEURL; ?>/cart/remove_voucher" class="p-2 text-red-500 hover:bg-red-100 rounded-xl transition font-bold text-xs" title="Hapus Voucher">
+                                    <i class="fas fa-times text-base"></i>
+                                </a>
+                            </div>
+                        <?php else: ?>
+                            <!-- Form Input Voucher -->
+                            <form action="<?= BASEURL; ?>/cart/apply_voucher" method="POST" class="flex gap-2 mb-4">
+                                <input type="text" name="voucher_code" placeholder="Ketik kode promo..." uppercase
+                                       class="flex-1 px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-unsoed-blue text-xs font-mono font-bold uppercase text-gray-800">
+                                <button type="submit" class="bg-unsoed-blue hover:bg-blue-800 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow transition">
+                                    Pakai
+                                </button>
+                            </form>
+
+                            <!-- Daftar Voucher Aktif -->
+                            <?php if(!empty($data['active_vouchers'])): ?>
+                                <div class="space-y-2 mt-4 pt-4 border-t border-gray-100">
+                                    <p class="text-[11px] font-extrabold text-gray-400 uppercase tracking-wider">Pilih Promo Tersedia:</p>
+                                    <div class="max-h-48 overflow-y-auto pr-1 space-y-2">
+                                        <?php foreach($data['active_vouchers'] as $av): ?>
+                                            <div class="p-3 bg-amber-50/60 border border-amber-200/80 rounded-2xl flex items-center justify-between gap-2 hover:bg-amber-50 transition">
+                                                <div class="min-w-0">
+                                                    <span class="font-mono font-bold text-xs text-amber-900 bg-amber-100 px-2 py-0.5 rounded"><?= htmlspecialchars($av['code']) ?></span>
+                                                    <p class="text-[11px] font-bold text-gray-800 truncate mt-1"><?= htmlspecialchars($av['title']) ?></p>
+                                                    <p class="text-[10px] text-gray-500">Min. Belanja: Rp <?= number_format($av['min_purchase'], 0, ',', '.') ?></p>
+                                                </div>
+                                                <form action="<?= BASEURL; ?>/cart/apply_voucher" method="POST">
+                                                    <input type="hidden" name="voucher_code" value="<?= htmlspecialchars($av['code']) ?>">
+                                                    <button type="submit" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-extrabold rounded-lg shadow-sm transition whitespace-nowrap">
+                                                        Klaim
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Order Summary -->
                     <div class="glass rounded-3xl p-6 shadow-xl border border-white sticky top-24">
                         <h3 class="font-bold text-lg text-gray-800 border-b border-gray-200 pb-4 mb-6">Ringkasan Belanja</h3>
                         
-                        <div class="space-y-4 mb-6">
+                        <?php 
+                        $discount = !empty($data['applied_voucher']) ? floatval($data['applied_voucher']['discount_amount']) : 0;
+                        $final_price = max(0, $data['total_price'] - $discount);
+                        ?>
+
+                        <div class="space-y-4 mb-6 text-sm">
                             <div class="flex justify-between text-gray-600">
                                 <span>Total Harga (<?= count($data['cart_items']) ?> Barang)</span>
-                                <span>Rp <?= number_format($data['total_price'], 0, ',', '.') ?></span>
+                                <span class="font-semibold">Rp <?= number_format($data['total_price'], 0, ',', '.') ?></span>
                             </div>
-                            <div class="flex justify-between text-gray-600">
-                                <span>Diskon</span>
-                                <span class="text-red-500">- Rp 0</span>
+                            <?php if($discount > 0): ?>
+                            <div class="flex justify-between text-green-600 font-bold">
+                                <span>Diskon (<?= htmlspecialchars($data['applied_voucher']['code']) ?>)</span>
+                                <span>- Rp <?= number_format($discount, 0, ',', '.') ?></span>
                             </div>
+                            <?php endif; ?>
                             <div class="flex justify-between text-gray-600">
                                 <span>Biaya Pengiriman</span>
-                                <span class="text-green-600 font-medium">Gratis</span>
+                                <span class="text-green-600 font-bold">Gratis</span>
                             </div>
                         </div>
 
                         <div class="border-t border-gray-200 pt-4 mb-8">
                             <div class="flex justify-between items-center">
                                 <span class="font-bold text-gray-800">Total Belanja</span>
-                                <span class="font-extrabold text-2xl text-unsoed-blue">Rp <?= number_format($data['total_price'], 0, ',', '.') ?></span>
+                                <span class="font-extrabold text-2xl text-unsoed-blue">Rp <?= number_format($final_price, 0, ',', '.') ?></span>
                             </div>
                         </div>
 

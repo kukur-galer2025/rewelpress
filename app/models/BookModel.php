@@ -37,6 +37,12 @@ class BookModel {
         return $this->db->resultSet();
     }
 
+    public function getPromoBooks()
+    {
+        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id WHERE books.old_price > books.price ORDER BY (books.old_price - books.price) DESC, books.created_at DESC');
+        return $this->db->resultSet();
+    }
+
     public function getBookById($id)
     {
         $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id WHERE books.id = :id');
@@ -76,6 +82,13 @@ class BookModel {
     {
         $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id WHERE title LIKE :keyword OR author LIKE :keyword ORDER BY created_at DESC');
         $this->db->bind(':keyword', "%$keyword%");
+        return $this->db->resultSet();
+    }
+
+    public function getBooksByAuthorName($author_name)
+    {
+        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id WHERE books.author LIKE :author_name ORDER BY books.created_at DESC');
+        $this->db->bind(':author_name', "%$author_name%");
         return $this->db->resultSet();
     }
 

@@ -78,4 +78,74 @@ class UserModel {
         
         return true;
     }
+
+    // ==========================================
+    // METODE CRUD UNTUK PANEL ADMIN
+    // ==========================================
+
+    public function getAllUsers()
+    {
+        $this->db->query('SELECT * FROM users ORDER BY created_at DESC');
+        return $this->db->resultSet();
+    }
+
+    public function addUser($data)
+    {
+        // Cek apakah email sudah ada
+        if ($this->getUserByEmail($data['email'])) {
+            return false;
+        }
+
+        $this->db->query('INSERT INTO users (name, email, password, role, phone, address, created_at) VALUES (:name, :email, :password, :role, :phone, :address, NOW())');
+        $this->db->bind(':name', trim($data['name']));
+        $this->db->bind(':email', trim($data['email']));
+        
+        $password = !empty($data['password']) ? $data['password'] : 'unsoed123';
+        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+        $this->db->bind(':password', $hashed_password);
+        
+        $this->db->bind(':role', $data['role'] ?? 'customer');
+        $this->db->bind(':phone', trim($data['phone'] ?? ''));
+        $this->db->bind(':address', trim($data['address'] ?? ''));
+        
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
+
+    public function updateUser($data)
+    {
+        // Cek apakah ada perubahan password
+        if (!empty($data['password'])) {
+            $query = 'UPDATE users SET name = :name, email = :email, password = :password, role = :role, phone = :phone, address = :address WHERE id = :id';
+            $this->db->query($query);
+            $hashed_password = password_hash($data['password'], PASSWORD_BCRYPT);
+            $this->db->bind(':password', $hashed_password);
+        } else {
+            $query = 'UPDATE users SET name = :name, email = :email, role = :role, phone = :phone, address = :address WHERE id = :id';
+            $this->db->query($query);
+        }
+
+        $this->db->bind(':name', trim($data['name']));
+        $this->db->bind(':email', trim($data['email']));
+        $this->db->bind(':role', $data['role'] ?? 'customer');
+        $this->db->bind(':phone', trim($data['phone'] ?? ''));
+        $this->db->bind(':address', trim($data['address'] ?? ''));
+        $this->db->bind(':id', (int)$data['id']);
+
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
+
+    public function deleteUser($id)
+    {
+        // Jangan izinkan hapus akun diri sendiri yang sedang login (keamanan dasar)
+        if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $id) {
+            return false;
+        }
+
+        $this->db->query('DELETE FROM users WHERE id = :id');
+        $this->db->bind(':id', (int)$id);
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
 }

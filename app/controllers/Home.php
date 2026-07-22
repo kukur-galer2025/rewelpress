@@ -10,14 +10,16 @@ class Home extends Controller {
             $data['buku_terbaru'] = $this->model('BookModel')->getLatestBooks(5);
             $data['buku_terpopuler'] = $this->model('BookModel')->getPopularBooks(5);
             $data['buku_terlaris'] = $this->model('BookModel')->getBestSellerBooks(5);
-            $data['tokoh_penulis'] = $this->model('BookModel')->getDistinctAuthors(6);
+            $data['tokoh_penulis'] = $this->model('AuthorModel')->getFeaturedAuthors(6);
             $data['agenda_terkini'] = $this->model('NewsModel')->getLatestNews(3);
+            $data['latest_video'] = $this->model('GalleryModel')->getLatestVideo();
         } catch (Exception $e) {
             $data['buku_terbaru'] = [];
             $data['buku_terpopuler'] = [];
             $data['buku_terlaris'] = [];
             $data['tokoh_penulis'] = [];
             $data['agenda_terkini'] = [];
+            $data['latest_video'] = null;
             $data['db_error'] = true;
         }
 

@@ -53,7 +53,7 @@
                         <h1 class="text-3xl md:text-5xl font-serif font-bold text-gray-900 leading-tight mb-4">
                             <?= $data['buku']['title'] ?>
                         </h1>
-                        <p class="text-lg text-gray-600 font-medium">Penulis: <span class="text-unsoed-blue"><?= $data['buku']['author'] ?></span></p>
+                        <p class="text-lg text-gray-600 font-medium">Penulis: <a href="<?= BASEURL; ?>/penulis/detail/<?= urlencode($data['buku']['author']) ?>" class="text-unsoed-blue hover:text-unsoed-yellow hover:underline font-bold transition"><?= htmlspecialchars($data['buku']['author']) ?></a></p>
                     </div>
 
                     <div class="mb-8">

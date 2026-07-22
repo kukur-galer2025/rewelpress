@@ -1,131 +1,79 @@
-<?php
-$featured = null;
-$regular_news = [];
+<!-- Header Title Banner -->
+<div class="bg-[#f3f4f6] border-b border-gray-200 py-8">
+    <div class="container mx-auto px-4 max-w-[1200px] flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <h1 class="text-3xl md:text-4xl font-serif font-light text-gray-500 uppercase tracking-wide">EVENT & AGENDA</h1>
+        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+            <a href="<?= BASEURL; ?>" class="hover:text-unsoed-blue transition">HOME</a>
+            <span>/</span>
+            <span class="text-gray-700 font-bold">EVENT & AGENDA</span>
+        </div>
+    </div>
+</div>
 
-if (!empty($data['news'])) {
-    // Sort array by created_at descending (assuming model returns it this way, but just in case)
-    $featured = $data['news'][0];
-    if(count($data['news']) > 1) {
-        $regular_news = array_slice($data['news'], 1);
-    }
-}
-?>
+<div class="container mx-auto px-4 max-w-[1200px] py-14">
 
-<div class="bg-white py-12 md:py-16 min-h-screen">
-    <div class="container mx-auto px-4 lg:px-8 max-w-7xl">
-        
-        <!-- Header: Editorial Style -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between border-b-2 border-gray-900 pb-6 mb-12">
-            <div>
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 tracking-tight font-serif uppercase">Jurnal & Berita</h1>
-                <p class="text-gray-500 mt-3 font-medium text-lg">Kabar terbaru, agenda, dan liputan dari dapur redaksi Unsoed Press.</p>
-            </div>
-            <div class="mt-6 md:mt-0 text-sm font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-4 py-2 rounded-full">
-                Edisi <?= date('F Y') ?>
-            </div>
+    <?php if(empty($data['news'])): ?>
+        <div class="py-20 text-center text-gray-400">
+            <i class="far fa-newspaper text-6xl mb-4 block text-gray-200"></i>
+            Belum ada berita atau agenda yang ditampilkan.
+        </div>
+    <?php else: ?>
+        <div class="divide-y divide-gray-200">
+            <?php foreach($data['news'] as $news): ?>
+                <?php 
+                    // Decode atau ambil gambar pertama
+                    $news_images = [];
+                    if(!empty($news['image'])) {
+                        $decoded = json_decode($news['image'], true);
+                        $news_images = is_array($decoded) ? $decoded : (is_string($news['image']) && filter_var($news['image'], FILTER_VALIDATE_URL) ? [$news['image']] : []);
+                    }
+                    $thumbUrl = !empty($news_images) ? $news_images[0] : 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80';
+                    
+                    // Format tanggal e.g., "04 June 2026"
+                    $formattedDate = date('d F Y', strtotime($news['created_at']));
+                ?>
+                <div class="py-8 first:pt-0 flex flex-col md:flex-row gap-6 lg:gap-8 items-start">
+                    
+                    <!-- Left Thumbnail (Persis UGM Press landscape ratio) -->
+                    <a href="<?= BASEURL; ?>/news/read/<?= $news['slug'] ?>" class="w-full md:w-[280px] lg:w-[320px] aspect-[16/10] flex-shrink-0 bg-gray-100 rounded overflow-hidden border border-gray-200 shadow-sm group">
+                        <img src="<?= $thumbUrl ?>" alt="<?= htmlspecialchars($news['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+                    </a>
+
+                    <!-- Middle Content (Title & Excerpt) -->
+                    <div class="flex-1 space-y-3">
+                        <h3 class="text-xl md:text-2xl font-bold font-serif text-gray-800 hover:text-unsoed-blue transition leading-snug">
+                            <a href="<?= BASEURL; ?>/news/read/<?= $news['slug'] ?>">
+                                <?= htmlspecialchars($news['title']) ?>
+                            </a>
+                        </h3>
+                        
+                        <p class="text-gray-500 text-sm leading-relaxed line-clamp-3 md:line-clamp-4">
+                            <?= strip_tags($news['content']) ?>
+                        </p>
+                    </div>
+
+                    <!-- Right Column (Tanggal Posting) -->
+                    <div class="w-full md:w-[160px] flex-shrink-0 text-left pt-2 md:pt-0">
+                        <span class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">Tanggal Posting</span>
+                        <div class="flex items-center gap-2 text-xs text-gray-500 font-medium">
+                            <i class="far fa-calendar-alt text-gray-400"></i>
+                            <span><?= $formattedDate ?></span>
+                        </div>
+                    </div>
+
+                </div>
+            <?php endforeach; ?>
         </div>
 
-        <?php if(empty($data['news'])): ?>
-            <div class="py-20 text-center">
-                <div class="text-gray-200 mb-6">
-                    <i class="far fa-newspaper text-8xl"></i>
-                </div>
-                <h3 class="text-2xl font-serif font-bold text-gray-800 mb-2">Peti Berita Kosong</h3>
-                <p class="text-gray-500">Redaksi belum menerbitkan liputan atau agenda terbaru untuk saat ini.</p>
-            </div>
-        <?php else: ?>
-            
-            <!-- FEATURED ARTICLE (Sorotan Utama) -->
-            <div class="group mb-16">
-                <a href="<?= BASEURL; ?>/news/read/<?= $featured['slug'] ?>" class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
-                    
-                    <!-- Cover Image -->
-                    <div class="w-full lg:w-2/3 h-[300px] sm:h-[450px] lg:h-[550px] relative overflow-hidden rounded-lg bg-gray-100 shadow-md">
-                        <?php 
-                        $feat_images = [];
-                        if(!empty($featured['image'])) {
-                            $decoded = json_decode($featured['image'], true);
-                            $feat_images = is_array($decoded) ? $decoded : (is_string($featured['image']) && filter_var($featured['image'], FILTER_VALIDATE_URL) ? [$featured['image']] : []);
-                        }
-                        ?>
-                        <?php if(!empty($feat_images)): ?>
-                            <img src="<?= $feat_images[0] ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out">
-                        <?php else: ?>
-                            <div class="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50">
-                                <i class="fas fa-image text-6xl"></i>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <!-- Content -->
-                    <div class="w-full lg:w-1/3 flex flex-col justify-center">
-                        <div class="flex items-center gap-3 mb-5">
-                            <span class="px-3 py-1 bg-unsoed-darkblue text-unsoed-yellow text-xs font-bold uppercase tracking-wider rounded-sm">Sorotan Utama</span>
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                                <?= date('d M Y', strtotime($featured['created_at'])) ?>
-                            </span>
-                        </div>
-                        
-                        <h2 class="text-3xl lg:text-4xl xl:text-5xl font-bold font-serif text-gray-900 leading-tight mb-5 group-hover:text-unsoed-blue transition-colors">
-                            <?= $featured['title'] ?>
-                        </h2>
-                        
-                        <p class="text-gray-600 text-lg leading-relaxed mb-8 line-clamp-4">
-                            <?= strip_tags(substr($featured['content'], 0, 400)) ?>...
-                        </p>
-                        
-                        <span class="inline-flex items-center gap-2 text-unsoed-blue font-bold uppercase tracking-widest text-sm group-hover:text-unsoed-darkblue transition-colors">
-                            Baca Liputan Lengkap <i class="fas fa-long-arrow-alt-right transition-transform duration-300 group-hover:translate-x-3"></i>
-                        </span>
-                    </div>
-                </a>
-            </div>
+        <!-- Pagination (Persis Contoh UGM Press: 1 2 3 4 › ») -->
+        <div class="flex items-center gap-1.5 pt-12">
+            <span class="w-10 h-10 bg-[#0f3460] text-white font-bold flex items-center justify-center rounded text-sm shadow cursor-default">1</span>
+            <a href="#" class="w-10 h-10 border border-gray-200 text-gray-600 font-bold flex items-center justify-center rounded text-sm hover:bg-gray-100 transition">2</a>
+            <a href="#" class="w-10 h-10 border border-gray-200 text-gray-600 font-bold flex items-center justify-center rounded text-sm hover:bg-gray-100 transition">3</a>
+            <a href="#" class="w-10 h-10 border border-gray-200 text-gray-600 font-bold flex items-center justify-center rounded text-sm hover:bg-gray-100 transition">4</a>
+            <a href="#" class="w-10 h-10 border border-gray-200 text-gray-600 font-bold flex items-center justify-center rounded text-sm hover:bg-gray-100 transition">›</a>
+            <a href="#" class="w-10 h-10 border border-gray-200 text-gray-600 font-bold flex items-center justify-center rounded text-sm hover:bg-gray-100 transition">»</a>
+        </div>
+    <?php endif; ?>
 
-            <hr class="border-t-2 border-gray-100 mb-12">
-
-            <!-- LATEST NEWS GRID -->
-            <?php if(!empty($regular_news)): ?>
-                <div class="flex justify-between items-center mb-10">
-                    <h3 class="text-2xl font-bold font-serif text-gray-900 border-l-4 border-unsoed-yellow pl-4">Berita Lainnya</h3>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-                    <?php foreach($regular_news as $news): ?>
-                        <a href="<?= BASEURL; ?>/news/read/<?= $news['slug'] ?>" class="group block">
-                            <div class="w-full aspect-[4/3] bg-gray-100 mb-6 overflow-hidden rounded-lg shadow-sm group-hover:shadow-md transition-shadow">
-                                <?php 
-                                $reg_images = [];
-                                if(!empty($news['image'])) {
-                                    $decoded = json_decode($news['image'], true);
-                                    $reg_images = is_array($decoded) ? $decoded : (is_string($news['image']) && filter_var($news['image'], FILTER_VALIDATE_URL) ? [$news['image']] : []);
-                                }
-                                ?>
-                                <?php if(!empty($reg_images)): ?>
-                                    <img src="<?= $reg_images[0] ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                                <?php else: ?>
-                                    <div class="w-full h-full flex items-center justify-center text-gray-300">
-                                        <i class="fas fa-image text-3xl"></i>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                            
-                            <div class="flex items-center gap-2 text-xs font-bold text-unsoed-blue uppercase tracking-wider mb-3">
-                                <i class="far fa-calendar-alt"></i> <?= date('d M Y', strtotime($news['created_at'])) ?>
-                            </div>
-                            
-                            <h4 class="text-xl font-bold font-serif text-gray-900 leading-snug mb-3 group-hover:text-unsoed-blue transition-colors line-clamp-3">
-                                <?= $news['title'] ?>
-                            </h4>
-                            
-                            <p class="text-gray-500 text-sm line-clamp-3 leading-relaxed">
-                                <?= strip_tags(substr($news['content'], 0, 200)) ?>...
-                            </p>
-                        </a>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-            
-        <?php endif; ?>
-
-    </div>
 </div>

@@ -11,7 +11,7 @@ class CategoryModel {
 
     public function getAllCategories()
     {
-        $this->db->query('SELECT * FROM ' . $this->table);
+        $this->db->query('SELECT * FROM ' . $this->table . ' ORDER BY name ASC');
         return $this->db->resultSet();
     }
 
@@ -114,6 +114,32 @@ class CategoryModel {
                 $tree[] = &$cat;
             }
         }
+
+        // Urutkan kategori utama sesuai standar UGM Press
+        $customOrder = [
+            'Sosial & Humaniora' => 1,
+            'Sains & Teknologi' => 2,
+            'Kesehatan & Kedokteran' => 3,
+            'Agro & Fauna' => 4
+        ];
+        usort($tree, function($a, $b) use ($customOrder) {
+            $orderA = isset($customOrder[$a['name']]) ? $customOrder[$a['name']] : 999;
+            $orderB = isset($customOrder[$b['name']]) ? $customOrder[$b['name']] : 999;
+            if ($orderA === $orderB) {
+                return strcmp($a['name'], $b['name']);
+            }
+            return $orderA <=> $orderB;
+        });
+
+        // Urutkan sub-kategori secara alfabetis berdasarkan nama
+        foreach ($tree as &$cat) {
+            if (!empty($cat['children'])) {
+                usort($cat['children'], function($a, $b) {
+                    return strcmp($a['name'], $b['name']);
+                });
+            }
+        }
+
         return $tree;
     }
 }

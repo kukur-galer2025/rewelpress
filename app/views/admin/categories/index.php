@@ -31,6 +31,22 @@
         <?php endif; ?>
     <?php endif; ?>
 
+    <!-- Info Super Sale / Promo -->
+    <div class="bg-gradient-to-r from-red-50 to-orange-50 border border-red-100 rounded-2xl p-5 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-red-500 text-white rounded-xl flex items-center justify-center text-xl font-bold flex-shrink-0 shadow-md">
+                <i class="fas fa-bolt animate-bounce"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-800 text-base">Menu Khusus: SUPER SALE (Flash Sale)</h4>
+                <p class="text-xs text-gray-600 mt-0.5">Super Sale adalah <strong class="text-red-600">Fitur Diskon Dinamis</strong> (bukan kategori subjek buku). Buku dari kategori manapun yang memiliki <strong>Harga Coret &gt; Harga Jual</strong> akan otomatis masuk ke halaman Super Sale di Homepage!</p>
+            </div>
+        </div>
+        <a href="<?= BASEURL; ?>/admin/books" class="px-4 py-2 bg-red-500 text-white text-xs font-bold rounded-xl hover:bg-red-600 transition shadow-sm flex-shrink-0 flex items-center gap-1.5">
+            <i class="fas fa-tags"></i> Atur Harga Coret Buku
+        </a>
+    </div>
+
     <!-- Category Tree -->
     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="p-6">

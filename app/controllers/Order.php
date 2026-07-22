@@ -15,6 +15,7 @@ class Order extends Controller {
     {
         $data['judul'] = 'Riwayat Pesanan - Unsoed Press';
         $data['orders'] = $this->model('OrderModel')->getOrdersByUserId($_SESSION['user_id']);
+        $data['ebook_orders'] = $this->model('EbookOrderModel')->getEbookOrdersByUserId($_SESSION['user_id']);
         
         $this->view('templates/header', $data);
         $this->view('order/history', $data);
@@ -42,11 +43,26 @@ class Order extends Controller {
             }
         }
 
-        $order_id = $this->model('OrderModel')->createOrder($_SESSION['user_id'], $total_amount, $cart_items);
+        $subtotal = $total_amount;
+        $voucher_code = null;
+        $discount_amount = 0.00;
+
+        if (isset($_SESSION['applied_voucher'])) {
+            $res = $this->model('VoucherModel')->validateAndCalculate($_SESSION['applied_voucher']['code'], $subtotal, 'book');
+            if ($res['valid']) {
+                $voucher_code = $res['voucher']['code'];
+                $discount_amount = $res['discount_amount'];
+                $total_amount = max(0, $subtotal - $discount_amount);
+                $this->model('VoucherModel')->applyVoucherUsage($voucher_code);
+            }
+        }
+
+        $order_id = $this->model('OrderModel')->createOrder($_SESSION['user_id'], $total_amount, $cart_items, $voucher_code, $discount_amount);
 
         if($order_id) {
-            // Clear cart
+            // Clear cart & voucher
             unset($_SESSION['cart']);
+            unset($_SESSION['applied_voucher']);
 
             // Simulate sending invoice email
             $user_email = $this->model('UserModel')->getUserById($_SESSION['user_id'])['email'];

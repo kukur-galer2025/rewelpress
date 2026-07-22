@@ -39,6 +39,9 @@ class Order extends Controller {
         foreach($_SESSION['cart'] as $book_id => $qty) {
             $book = $bookModel->getBookById($book_id);
             if($book) {
+                if ($book['stock'] < $qty) {
+                    die('Maaf, stok untuk buku "' . htmlspecialchars($book['title']) . '" tidak mencukupi. Sisa stok: ' . $book['stock']);
+                }
                 $book['qty'] = $qty;
                 $book['subtotal'] = $book['price'] * $qty;
                 $total_amount += $book['subtotal'];
@@ -63,6 +66,11 @@ class Order extends Controller {
         $order_id = $this->model('OrderModel')->createOrder($_SESSION['user_id'], $total_amount, $cart_items, $voucher_code, $discount_amount, $delivery_method, $shipping_address);
 
         if($order_id) {
+            // Decrease stock
+            foreach($cart_items as $item) {
+                $bookModel->decreaseStock($item['id'], $item['qty']);
+            }
+
             // Clear cart & voucher
             unset($_SESSION['cart']);
             unset($_SESSION['applied_voucher']);

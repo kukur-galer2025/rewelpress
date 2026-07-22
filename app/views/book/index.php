@@ -138,7 +138,11 @@
                                     <span class="bg-unsoed-yellow/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider shadow-sm">
                                         <?= !empty($buku['parent_category_name']) ? $buku['parent_category_name'] . ' &bull; ' : '' ?><?= $buku['category_name'] ?>
                                     </span>
-                                    <?php if($buku['old_price'] > $buku['price']): ?>
+                                    <?php if(isset($buku['is_flashsale']) && $buku['is_flashsale'] == 1): ?>
+                                        <span class="bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-md shadow-md animate-pulse flex items-center gap-1">
+                                            <i class="fas fa-bolt"></i> FLASH SALE
+                                        </span>
+                                    <?php elseif($buku['old_price'] > $buku['price']): ?>
                                         <?php $disc = round((($buku['old_price'] - $buku['price']) / $buku['old_price']) * 100); ?>
                                         <span class="bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded-md shadow-md animate-pulse">
                                             -<?= $disc ?>%
@@ -148,8 +152,12 @@
                                 
                                 <div class="relative w-full pt-[140%] bg-gray-100 overflow-hidden">
                                     <?php $img_src = !empty($buku['image']) ? $buku['image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400'; ?>
-                                    <img src="<?= $img_src ?>" alt="<?= $buku['title'] ?>" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                    
+                                    <img src="<?= $img_src ?>" alt="<?= htmlspecialchars($buku['title']) ?>" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                    <?php if(isset($buku['stock']) && $buku['stock'] <= 0): ?>
+                                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
+                                            <span class="bg-black/80 text-white font-bold text-sm px-4 py-2 rounded-lg border border-gray-600 backdrop-blur-sm">STOK HABIS</span>
+                                        </div>
+                                    <?php endif; ?>
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                 </div>
                                 

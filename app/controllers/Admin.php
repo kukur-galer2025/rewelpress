@@ -39,8 +39,10 @@ class Admin extends Controller {
     {
         $data['judul'] = 'Tambah Buku Baru - Unsoed Press';
         $data['categories'] = $this->model('CategoryModel')->getHierarchicalCategories();
+        $data['authors'] = $this->model('AuthorModel')->getAllAuthors();
 
         if($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $this->model('AuthorModel')->addAuthorIfNotExists($_POST['author']);
             // Handle Image Upload
             $image_path = null;
             if(isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
@@ -76,8 +78,10 @@ class Admin extends Controller {
         $data['judul'] = 'Edit Buku - Unsoed Press';
         $data['buku'] = $this->model('BookModel')->getBookById($id);
         $data['categories'] = $this->model('CategoryModel')->getHierarchicalCategories();
+        $data['authors'] = $this->model('AuthorModel')->getAllAuthors();
 
         if($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $this->model('AuthorModel')->addAuthorIfNotExists($_POST['author']);
             // Handle Image Upload
             $image_path = $_POST['old_image']; // keep old image by default
             
@@ -755,6 +759,7 @@ class Admin extends Controller {
     {
         $data['judul'] = 'Tambah E-Book Baru - Unsoed Press';
         $data['books'] = $this->model('BookModel')->getAllBooks();
+        $data['categories'] = $this->model('CategoryModel')->getHierarchicalCategories();
 
         $this->view('templates/admin_header', $data);
         $this->view('admin/ebooks/create', $data);
@@ -806,6 +811,7 @@ class Admin extends Controller {
         $data['judul'] = 'Edit Data E-Book - Unsoed Press';
         $data['ebook'] = $this->model('EbookModel')->getEbookById($id);
         $data['books'] = $this->model('BookModel')->getAllBooks();
+        $data['categories'] = $this->model('CategoryModel')->getHierarchicalCategories();
 
         if (!$data['ebook']) {
             header('Location: ' . BASEURL . '/admin/ebooks');

@@ -48,6 +48,23 @@
             </div>
 
             <div>
+                <label for="parent_category" class="block text-sm font-bold text-gray-700 mb-2">Kategori Utama (Opsional, khusus Standalone)</label>
+                <select id="parent_category" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue transition text-sm">
+                    <option value="">-- Pilih Kategori Utama --</option>
+                    <?php foreach($data['categories'] as $cat): ?>
+                        <option value="<?= $cat['id'] ?>"><?= $cat['name'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div>
+                <label for="category_id" class="block text-sm font-bold text-gray-700 mb-2">Sub-Kategori</label>
+                <select name="category_id" id="category_id" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue transition text-sm" disabled>
+                    <option value="">-- Pilih Kategori Utama Dulu --</option>
+                </select>
+            </div>
+
+            <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2">
                     Ukuran File E-Book
                 </label>
@@ -84,6 +101,12 @@
                         <i class="fas fa-gift mr-1"></i> Gratis / Open Access (Rp 0)
                     </span>
                 </label>
+                
+                <label class="flex items-center gap-3 mt-4 cursor-pointer">
+                    <input type="checkbox" name="is_flashsale" value="1" <?= isset($data['ebook']['is_flashsale']) && $data['ebook']['is_flashsale'] ? 'checked' : '' ?> class="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                    <span class="text-sm font-bold text-red-600 bg-red-50 px-2 py-1 rounded">Flash Sale</span>
+                </label>
+                <p class="text-[11px] text-gray-500">* Centang Flash Sale untuk memunculkan lencana promosi.</p>
             </div>
         </div>
 
@@ -150,4 +173,74 @@ function toggleFreePrice() {
         priceInput.classList.remove('bg-gray-100', 'text-gray-400');
     }
 }
+</script>
+
+<script>
+    const categoriesData = <?= json_encode($data['categories']) ?>;
+    const parentSelect = document.getElementById('parent_category');
+    const childSelect = document.getElementById('category_id');
+    const currentCategoryId = <?= $data['ebook']['category_id'] ?? 'null' ?>;
+
+    function populateChildren(parentId, selectedChildId = null) {
+        childSelect.innerHTML = '<option value="">-- Pilih Sub-Kategori --</option>';
+        if (!parentId) {
+            childSelect.disabled = true;
+            childSelect.innerHTML = '<option value="">-- Pilih Kategori Utama Dulu --</option>';
+            return;
+        }
+
+        const parent = categoriesData.find(c => c.id == parentId);
+        if (parent && parent.children && parent.children.length > 0) {
+            childSelect.disabled = false;
+            
+            const optionUmum = document.createElement('option');
+            optionUmum.value = parent.id;
+            optionUmum.textContent = "Umum / Semua " + parent.name;
+            if (parent.id == selectedChildId) optionUmum.selected = true;
+            childSelect.appendChild(optionUmum);
+            
+            parent.children.forEach(child => {
+                const option = document.createElement('option');
+                option.value = child.id;
+                option.textContent = child.name;
+                if (child.id == selectedChildId) option.selected = true;
+                childSelect.appendChild(option);
+            });
+        } else if(parent) {
+            childSelect.disabled = false;
+            const option = document.createElement('option');
+            option.value = parent.id;
+            option.textContent = parent.name + " (Tanpa Sub)";
+            option.selected = true;
+            childSelect.appendChild(option);
+        }
+    }
+
+    parentSelect.addEventListener('change', function() {
+        populateChildren(this.value);
+    });
+
+    // Preselect on load
+    if (currentCategoryId) {
+        let initialParentId = null;
+        const isParent = categoriesData.find(c => c.id == currentCategoryId);
+        if (isParent) {
+            initialParentId = currentCategoryId;
+        } else {
+            for(let i = 0; i < categoriesData.length; i++) {
+                if(categoriesData[i].children) {
+                    const foundChild = categoriesData[i].children.find(child => child.id == currentCategoryId);
+                    if(foundChild) {
+                        initialParentId = categoriesData[i].id;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (initialParentId) {
+            parentSelect.value = initialParentId;
+            populateChildren(initialParentId, currentCategoryId);
+        }
+    }
 </script>

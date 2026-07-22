@@ -70,4 +70,24 @@ class AuthorModel {
         $this->db->execute();
         return $this->db->rowCount();
     }
+
+    public function addAuthorIfNotExists($name)
+    {
+        $name = trim($name);
+        if (empty($name)) return;
+        
+        $this->db->query('SELECT id FROM ' . $this->table . ' WHERE name = :name LIMIT 1');
+        $this->db->bind(':name', $name);
+        $existing = $this->db->single();
+        
+        if (!$existing) {
+            $query = "INSERT INTO authors (name, photo, affiliation, bio) VALUES (:name, :photo, :affiliation, :bio)";
+            $this->db->query($query);
+            $this->db->bind(':name', $name);
+            $this->db->bind(':photo', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&h=400&q=80');
+            $this->db->bind(':affiliation', 'Penulis Eksternal');
+            $this->db->bind(':bio', 'Biografi belum tersedia.');
+            $this->db->execute();
+        }
+    }
 }

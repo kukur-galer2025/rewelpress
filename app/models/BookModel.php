@@ -101,8 +101,8 @@ class BookModel {
 
     public function addBook($data)
     {
-        $query = "INSERT INTO books (title, author, category_id, isbn, price, old_price, image, synopsis, pages, weight, publication_year) 
-                  VALUES (:title, :author, :category_id, :isbn, :price, :old_price, :image, :synopsis, :pages, :weight, :publication_year)";
+        $query = "INSERT INTO books (title, author, category_id, isbn, price, old_price, image, synopsis, pages, weight, publication_year, is_flashsale, stock) 
+                  VALUES (:title, :author, :category_id, :isbn, :price, :old_price, :image, :synopsis, :pages, :weight, :publication_year, :is_flashsale, :stock)";
         
         $this->db->query($query);
         $this->db->bind(':title', $data['title']);
@@ -116,6 +116,8 @@ class BookModel {
         $this->db->bind(':pages', !empty($data['pages']) ? $data['pages'] : null);
         $this->db->bind(':weight', !empty($data['weight']) ? $data['weight'] : null);
         $this->db->bind(':publication_year', !empty($data['publication_year']) ? $data['publication_year'] : null);
+        $this->db->bind(':is_flashsale', isset($data['is_flashsale']) ? $data['is_flashsale'] : 0);
+        $this->db->bind(':stock', isset($data['stock']) ? $data['stock'] : 0);
 
         $this->db->execute();
         return $this->db->rowCount();
@@ -134,7 +136,9 @@ class BookModel {
                     synopsis = :synopsis,
                     pages = :pages,
                     weight = :weight,
-                    publication_year = :publication_year
+                    publication_year = :publication_year,
+                    is_flashsale = :is_flashsale,
+                    stock = :stock
                   WHERE id = :id";
         
         $this->db->query($query);
@@ -149,8 +153,19 @@ class BookModel {
         $this->db->bind(':pages', !empty($data['pages']) ? $data['pages'] : null);
         $this->db->bind(':weight', !empty($data['weight']) ? $data['weight'] : null);
         $this->db->bind(':publication_year', !empty($data['publication_year']) ? $data['publication_year'] : null);
+        $this->db->bind(':is_flashsale', isset($data['is_flashsale']) ? $data['is_flashsale'] : 0);
+        $this->db->bind(':stock', isset($data['stock']) ? $data['stock'] : 0);
         $this->db->bind(':id', $data['id']);
 
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
+
+    public function decreaseStock($id, $qty)
+    {
+        $this->db->query("UPDATE books SET stock = stock - :qty WHERE id = :id AND stock >= :qty");
+        $this->db->bind(':qty', $qty);
+        $this->db->bind(':id', $id);
         $this->db->execute();
         return $this->db->rowCount();
     }

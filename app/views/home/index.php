@@ -23,9 +23,20 @@ if (!function_exists('renderBookCard')) {
         echo '<img src="' . $img_src . '" alt="' . $buku['title'] . '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">';
         
         // Ribbon
-        if($discount > 0) {
+        if(isset($buku['is_flashsale']) && $buku['is_flashsale'] == 1) {
+            echo '<div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold px-8 py-1 transform rotate-45 translate-x-6 translate-y-3 shadow-sm flex items-center gap-1">';
+            echo '<i class="fas fa-bolt"></i> FLASH SALE';
+            echo '</div>';
+        } else if($discount > 0) {
             echo '<div class="absolute top-0 right-0 bg-[#bb0000] text-white text-xs font-bold px-6 py-1 transform rotate-45 translate-x-5 translate-y-3 shadow-sm">';
             echo 'DISKON ' . $discount . '%';
+            echo '</div>';
+        }
+
+        // Stock Indicator
+        if(isset($buku['stock']) && $buku['stock'] <= 0) {
+            echo '<div class="absolute inset-0 bg-black/40 flex items-center justify-center">';
+            echo '<span class="bg-black/80 text-white font-bold text-sm px-4 py-2 rounded-lg border border-gray-600 backdrop-blur-sm">STOK HABIS</span>';
             echo '</div>';
         }
         echo '</div>'; // End Image Container
@@ -225,9 +236,14 @@ if (!function_exists('renderBookCard')) {
                 <a href="<?= BASEURL; ?>/ebook/detail/<?= $ebook['id'] ?>" class="block bg-white relative">
                     <div class="relative overflow-hidden aspect-[3/4] bg-gray-100 rounded-xl shadow-sm border border-gray-100">
                         <img src="<?= $img_src ?>" alt="<?= htmlspecialchars($ebook['title'] ?? $ebook['book_title'] ?? '') ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute top-2 left-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow flex items-center gap-1">
+                        <div class="absolute top-2 left-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow flex items-center gap-1 z-10">
                             <i class="fas fa-tablet-alt"></i> E-BOOK
                         </div>
+                        <?php if(isset($ebook['is_flashsale']) && $ebook['is_flashsale'] == 1): ?>
+                            <div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold px-8 py-1 transform rotate-45 translate-x-6 translate-y-3 shadow-sm flex items-center gap-1 z-10">
+                                <i class="fas fa-bolt"></i> FLASH SALE
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <div class="pt-4">
                         <h3 class="text-[13px] font-bold text-gray-800 uppercase leading-snug mb-2 line-clamp-2 h-10 group-hover:text-unsoed-blue transition-colors"><?= htmlspecialchars($ebook['title'] ?? $ebook['book_title'] ?? '') ?></h3>

@@ -22,7 +22,13 @@
                 
                 <div>
                     <label for="author" class="block text-sm font-bold text-gray-700 mb-2">Penulis <span class="text-red-500">*</span></label>
-                    <input type="text" name="author" id="author" value="<?= $data['buku']['author'] ?>" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" required>
+                    <input type="text" name="author" id="author" list="author_list" value="<?= htmlspecialchars($data['buku']['author']) ?>" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" required placeholder="Pilih dari daftar atau Ketik nama baru">
+                    <datalist id="author_list">
+                        <?php foreach($data['authors'] as $auth): ?>
+                            <option value="<?= htmlspecialchars($auth['name']) ?>"></option>
+                        <?php endforeach; ?>
+                    </datalist>
+                    <p class="text-[11px] text-gray-500 mt-1">* Mengetik nama baru akan otomatis mendaftarkannya ke sistem Penulis.</p>
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -136,7 +142,19 @@
                             <span class="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">PROMO</span>
                         </label>
                         <input type="number" name="old_price" id="old_price" value="<?= $data['buku']['old_price'] ?>" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" placeholder="Rp">
-                        <p class="text-[11px] text-red-500 mt-1 font-medium"><i class="fas fa-bolt mr-0.5"></i> Isi lebih besar dari Harga Jual untuk otomatis tampil di menu SUPER SALE!</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="stock" class="block text-sm font-bold text-gray-700 mb-2">Stok Tersedia <span class="text-red-500">*</span></label>
+                        <input type="number" name="stock" id="stock" value="<?= $data['buku']['stock'] ?? 0 ?>" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" required>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <label class="flex items-center gap-2 mt-6 cursor-pointer">
+                            <input type="checkbox" name="is_flashsale" value="1" <?= isset($data['buku']['is_flashsale']) && $data['buku']['is_flashsale'] ? 'checked' : '' ?> class="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                            <span class="text-sm font-bold text-red-600 bg-red-50 px-2 py-1 rounded">Flash Sale</span>
+                        </label>
                     </div>
                 </div>
 

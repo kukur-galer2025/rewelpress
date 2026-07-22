@@ -396,7 +396,7 @@ if (!function_exists('renderBookCard')) {
     <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <!-- Video & Gallery (Diperbagus) -->
         <div class="border border-gray-200 bg-white shadow-sm overflow-hidden rounded-xl group" data-aos="fade-up">
-            <div class="bg-gradient-to-r from-gray-700 to-gray-600 text-white text-center py-3 font-bold text-sm tracking-wide">
+            <div class="bg-unsoed-darkblue text-white text-center py-3 font-bold text-sm tracking-wide">
                 <i class="fas fa-camera-retro mr-2"></i> GALERI MULTIMEDIA
             </div>
             <div class="p-5">
@@ -442,7 +442,7 @@ if (!function_exists('renderBookCard')) {
 
         <!-- Agenda Terkini -->
         <div class="border border-gray-200 bg-white shadow-sm overflow-hidden rounded-xl" data-aos="fade-up" data-aos-delay="100">
-            <div class="bg-gradient-to-r from-gray-700 to-gray-600 text-white text-center py-3 font-bold text-sm tracking-wide">
+            <div class="bg-unsoed-darkblue text-white text-center py-3 font-bold text-sm tracking-wide">
                 <i class="far fa-calendar-alt mr-2"></i> AGENDA TERKINI
             </div>
             <div class="p-5 space-y-5">

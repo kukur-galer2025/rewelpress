@@ -108,6 +108,15 @@ if (!empty($e['cover_image'])) {
                     <span class="font-semibold"><?= htmlspecialchars($e['book_author']) ?></span>
                 </p>
                 <?php endif; ?>
+
+                <?php if(!empty($e['book_id'])): ?>
+                <div class="mt-4">
+                    <a href="<?= BASEURL ?>/book/detail/<?= $e['book_id'] ?>" class="inline-flex items-center gap-2 text-sm font-semibold bg-indigo-50 text-indigo-700 px-4 py-2 rounded-xl hover:bg-indigo-100 transition-colors border border-indigo-200 shadow-sm">
+                        <i class="fas fa-book"></i>
+                        Tersedia Edisi Cetak (Buku Fisik) &rarr;
+                    </a>
+                </div>
+                <?php endif; ?>
             </div>
 
             <!-- Harga -->

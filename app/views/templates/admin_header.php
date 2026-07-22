@@ -15,6 +15,29 @@
     
     <!-- Tailwind CSS (Compiled) -->
     <link rel="stylesheet" href="<?= BASEURL; ?>/assets/css/style.css">
+    
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        /* Tailwind custom styles for Select2 */
+        .select2-container .select2-selection--multiple {
+            border-color: #d1d5db;
+            border-radius: 0.5rem;
+            min-height: 42px;
+            padding: 2px 8px;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 2px 8px;
+            margin-top: 6px;
+        }
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
+            border-color: #3b82f6;
+            outline: 0;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans antialiased text-gray-800">
 
@@ -88,7 +111,7 @@
                         <span class="truncate whitespace-nowrap">Pesanan E-Book</span>
                     </div>
                     <?php if($ebookOrderCount > 0): ?>
-                        <span class="bg-yellow-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full flex-shrink-0 ml-1 animate-pulse"><?= $ebookOrderCount ?></span>
+                        <span class="bg-yellow-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full flex-shrink-0 ml-1 animate-pulse"><?= esc($ebookOrderCount) ?></span>
                     <?php endif; ?>
                 </a>
 
@@ -129,7 +152,7 @@
                         <span class="truncate whitespace-nowrap">Pesan Kontak</span>
                     </div>
                     <?php if($unreadMessagesCount > 0): ?>
-                        <span class="bg-red-500 text-white font-extrabold text-[10px] px-2 py-0.5 rounded-full flex-shrink-0 ml-1 animate-pulse shadow-sm"><?= $unreadMessagesCount ?> Baru</span>
+                        <span class="bg-red-500 text-white font-extrabold text-[10px] px-2 py-0.5 rounded-full flex-shrink-0 ml-1 animate-pulse shadow-sm"><?= esc($unreadMessagesCount) ?> Baru</span>
                     <?php endif; ?>
                 </a>
                 
@@ -192,7 +215,7 @@
                         <a href="javascript:void(0)" class="relative p-2.5 text-gray-600 hover:text-unsoed-blue transition flex items-center justify-center rounded-xl hover:bg-gray-100">
                             <i class="fas fa-bell text-xl"></i>
                             <?php if($adminUnreadNotif > 0): ?>
-                            <span class="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-extrabold flex items-center justify-center rounded-full border-2 border-white animate-pulse"><?= $adminUnreadNotif ?></span>
+                            <span class="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-extrabold flex items-center justify-center rounded-full border-2 border-white animate-pulse"><?= esc($adminUnreadNotif) ?></span>
                             <?php endif; ?>
                         </a>
                         <div class="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right scale-95 group-hover:scale-100 z-50">
@@ -208,7 +231,7 @@
                                 <?php if(empty($adminNotifs)): ?>
                                     <div class="p-6 text-center text-gray-400 text-xs">Belum ada notifikasi baru.</div>
                                 <?php else: foreach($adminNotifs as $n): ?>
-                                    <a href="<?= BASEURL ?>/notification/read/<?= $n['id'] ?>?link=<?= urlencode($n['link'] ?? '#') ?>" class="block p-3 hover:bg-gray-50 transition <?= $n['is_read'] ? 'opacity-60 bg-white' : 'bg-blue-50/40 font-semibold' ?>">
+                                    <a href="<?= BASEURL ?>/notification/read/<?= esc($n['id']) ?>?link=<?= urlencode($n['link'] ?? '#') ?>" class="block p-3 hover:bg-gray-50 transition <?= $n['is_read'] ? 'opacity-60 bg-white' : 'bg-blue-50/40 font-semibold' ?>">
                                         <div class="flex items-start gap-2.5">
                                             <div class="w-2 h-2 rounded-full mt-1.5 flex-shrink-0 <?= $n['is_read'] ? 'bg-gray-300' : 'bg-red-500' ?>"></div>
                                             <div class="flex-1">

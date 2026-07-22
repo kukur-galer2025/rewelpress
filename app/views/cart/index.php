@@ -24,7 +24,7 @@
                 <!-- Cart Items List -->
                 <div class="lg:w-2/3">
                     <form action="<?= BASEURL; ?>/cart/update" method="POST" id="cartForm">
-                        <div class="glass rounded-3xl p-6 shadow-xl border border-white mb-6">
+<?= csrf_field() ?><div class="glass rounded-3xl p-6 shadow-xl border border-white mb-6">
                             <div class="flex justify-between items-center border-b border-gray-200 pb-4 mb-6">
                                 <h3 class="font-bold text-lg text-gray-800">Daftar Produk (<?= count($data['cart_items']) ?>)</h3>
                                 <a href="<?= BASEURL; ?>/cart/clear" class="text-sm text-red-500 hover:text-red-700 font-medium transition" onclick="return confirm('Apakah Anda yakin ingin mengosongkan keranjang?')">
@@ -37,15 +37,15 @@
                                 <div class="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-gray-100 last:border-0 last:pb-0">
                                     
                                     <!-- Book Image -->
-                                    <a href="<?= BASEURL; ?>/book/detail/<?= $item['id'] ?>" class="w-24 shrink-0 rounded-xl overflow-hidden shadow-md">
+                                    <a href="<?= BASEURL; ?>/book/detail/<?= esc($item['slug']) ?>" class="w-24 shrink-0 rounded-xl overflow-hidden shadow-md">
                                         <?php $img_src = !empty($item['image']) ? $item['image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400'; ?>
-                                        <img src="<?= $img_src ?>" alt="<?= $item['title'] ?>" class="w-full h-auto object-cover aspect-[3/4] hover:scale-110 transition duration-500">
+                                        <img src="<?= esc($img_src) ?>" alt="<?= esc($item['title']) ?>" class="w-full h-auto object-cover aspect-[3/4] hover:scale-110 transition duration-500">
                                     </a>
 
                                     <!-- Book Info -->
                                     <div class="flex-grow w-full">
-                                        <a href="<?= BASEURL; ?>/book/detail/<?= $item['id'] ?>" class="text-lg font-bold text-gray-800 hover:text-unsoed-blue transition line-clamp-2 mb-1"><?= $item['title'] ?></a>
-                                        <p class="text-sm text-gray-500 mb-3"><?= $item['author'] ?></p>
+                                        <a href="<?= BASEURL; ?>/book/detail/<?= esc($item['slug']) ?>" class="text-lg font-bold text-gray-800 hover:text-unsoed-blue transition line-clamp-2 mb-1"><?= esc($item['title']) ?></a>
+                                        <p class="text-sm text-gray-500 mb-3"><?= esc($item['author']) ?></p>
                                         <div class="flex items-center gap-2">
                                             <h4 class="text-unsoed-blue font-extrabold text-lg">Rp <?= number_format($item['price'], 0, ',', '.') ?></h4>
                                             <?php if(isset($item['old_price']) && $item['old_price'] > 0 && $item['old_price'] > $item['price']): ?>
@@ -57,17 +57,17 @@
                                     <!-- Qty & Action -->
                                     <div class="flex flex-col sm:items-end gap-3 w-full sm:w-auto">
                                         <div class="flex items-center border border-gray-300 rounded-lg bg-gray-50 px-2 py-1">
-                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-unsoed-blue transition" onclick="document.getElementById('qty_<?= $item['id'] ?>').value = Math.max(1, parseInt(document.getElementById('qty_<?= $item['id'] ?>').value) - 1)">
+                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-unsoed-blue transition" onclick="document.getElementById('qty_<?= esc($item['id']) ?>').value = Math.max(1, parseInt(document.getElementById('qty_<?= esc($item['id']) ?>').value) - 1)">
                                                 <i class="fas fa-minus text-xs"></i>
                                             </button>
-                                            <input type="number" name="qty[<?= $item['id'] ?>]" id="qty_<?= $item['id'] ?>" value="<?= $item['qty'] ?>" min="1" class="w-12 text-center font-bold text-gray-800 bg-transparent outline-none appearance-none">
-                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-unsoed-blue transition" onclick="document.getElementById('qty_<?= $item['id'] ?>').value = parseInt(document.getElementById('qty_<?= $item['id'] ?>').value) + 1">
+                                            <input type="number" name="qty[<?= esc($item['id']) ?>]" id="qty_<?= esc($item['id']) ?>" value="<?= esc($item['qty']) ?>" min="1" class="w-12 text-center font-bold text-gray-800 bg-transparent outline-none appearance-none">
+                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-unsoed-blue transition" onclick="document.getElementById('qty_<?= esc($item['id']) ?>').value = parseInt(document.getElementById('qty_<?= esc($item['id']) ?>').value) + 1">
                                                 <i class="fas fa-plus text-xs"></i>
                                             </button>
                                         </div>
                                         <div class="flex justify-between items-center w-full mt-2 sm:mt-0">
                                             <span class="text-sm font-bold text-gray-700 sm:hidden">Subtotal: Rp <?= number_format($item['subtotal'], 0, ',', '.') ?></span>
-                                            <a href="<?= BASEURL; ?>/cart/remove/<?= $item['id'] ?>" class="text-sm text-red-400 hover:text-red-600 transition flex items-center gap-1 bg-red-50 px-3 py-1 rounded-full">
+                                            <a href="<?= BASEURL; ?>/cart/remove/<?= esc($item['id']) ?>" class="text-sm text-red-400 hover:text-red-600 transition flex items-center gap-1 bg-red-50 px-3 py-1 rounded-full">
                                                 <i class="fas fa-times"></i> Hapus
                                             </a>
                                         </div>
@@ -116,7 +116,7 @@
                         <?php else: ?>
                             <!-- Form Input Voucher -->
                             <form action="<?= BASEURL; ?>/cart/apply_voucher" method="POST" class="flex gap-2 mb-4">
-                                <input type="text" name="voucher_code" placeholder="Ketik kode promo..." uppercase
+<?= csrf_field() ?><input type="text" name="voucher_code" placeholder="Ketik kode promo..." uppercase
                                        class="flex-1 px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-unsoed-blue text-xs font-mono font-bold uppercase text-gray-800">
                                 <button type="submit" class="bg-unsoed-blue hover:bg-blue-800 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow transition">
                                     Pakai
@@ -136,7 +136,7 @@
                                                     <p class="text-[10px] text-gray-500">Min. Belanja: Rp <?= number_format($av['min_purchase'], 0, ',', '.') ?></p>
                                                 </div>
                                                 <form action="<?= BASEURL; ?>/cart/apply_voucher" method="POST">
-                                                    <input type="hidden" name="voucher_code" value="<?= htmlspecialchars($av['code']) ?>">
+<?= csrf_field() ?><input type="hidden" name="voucher_code" value="<?= htmlspecialchars($av['code']) ?>">
                                                     <button type="submit" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-extrabold rounded-lg shadow-sm transition whitespace-nowrap">
                                                         Klaim
                                                     </button>
@@ -183,7 +183,7 @@
                         </div>
 
                         <form action="<?= BASEURL; ?>/order/checkout" method="POST" class="mb-0">
-                            <!-- Metode Pengiriman -->
+<?= csrf_field() ?><!-- Metode Pengiriman -->
                             <div class="mb-6 bg-gray-50 p-4 rounded-2xl border border-gray-200">
                                 <h4 class="font-bold text-gray-800 text-sm mb-3">Metode Pengiriman Buku Fisik</h4>
                                 <div class="space-y-3">
@@ -222,3 +222,4 @@
 
     </div>
 </section>
+<?= csrf_field() ?>

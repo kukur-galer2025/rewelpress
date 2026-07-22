@@ -51,7 +51,7 @@
                 <i class="fas fa-folder-plus text-unsoed-yellow"></i> Buat Album Baru
             </h3>
             <form action="<?= BASEURL; ?>/admin/create_album" method="POST" class="space-y-4">
-                <div>
+<?= csrf_field() ?><div>
                     <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Nama Album</label>
                     <input type="text" name="title" required class="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-unsoed-blue outline-none" placeholder="Contoh: Bazar Buku 2026">
                 </div>
@@ -75,11 +75,11 @@
                 <?php foreach($data['albums'] as $album): ?>
                     <?php $isActive = ($data['current_album_id'] == $album['id']); ?>
                     <div class="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl transition <?= $isActive ? 'bg-unsoed-blue text-white font-bold' : 'bg-gray-50 text-gray-700 hover:bg-gray-100' ?>">
-                        <a href="<?= BASEURL; ?>/admin/gallery/<?= $album['id'] ?>" class="flex-1 truncate text-sm">
+                        <a href="<?= BASEURL; ?>/admin/gallery/<?= esc($album['id']) ?>" class="flex-1 truncate text-sm">
                             <?= htmlspecialchars($album['title']) ?>
                         </a>
-                        <span class="text-xs font-bold px-2 py-0.5 rounded-full <?= $isActive ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-700' ?>"><?= $album['photo_count'] ?></span>
-                        <a href="<?= BASEURL; ?>/admin/delete_album/<?= $album['id'] ?>" onclick="return confirm('Apakah Anda yakin menghapus album ini? Semua foto di dalamnya akan ikut terhapus.')" class="text-red-400 hover:text-red-600 transition p-1" title="Hapus Album">
+                        <span class="text-xs font-bold px-2 py-0.5 rounded-full <?= $isActive ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-700' ?>"><?= esc($album['photo_count']) ?></span>
+                        <a href="<?= BASEURL; ?>/admin/delete_album/<?= esc($album['id']) ?>" onclick="return confirmAction(this.href, 'Hapus Album', 'Apakah Anda yakin menghapus album ini? Semua foto di dalamnya akan ikut terhapus.')" class="text-red-400 hover:text-red-600 transition p-1" title="Hapus Album">
                             <i class="fas fa-trash-alt text-xs"></i>
                         </a>
                     </div>
@@ -97,11 +97,11 @@
                 <i class="fas fa-cloud-upload-alt text-unsoed-blue"></i> Tambah Foto ke dalam Album
             </h3>
             <form action="<?= BASEURL; ?>/admin/create_photo" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                <div>
+<?= csrf_field() ?><div>
                     <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Pilih Album</label>
                     <select name="album_id" required class="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-unsoed-blue outline-none bg-white">
                         <?php foreach($data['albums'] as $album): ?>
-                            <option value="<?= $album['id'] ?>" <?= ($data['current_album_id'] == $album['id']) ? 'selected' : '' ?>><?= htmlspecialchars($album['title']) ?></option>
+                            <option value="<?= esc($album['id']) ?>" <?= ($data['current_album_id'] == $album['id']) ? 'selected' : '' ?>><?= htmlspecialchars($album['title']) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -142,9 +142,9 @@
                     <?php foreach($data['photos'] as $photo): ?>
                         <div class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-200 group relative flex flex-col">
                             <div class="aspect-[4/3] w-full overflow-hidden relative">
-                                <img src="<?= $photo['image_url'] ?>" alt="<?= htmlspecialchars($photo['title']) ?>" class="w-full h-full object-cover">
+                                <img src="<?= esc($photo['image_url']) ?>" alt="<?= htmlspecialchars($photo['title']) ?>" class="w-full h-full object-cover">
                                 <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                    <a href="<?= BASEURL; ?>/admin/delete_photo/<?= $photo['id'] ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus foto ini?')" class="w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg hover:scale-110 transition" title="Hapus Foto">
+                                    <a href="<?= BASEURL; ?>/admin/delete_photo/<?= esc($photo['id']) ?>" onclick="return confirmAction(this.href, 'Hapus Foto', 'Apakah Anda yakin ingin menghapus foto ini?')" class="w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg hover:scale-110 transition" title="Hapus Foto">
                                         <i class="fas fa-trash-alt text-xs"></i>
                                     </a>
                                 </div>
@@ -161,3 +161,4 @@
 
     </div>
 </div>
+<?= csrf_field() ?>

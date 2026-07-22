@@ -42,7 +42,7 @@
                 <i class="fab fa-youtube text-red-600 text-2xl"></i> Tambah Video YouTube
             </h3>
             <form action="<?= BASEURL; ?>/admin/create_video" method="POST" class="space-y-4">
-                <div>
+<?= csrf_field() ?><div>
                     <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Judul Video <span class="text-red-500">*</span></label>
                     <input type="text" name="title" required class="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-unsoed-blue outline-none" placeholder="Contoh: Cara Belanja Online di Unsoed Press">
                 </div>
@@ -81,14 +81,14 @@
                         <div class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-200 flex flex-col group">
                             <div class="aspect-video w-full bg-black relative">
                                 <?php if(strpos($video['youtube_url'], 'embed') !== false): ?>
-                                    <iframe src="<?= $video['youtube_url'] ?>" title="<?= htmlspecialchars($video['title']) ?>" class="w-full h-full border-0" allowfullscreen></iframe>
+                                    <iframe src="<?= esc($video['youtube_url']) ?>" title="<?= htmlspecialchars($video['title']) ?>" class="w-full h-full border-0" allowfullscreen></iframe>
                                 <?php else: ?>
                                     <img src="<?= !empty($video['thumbnail_url']) ? $video['thumbnail_url'] : 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80' ?>" class="w-full h-full object-cover">
                                 <?php endif; ?>
                             </div>
                             <div class="p-3.5 bg-white border-t border-gray-100 flex-1 flex items-center justify-between gap-3">
                                 <h4 class="text-xs font-bold text-gray-800 line-clamp-2 uppercase flex-1"><?= htmlspecialchars($video['title']) ?></h4>
-                                <a href="<?= BASEURL; ?>/admin/delete_video/<?= $video['id'] ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus video ini?')" class="w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition flex items-center justify-center flex-shrink-0" title="Hapus Video">
+                                <a href="<?= BASEURL; ?>/admin/delete_video/<?= esc($video['id']) ?>" onclick="return confirmAction(this.href, 'Hapus Video', 'Apakah Anda yakin ingin menghapus video ini?')" class="w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition flex items-center justify-center flex-shrink-0" title="Hapus Video">
                                     <i class="fas fa-trash-alt text-xs"></i>
                                 </a>
                             </div>
@@ -100,3 +100,4 @@
     </div>
 
 </div>
+<?= csrf_field() ?>

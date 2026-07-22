@@ -26,7 +26,7 @@
     </div>
 
     <form action="<?= BASEURL; ?>/admin/store_user" method="POST" class="p-8 space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<?= csrf_field() ?><div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2">
                     Nama Lengkap <span class="text-red-500">*</span>
@@ -87,3 +87,4 @@
         </div>
     </form>
 </div>
+<?= csrf_field() ?>

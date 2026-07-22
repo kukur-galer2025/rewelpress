@@ -7,14 +7,14 @@
 
 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
     <form action="<?= BASEURL; ?>/admin/update_news" method="POST" enctype="multipart/form-data" id="newsForm">
-        <input type="hidden" name="id" value="<?= $data['news']['id'] ?>">
+<?= csrf_field() ?><input type="hidden" name="id" value="<?= esc($data['news']['id']) ?>">
         <input type="hidden" name="old_images" value="<?= htmlspecialchars($data['news']['image']) ?>">
         
         <div class="space-y-6">
             <!-- Judul -->
             <div>
                 <label for="title" class="block text-sm font-bold text-gray-700 mb-2">Judul Berita <span class="text-red-500">*</span></label>
-                <input type="text" name="title" id="title" value="<?= $data['news']['title'] ?>" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" required>
+                <input type="text" name="title" id="title" value="<?= esc($data['news']['title']) ?>" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" required>
             </div>
 
             <!-- Gambar Berita (Galeri) -->
@@ -40,7 +40,7 @@
                         <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
                             <?php foreach($images as $img): ?>
                                 <div class="aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
-                                    <img src="<?= $img ?>" alt="Cover" class="w-full h-full object-cover">
+                                    <img src="<?= esc($img) ?>" alt="Cover" class="w-full h-full object-cover">
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -90,7 +90,7 @@
                 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
                 
                 <!-- Initial content passed into the editor container -->
-                <div id="editor-container" class="h-64 sm:h-96 rounded-b-lg"><?= $data['news']['content'] ?></div>
+                <div id="editor-container" class="h-64 sm:h-96 rounded-b-lg"><?= esc($data['news']['content']) ?></div>
                 
                 <input type="hidden" name="content" id="content" required>
                 
@@ -142,3 +142,4 @@
         
     </form>
 </div>
+<?= csrf_field() ?>

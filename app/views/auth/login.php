@@ -49,7 +49,7 @@
             <?php if(isset($data['error'])): ?>
                 <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg flex items-center gap-3">
                     <i class="fas fa-exclamation-circle text-red-500"></i>
-                    <p class="text-sm text-red-700 font-medium"><?= $data['error'] ?></p>
+                    <p class="text-sm text-red-700 font-medium"><?= esc($data['error']) ?></p>
                 </div>
             <?php endif; ?>
             
@@ -61,7 +61,7 @@
             <?php endif; ?>
 
             <form action="<?= BASEURL; ?>/auth/login" method="POST" class="space-y-6">
-                <div>
+<?= csrf_field() ?><div>
                     <label for="email" class="block text-sm font-bold text-gray-700 mb-2">Alamat Email</label>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-unsoed-blue text-gray-400">
@@ -131,3 +131,4 @@
         </div>
     </div>
 </div>
+<?= csrf_field() ?>

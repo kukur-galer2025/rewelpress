@@ -3,7 +3,7 @@
     <div class="absolute inset-0 bg-gradient-to-r from-unsoed-darkblue to-unsoed-blue"></div>
     <div class="container mx-auto px-4 relative z-10">
         <h1 class="text-3xl font-serif font-bold text-white mb-2">Selesaikan Pembayaran Anda</h1>
-        <p class="text-gray-300 text-sm">Pesanan #<?= $data['order']['id'] ?></p>
+        <p class="text-gray-300 text-sm">Pesanan #<?= esc($data['order']['id']) ?></p>
     </div>
 </div>
 
@@ -46,7 +46,7 @@
                                 <i class="fas fa-qrcode text-unsoed-yellow text-xl"></i> QRIS
                             </div>
                             <?php if(!empty($data['settings']['qris_image'])): ?>
-                                <img src="<?= $data['settings']['qris_image'] ?>" alt="QRIS" class="w-full max-w-[200px] mx-auto rounded-xl shadow-sm">
+                                <img src="<?= esc($data['settings']['qris_image']) ?>" alt="QRIS" class="w-full max-w-[200px] mx-auto rounded-xl shadow-sm">
                             <?php else: ?>
                                 <p class="text-sm text-gray-500 text-center">QRIS belum tersedia.</p>
                             <?php endif; ?>
@@ -67,10 +67,10 @@
                     <h3 class="text-xl font-bold text-gray-800 mb-4">Konfirmasi Pembayaran</h3>
                     <p class="text-sm text-gray-500 mb-6">Setelah Anda melakukan transfer, unggah bukti pembayaran Anda di sini agar Admin dapat memproses pesanan Anda.</p>
 
-                    <form action="<?= BASEURL; ?>/order/pay/<?= $data['order']['id'] ?>" method="POST" enctype="multipart/form-data" class="space-y-6">
-                        <?php if(isset($data['error'])): ?>
+                    <form action="<?= BASEURL; ?>/order/pay/<?= esc($data['order']['id']) ?>" method="POST" enctype="multipart/form-data" class="space-y-6">
+<?= csrf_field() ?><?php if(isset($data['error'])): ?>
                             <div class="bg-red-50 p-3 rounded-lg border border-red-200 text-sm text-red-600 mb-4">
-                                <i class="fas fa-exclamation-circle mr-1"></i> <?= $data['error'] ?>
+                                <i class="fas fa-exclamation-circle mr-1"></i> <?= esc($data['error']) ?>
                             </div>
                         <?php endif; ?>
 
@@ -154,3 +154,4 @@
         placeholder.classList.remove('hidden');
     }
 </script>
+<?= csrf_field() ?>

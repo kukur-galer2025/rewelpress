@@ -15,12 +15,12 @@
         </div>
         <div>
             <h3 class="font-bold text-lg">Edit E-Book: <?= htmlspecialchars($data['ebook']['title']) ?></h3>
-            <p class="text-xs text-gray-300">ID E-Book: #<?= $data['ebook']['id'] ?> | Terdaftar pada <?= date('d M Y', strtotime($data['ebook']['created_at'])) ?></p>
+            <p class="text-xs text-gray-300">ID E-Book: #<?= esc($data['ebook']['id']) ?> | Terdaftar pada <?= date('d M Y', strtotime($data['ebook']['created_at'])) ?></p>
         </div>
     </div>
 
     <form action="<?= BASEURL; ?>/admin/update_ebook" method="POST" enctype="multipart/form-data" class="p-8 space-y-6">
-        <input type="hidden" name="id" value="<?= $data['ebook']['id'] ?>">
+<?= csrf_field() ?><input type="hidden" name="id" value="<?= esc($data['ebook']['id']) ?>">
         <input type="hidden" name="file_pdf" value="<?= htmlspecialchars($data['ebook']['file_pdf'] ?? '') ?>">
         <input type="hidden" name="preview_pdf" value="<?= htmlspecialchars($data['ebook']['preview_pdf'] ?? '') ?>">
         
@@ -32,8 +32,8 @@
             <select name="book_id" id="selectBookId" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue transition text-sm font-semibold">
                 <option value="">-- Standalone E-Book (Tidak Terhubung) --</option>
                 <?php foreach($data['books'] as $b): ?>
-                    <option value="<?= $b['id'] ?>" <?= ($data['ebook']['book_id'] == $b['id']) ? 'selected' : '' ?>>
-                        [#<?= $b['id'] ?>] <?= htmlspecialchars($b['title']) ?> (Penulis: <?= htmlspecialchars($b['author']) ?>)
+                    <option value="<?= esc($b['id']) ?>" <?= ($data['ebook']['book_id'] == $b['id']) ? 'selected' : '' ?>>
+                        [#<?= esc($b['id']) ?>] <?= htmlspecialchars($b['title']) ?> (Penulis: <?= htmlspecialchars($b['author']) ?>)
                     </option>
                 <?php endforeach; ?>
             </select>
@@ -52,7 +52,7 @@
                 <select id="parent_category" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue transition text-sm">
                     <option value="">-- Pilih Kategori Utama --</option>
                     <?php foreach($data['categories'] as $cat): ?>
-                        <option value="<?= $cat['id'] ?>"><?= $cat['name'] ?></option>
+                        <option value="<?= esc($cat['id']) ?>"><?= esc($cat['name']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -244,3 +244,4 @@ function toggleFreePrice() {
         }
     }
 </script>
+<?= csrf_field() ?>

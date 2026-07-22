@@ -7,8 +7,7 @@
 
 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
     <form action="<?= BASEURL; ?>/admin/store_news" method="POST" enctype="multipart/form-data" id="newsForm">
-        
-        <div class="space-y-6">
+<?= csrf_field() ?><div class="space-y-6">
             <!-- Judul -->
             <div>
                 <label for="title" class="block text-sm font-bold text-gray-700 mb-2">Judul Berita <span class="text-red-500">*</span></label>
@@ -117,3 +116,4 @@
         
     </form>
 </div>
+<?= csrf_field() ?>

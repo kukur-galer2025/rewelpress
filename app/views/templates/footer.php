@@ -36,11 +36,9 @@
                     </h4>
                     <ul class="space-y-3 text-sm">
                         <li><a href="<?= BASEURL; ?>" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block">Beranda</a></li>
-                        <li><a href="<?= BASEURL; ?>/profile" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block">Tentang Kami (Profile)</a></li>
-                        <li><a href="<?= BASEURL; ?>/penerbitan" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block">Layanan Penerbitan</a></li>
-                        <li><a href="<?= BASEURL; ?>/carabelanja" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block">Cara Pembelian</a></li>
-                        <li><a href="<?= BASEURL; ?>/promo" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block text-amber-400 font-bold"><i class="fas fa-gift mr-1"></i> Promo & Voucher</a></li>
-                        <li><a href="<?= BASEURL; ?>/ebook" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block">Katalog E-Book</a></li>
+                        <li><a href="<?= BASEURL; ?>/news" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block">Berita Unsoed Press</a></li>
+                        <li><a href="<?= BASEURL; ?>/book" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block">Katalog Buku</a></li>
+                        <li><a href="<?= BASEURL; ?>/ebook" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block">E-Book</a></li>
                     </ul>
                 </div>
 
@@ -51,11 +49,14 @@
                         <span class="absolute -bottom-2 left-0 w-1/2 h-1 bg-unsoed-yellow rounded-full"></span>
                     </h4>
                     <ul class="space-y-3 text-sm">
-                        <li><a href="<?= BASEURL; ?>/book/category/14" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block">Pertanian & Kehutanan</a></li>
-                        <li><a href="<?= BASEURL; ?>/book/category/10" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block">Hukum & Politik</a></li>
-                        <li><a href="<?= BASEURL; ?>/book/category/9" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block">Ekonomi & Bisnis</a></li>
-                        <li><a href="<?= BASEURL; ?>/book/category/1" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block">Biologi & Sains</a></li>
-                        <li><a href="<?= BASEURL; ?>/book/category/3" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block">Kedokteran & Kesehatan</a></li>
+                        <?php 
+                        $dbFooter = new Database();
+                        $dbFooter->query('SELECT categories.id, categories.name, categories.slug, COUNT(books.id) as total_books FROM categories LEFT JOIN books ON categories.id = books.category_id WHERE categories.parent_id IS NULL GROUP BY categories.id ORDER BY total_books DESC LIMIT 5');
+                        $popCats = $dbFooter->resultSet();
+                        foreach($popCats as $pcat):
+                        ?>
+                        <li><a href="<?= BASEURL; ?>/book/category/<?= esc($pcat['slug']) ?>" class="hover:text-unsoed-yellow hover:translate-x-2 transition-all block"><?= esc($pcat['name']) ?></a></li>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
 

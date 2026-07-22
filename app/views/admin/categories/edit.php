@@ -13,12 +13,11 @@
     <!-- Form Card -->
     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden max-w-3xl">
         <div class="p-6 md:p-8">
-            <form action="<?= BASEURL; ?>/admin/edit_category/<?= $data['category']['id'] ?>" method="POST" class="space-y-6">
-                
-                <div>
+            <form action="<?= BASEURL; ?>/admin/edit_category/<?= esc($data['category']['id']) ?>" method="POST" class="space-y-6">
+<?= csrf_field() ?><div>
                     <label for="name" class="block text-sm font-bold text-gray-700 mb-2">Nama Kategori <span class="text-red-500">*</span></label>
-                    <input type="text" name="name" id="name" value="<?= $data['category']['name'] ?>" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue transition-all" required>
-                    <p class="text-xs text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i> Slug saat ini: <code><?= $data['category']['slug'] ?></code> (akan diperbarui otomatis)</p>
+                    <input type="text" name="name" id="name" value="<?= esc($data['category']['name']) ?>" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue transition-all" required>
+                    <p class="text-xs text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i> Slug saat ini: <code><?= esc($data['category']['slug']) ?></code> (akan diperbarui otomatis)</p>
                 </div>
 
                 <div>
@@ -44,8 +43,8 @@
                                 // Jangan tampilkan diri sendiri sebagai parent, dan hanya tampilkan root category
                                 if(is_null($parent['parent_id']) && $parent['id'] != $data['category']['id']): 
                             ?>
-                                <option value="<?= $parent['id'] ?>" <?= ($data['category']['parent_id'] == $parent['id']) ? 'selected' : '' ?>>
-                                    <?= $parent['name'] ?>
+                                <option value="<?= esc($parent['id']) ?>" <?= ($data['category']['parent_id'] == $parent['id']) ? 'selected' : '' ?>>
+                                    <?= esc($parent['name']) ?>
                                 </option>
                             <?php endif; ?>
                         <?php endforeach; ?>
@@ -79,3 +78,4 @@
         </div>
     </div>
 </div>
+<?= csrf_field() ?>

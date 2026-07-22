@@ -80,6 +80,7 @@ class EbookModel {
                    books.author as book_author, 
                    books.image as cover_image, 
                    books.isbn,
+                   books.slug as book_slug,
                    COALESCE(cat_ebook.name, cat_book.name) as category_name
             FROM ebooks 
             LEFT JOIN books ON ebooks.book_id = books.id 
@@ -238,5 +239,119 @@ class EbookModel {
         }
 
         return false;
+    }
+
+    /**
+     * Ambil semua E-book yang sudah dibeli (confirmed) oleh user tertentu.
+     */
+    public function getUserPurchasedEbooks($user_id)
+    {
+        $this->db->query("
+            SELECT DISTINCT e.*, 
+                   b.title as book_title, 
+                   b.author as book_author, 
+                   b.image as cover_image, 
+                   COALESCE(cat_e.name, cat_b.name) as category_name
+            FROM ebooks e
+            LEFT JOIN books b ON e.book_id = b.id
+            LEFT JOIN categories cat_e ON e.category_id = cat_e.id
+            LEFT JOIN categories cat_b ON b.category_id = cat_b.id
+            LEFT JOIN ebook_orders eo ON eo.ebook_id = e.id AND eo.user_id = :user_id AND eo.status = 'confirmed'
+            LEFT JOIN order_items oi ON oi.book_id = e.book_id
+            LEFT JOIN orders o ON o.id = oi.order_id AND o.user_id = :user_id AND o.status = 'confirmed'
+            WHERE (eo.id IS NOT NULL OR (o.id IS NOT NULL AND e.book_id IS NOT NULL))
+              AND e.status = 'active'
+            ORDER BY e.title ASC
+        ");
+        $this->db->bind(':user_id', (int)$user_id);
+        return $this->db->resultSet();
+    }
+
+    public function incrementViews($id)
+    {
+        $this->db->query('UPDATE ebooks SET views_count = views_count + 1 WHERE id = :id');
+        $this->db->bind(':id', $id);
+        $this->db->execute();
+    }
+
+    public function getFilteredEbooks($keyword = '', $author = '', $limit = 10, $offset = 0)
+    {
+        $sql = "
+            SELECT ebooks.*, 
+                   books.title as book_title, 
+                   books.author as book_author, 
+                   books.image as cover_image, 
+                   books.isbn,
+                   books.price as normal_price,
+                   books.synopsis,
+                   COALESCE(cat_ebook.name, cat_book.name) as category_name
+            FROM ebooks 
+            LEFT JOIN books ON ebooks.book_id = books.id 
+            LEFT JOIN categories cat_ebook ON ebooks.category_id = cat_ebook.id
+            LEFT JOIN categories cat_book ON books.category_id = cat_book.id
+            WHERE ebooks.status = 'active'
+        ";
+        if (!empty($keyword)) {
+            $sql .= " AND (ebooks.title LIKE :keyword OR books.title LIKE :keyword2 OR books.author LIKE :keyword3)";
+        }
+        if (!empty($author)) {
+            $sql .= " AND books.author = :author";
+        }
+        $sql .= " ORDER BY ebooks.created_at DESC LIMIT :limit OFFSET :offset";
+
+        $this->db->query($sql);
+        if (!empty($keyword)) {
+            $kw = '%' . $keyword . '%';
+            $this->db->bind(':keyword', $kw);
+            $this->db->bind(':keyword2', $kw);
+            $this->db->bind(':keyword3', $kw);
+        }
+        if (!empty($author)) {
+            $this->db->bind(':author', $author);
+        }
+        $this->db->bind(':limit', (int)$limit);
+        $this->db->bind(':offset', (int)$offset);
+        return $this->db->resultSet();
+    }
+
+    public function getFilteredEbooksCount($keyword = '', $author = '')
+    {
+        $sql = "
+            SELECT COUNT(*) as total
+            FROM ebooks 
+            LEFT JOIN books ON ebooks.book_id = books.id 
+            WHERE ebooks.status = 'active'
+        ";
+        if (!empty($keyword)) {
+            $sql .= " AND (ebooks.title LIKE :keyword OR books.title LIKE :keyword2 OR books.author LIKE :keyword3)";
+        }
+        if (!empty($author)) {
+            $sql .= " AND books.author = :author";
+        }
+
+        $this->db->query($sql);
+        if (!empty($keyword)) {
+            $kw = '%' . $keyword . '%';
+            $this->db->bind(':keyword', $kw);
+            $this->db->bind(':keyword2', $kw);
+            $this->db->bind(':keyword3', $kw);
+        }
+        if (!empty($author)) {
+            $this->db->bind(':author', $author);
+        }
+        $result = $this->db->single();
+        return $result['total'] ?? 0;
+    }
+
+    public function getEbookAuthors()
+    {
+        $this->db->query("
+            SELECT DISTINCT books.author 
+            FROM ebooks 
+            LEFT JOIN books ON ebooks.book_id = books.id 
+            WHERE ebooks.status = 'active' AND books.author IS NOT NULL AND books.author != ''
+            ORDER BY books.author ASC
+        ");
+        return $this->db->resultSet();
     }
 }

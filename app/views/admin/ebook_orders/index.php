@@ -26,15 +26,15 @@ $totalConfirmed = count($statusGroups['confirmed']);
 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
     <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
         <p class="text-xs font-semibold text-gray-400 uppercase">Perlu Verifikasi</p>
-        <h4 class="text-2xl font-extrabold text-yellow-600 mt-1"><?= $waitingVerif ?></h4>
+        <h4 class="text-2xl font-extrabold text-yellow-600 mt-1"><?= esc($waitingVerif) ?></h4>
     </div>
     <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
         <p class="text-xs font-semibold text-gray-400 uppercase">Menunggu Bayar</p>
-        <h4 class="text-2xl font-extrabold text-blue-600 mt-1"><?= $waitingPayment ?></h4>
+        <h4 class="text-2xl font-extrabold text-blue-600 mt-1"><?= esc($waitingPayment) ?></h4>
     </div>
     <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
         <p class="text-xs font-semibold text-gray-400 uppercase">Sudah Dikonfirmasi</p>
-        <h4 class="text-2xl font-extrabold text-green-600 mt-1"><?= $totalConfirmed ?></h4>
+        <h4 class="text-2xl font-extrabold text-green-600 mt-1"><?= esc($totalConfirmed) ?></h4>
     </div>
     <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
         <p class="text-xs font-semibold text-gray-400 uppercase">Total Pesanan</p>
@@ -71,7 +71,7 @@ $totalConfirmed = count($statusGroups['confirmed']);
                 </tr>
                 <?php else: foreach($data['orders'] as $ord): ?>
                 <tr class="hover:bg-gray-50/80 transition-colors <?= $ord['status'] == 'paid' ? 'bg-yellow-50/30' : '' ?>">
-                    <td class="p-4 pl-6 font-bold text-gray-500 text-sm">#EBO-<?= $ord['id'] ?></td>
+                    <td class="p-4 pl-6 font-bold text-gray-500 text-sm">#EBO-<?= esc($ord['id']) ?></td>
                     <td class="p-4">
                         <p class="font-bold text-gray-900 text-sm"><?= htmlspecialchars($ord['user_name']) ?></p>
                         <p class="text-xs text-gray-400"><?= htmlspecialchars($ord['user_email']) ?></p>
@@ -102,11 +102,11 @@ $totalConfirmed = count($statusGroups['confirmed']);
                         ];
                         [$sCls, $sLabel] = $statusUI[$ord['status']] ?? $statusUI['pending'];
                         ?>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full border text-xs font-bold uppercase tracking-wider <?= $sCls ?>">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full border text-xs font-bold uppercase tracking-wider <?= esc($sCls) ?>">
                             <?php if($ord['status'] == 'paid'): ?>
                                 <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse mr-1.5"></span>
                             <?php endif; ?>
-                            <?= $sLabel ?>
+                            <?= esc($sLabel) ?>
                         </span>
                     </td>
                     <td class="p-4 text-xs text-gray-500">
@@ -116,13 +116,13 @@ $totalConfirmed = count($statusGroups['confirmed']);
                         <div class="flex items-center justify-center gap-2">
                             <?php if($ord['status'] === 'paid'): ?>
                                 <!-- KONFIRMASI -->
-                                <a href="<?= BASEURL ?>/admin/confirm_ebook_order/<?= $ord['id'] ?>"
-                                   onclick="return confirm('Konfirmasi pembayaran #EBO-<?= $ord['id'] ?>? User akan mendapat akses unduh e-book.')"
+                                <a href="<?= BASEURL ?>/admin/confirm_ebook_order/<?= esc($ord['id']) ?>"
+                                   onclick="return confirmAction(this.href, 'Konfirmasi Pembayaran', 'Konfirmasi pembayaran #EBO-<?= esc($ord['id']) ?>? User akan mendapat akses unduh e-book.', 'warning')"
                                    class="inline-flex items-center gap-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
                                     <i class="fas fa-check"></i> Konfirmasi
                                 </a>
                                 <!-- TOLAK -->
-                                <button onclick="openRejectModal(<?= $ord['id'] ?>)"
+                                <button onclick="openRejectModal(<?= esc($ord['id']) ?>)"
                                         class="inline-flex items-center gap-1 px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold transition shadow-sm">
                                     <i class="fas fa-times"></i> Tolak
                                 </button>
@@ -148,7 +148,9 @@ $totalConfirmed = count($statusGroups['confirmed']);
         <h3 class="text-xl font-bold text-gray-800 mb-2">Tolak Pesanan E-Book</h3>
         <p class="text-sm text-gray-500 mb-5">Masukkan alasan penolakan. Pesan ini akan dikirim ke user sebagai notifikasi.</p>
         <form id="rejectForm" action="" method="POST">
-            <textarea name="note" rows="3" placeholder="Contoh: Bukti transfer tidak terbaca, nominal tidak sesuai, dll."
+<?= csrf_field() ?>
+<?= csrf_field() ?>
+<?= csrf_field() ?><textarea name="note" rows="3" placeholder="Contoh: Bukti transfer tidak terbaca, nominal tidak sesuai, dll."
                       class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-red-400/30 focus:border-red-400 text-sm transition mb-4" required></textarea>
             <div class="flex gap-3">
                 <button type="button" onclick="closeRejectModal()"
@@ -173,3 +175,5 @@ function closeRejectModal() {
     document.getElementById('rejectModal').classList.add('hidden');
 }
 </script>
+<?= csrf_field() ?>
+<?= csrf_field() ?>

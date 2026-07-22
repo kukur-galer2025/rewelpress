@@ -55,15 +55,27 @@ class Auth extends Controller {
 
         if($_SERVER['REQUEST_METHOD'] == 'POST') {
             $email = $_POST['email'];
-            $user = $this->model('UserModel')->getUserByEmail($email);
+            $password = $_POST['password'];
             
-            if($user) {
-                $data['error'] = 'Email sudah terdaftar!';
-            } else {
-                if($this->model('UserModel')->registerUser($_POST) > 0) {
-                    $data['success'] = 'Registrasi berhasil! Silakan login.';
+            // Validasi email
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $data['error'] = 'Format email tidak valid!';
+            } 
+            // Validasi password: minimal 8 karakter, huruf besar, angka, dan simbol
+            else if (!preg_match('/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/', $password)) {
+                $data['error'] = 'Sandi minimal 8 karakter, mengandung huruf besar, angka, dan simbol!';
+            } 
+            else {
+                $user = $this->model('UserModel')->getUserByEmail($email);
+                
+                if($user) {
+                    $data['error'] = 'Email sudah terdaftar!';
                 } else {
-                    $data['error'] = 'Gagal melakukan registrasi.';
+                    if($this->model('UserModel')->registerUser($_POST) > 0) {
+                        $data['success'] = 'Registrasi berhasil! Silakan login.';
+                    } else {
+                        $data['error'] = 'Gagal melakukan registrasi.';
+                    }
                 }
             }
         }

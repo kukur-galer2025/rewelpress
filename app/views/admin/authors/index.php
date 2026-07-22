@@ -59,7 +59,7 @@
                         <td class="p-4">
                             <div class="w-14 h-14 rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm flex-shrink-0">
                                 <?php $photo = !empty($author['photo']) ? $author['photo'] : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&h=200&q=80'; ?>
-                                <img src="<?= $photo ?>" alt="<?= htmlspecialchars($author['name']) ?>" class="w-full h-full object-cover">
+                                <img src="<?= esc($photo) ?>" alt="<?= htmlspecialchars($author['name']) ?>" class="w-full h-full object-cover">
                             </div>
                         </td>
                         <td class="p-4">
@@ -75,10 +75,10 @@
                         </td>
                         <td class="p-4 text-center">
                             <div class="flex justify-center gap-2">
-                                <a href="<?= BASEURL; ?>/admin/edit_author/<?= $author['id'] ?>" class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-500 hover:text-white transition" title="Edit Penulis">
+                                <a href="<?= BASEURL; ?>/admin/edit_author/<?= esc($author['id']) ?>" class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-500 hover:text-white transition" title="Edit Penulis">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="<?= BASEURL; ?>/admin/delete_author/<?= $author['id'] ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus tokoh penulis ini?')" class="w-9 h-9 rounded-lg bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-500 hover:text-white transition" title="Hapus Penulis">
+                                <a href="<?= BASEURL; ?>/admin/delete_author/<?= esc($author['id']) ?>" onclick="return confirmAction(this.href, 'Hapus Penulis', 'Apakah Anda yakin ingin menghapus tokoh penulis ini?')" class="w-9 h-9 rounded-lg bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-500 hover:text-white transition" title="Hapus Penulis">
                                     <i class="fas fa-trash-alt"></i>
                                 </a>
                             </div>

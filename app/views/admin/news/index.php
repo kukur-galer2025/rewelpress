@@ -54,13 +54,13 @@
                                         }
                                     ?>
                                     <?php if(!empty($admin_images)): ?>
-                                        <img src="<?= $admin_images[0] ?>" alt="Cover" class="w-full h-full object-cover">
+                                        <img src="<?= esc($admin_images[0]) ?>" alt="Cover" class="w-full h-full object-cover">
                                     <?php else: ?>
                                         <div class="w-full h-full flex items-center justify-center text-gray-400"><i class="fas fa-image"></i></div>
                                     <?php endif; ?>
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-gray-800 text-sm mb-1 leading-snug line-clamp-2"><?= $news['title'] ?></h3>
+                                    <h3 class="font-bold text-gray-800 text-sm mb-1 leading-snug line-clamp-2"><?= esc($news['title']) ?></h3>
                                     <p class="text-xs text-gray-500 line-clamp-1"><?= strip_tags(substr($news['content'], 0, 80)) ?>...</p>
                                 </div>
                             </div>
@@ -70,16 +70,16 @@
                         </td>
                         <td class="py-4 px-6 text-sm text-gray-600 text-center">
                             <span class="bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full text-xs font-semibold">
-                                <?= $news['views'] ?> x
+                                <?= esc($news['views']) ?> x
                             </span>
                         </td>
                         <td class="py-4 px-6">
                             <div class="flex justify-end gap-2">
-                                <a href="<?= BASEURL; ?>/admin/edit_news/<?= $news['id'] ?>" class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition">
+                                <a href="<?= BASEURL; ?>/admin/edit_news/<?= esc($news['id']) ?>" class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition">
                                     <i class="fas fa-edit text-sm"></i>
                                 </a>
-                                <form action="<?= BASEURL; ?>/admin/delete_news/<?= $news['id'] ?>" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus berita ini?');" class="inline">
-                                    <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition">
+                                <form action="<?= BASEURL; ?>/admin/delete_news/<?= esc($news['id']) ?>" method="POST" onsubmit="return confirmForm(this, 'Hapus Berita', 'Apakah Anda yakin ingin menghapus berita ini?');" class="inline">
+<?= csrf_field() ?><button type="submit" class="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition">
                                         <i class="fas fa-trash text-sm"></i>
                                     </button>
                                 </form>
@@ -92,3 +92,4 @@
         </table>
     </div>
 </div>
+<?= csrf_field() ?>

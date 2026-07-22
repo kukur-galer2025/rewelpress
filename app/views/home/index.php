@@ -16,7 +16,7 @@ if (!function_exists('renderBookCard')) {
         $category = !empty($buku['category_name']) ? $buku['category_name'] : 'Umum';
         
         echo '<div class="group">';
-        echo '<a href="'. BASEURL . '/book/detail/' . $buku['id'] . '" class="block bg-white relative">';
+        echo '<a href="'. BASEURL . '/book/detail/' . $buku['slug'] . '" class="block bg-white relative">';
         
         // Image Container
         echo '<div class="relative overflow-hidden aspect-[3/4] bg-gray-100 rounded-xl shadow-sm border border-gray-100">';
@@ -43,9 +43,9 @@ if (!function_exists('renderBookCard')) {
 
         // Content
         echo '<div class="pt-4">';
-        echo '<h3 class="text-[13px] font-bold text-gray-800 uppercase leading-snug mb-3 h-10 overflow-hidden group-hover:text-unsoed-blue transition-colors">' . $buku['title'] . '</h3>';
+        echo '<h3 class="text-[13px] font-bold text-gray-800 uppercase leading-snug mb-3 h-10 overflow-hidden group-hover:text-unsoed-blue transition-colors">' . esc($buku['title']) . '</h3>';
         
-        echo '<p class="text-[11px] text-gray-400 mb-2">' . $category . '</p>';
+        echo '<p class="text-[11px] text-gray-400 mb-2">' . esc($category) . '</p>';
         
         echo '<div class="border-t border-gray-300 pt-2 flex items-baseline justify-between">';
         if($discount > 0) {
@@ -233,9 +233,9 @@ if (!function_exists('renderBookCard')) {
                     $img_src = !empty($ebook['cover_image']) ? (strpos($ebook['cover_image'], 'http') === 0 ? $ebook['cover_image'] : BASEURL . '/uploads/covers/' . $ebook['cover_image']) : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400';
             ?>
             <div class="group">
-                <a href="<?= BASEURL; ?>/ebook/detail/<?= $ebook['id'] ?>" class="block bg-white relative">
+                <a href="<?= BASEURL; ?>/ebook/detail/<?= esc($ebook['id']) ?>" class="block bg-white relative">
                     <div class="relative overflow-hidden aspect-[3/4] bg-gray-100 rounded-xl shadow-sm border border-gray-100">
-                        <img src="<?= $img_src ?>" alt="<?= htmlspecialchars($ebook['title'] ?? $ebook['book_title'] ?? '') ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="<?= esc($img_src) ?>" alt="<?= htmlspecialchars($ebook['title'] ?? $ebook['book_title'] ?? '') ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute top-2 left-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow flex items-center gap-1 z-10">
                             <i class="fas fa-tablet-alt"></i> E-BOOK
                         </div>
@@ -286,9 +286,9 @@ if (!function_exists('renderBookCard')) {
                     $affiliation = $penulis['affiliation'] ?? '';
                     $author_param = !empty($penulis['id']) ? $penulis['id'] : urlencode($author_name);
             ?>
-            <a href="<?= BASEURL; ?>/penulis/detail/<?= $author_param ?>" class="text-center group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg border border-gray-100 transition-all duration-300 p-3">
+            <a href="<?= BASEURL; ?>/penulis/detail/<?= esc($author_param) ?>" class="text-center group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg border border-gray-100 transition-all duration-300 p-3">
                 <div class="aspect-square overflow-hidden rounded-xl bg-gray-100 relative mb-3">
-                    <img src="<?= $photo ?>" alt="<?= htmlspecialchars($author_name) ?>" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105">
+                    <img src="<?= esc($photo) ?>" alt="<?= htmlspecialchars($author_name) ?>" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105">
                     <?php if(!empty($affiliation)): ?>
                         <div class="absolute inset-0 bg-gradient-to-t from-unsoed-darkblue/90 via-unsoed-darkblue/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2 text-left">
                             <p class="text-[10px] text-white font-medium leading-tight line-clamp-3"><?= htmlspecialchars($affiliation) ?></p>
@@ -379,13 +379,13 @@ if (!function_exists('renderBookCard')) {
                     $vidThumb = !empty($latestVideo['thumbnail_url']) ? $latestVideo['thumbnail_url'] : 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=600&q=80';
                     $vidUrl = $latestVideo['youtube_url'];
                 ?>
-                <div onclick="openVideoModal('<?= $vidUrl ?>', '<?= addslashes($vidTitle) ?>')" class="aspect-video bg-gray-900 relative rounded-xl overflow-hidden flex items-center justify-center cursor-pointer group mb-4 shadow-sm border border-gray-200">
-                    <img src="<?= $vidThumb ?>" alt="<?= $vidTitle ?>" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500">
+                <div onclick="openVideoModal('<?= esc($vidUrl) ?>', '<?= addslashes($vidTitle) ?>')" class="aspect-video bg-gray-900 relative rounded-xl overflow-hidden flex items-center justify-center cursor-pointer group mb-4 shadow-sm border border-gray-200">
+                    <img src="<?= esc($vidThumb) ?>" alt="<?= esc($vidTitle) ?>" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500">
                     <div class="w-14 h-14 bg-red-600 group-hover:bg-red-700 rounded-full flex items-center justify-center text-white z-10 shadow-lg transform group-hover:scale-110 transition-transform duration-300">
                         <i class="fas fa-play ml-1 text-lg"></i>
                     </div>
                     <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 pt-8 opacity-90 group-hover:opacity-100 transition-opacity">
-                        <p class="text-xs text-white font-medium line-clamp-2 leading-tight drop-shadow-md"><?= $vidTitle ?></p>
+                        <p class="text-xs text-white font-medium line-clamp-2 leading-tight drop-shadow-md"><?= esc($vidTitle) ?></p>
                     </div>
                 </div>
                 <?php endif; ?>
@@ -396,7 +396,7 @@ if (!function_exists('renderBookCard')) {
                 <div class="grid grid-cols-3 gap-2 mb-4">
                     <?php foreach($latest_photos as $photo): ?>
                         <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden group cursor-pointer relative shadow-sm border border-gray-200">
-                            <img src="<?= $photo['image_url'] ?>" alt="<?= htmlspecialchars($photo['title']) ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <img src="<?= esc($photo['image_url']) ?>" alt="<?= htmlspecialchars($photo['title']) ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
                                 <i class="fas fa-search-plus text-white opacity-0 group-hover:opacity-100 transition-opacity scale-50 group-hover:scale-100 transform duration-300"></i>
                             </div>
@@ -432,7 +432,7 @@ if (!function_exists('renderBookCard')) {
                     <div class="flex gap-3">
                         <div class="w-16 h-16 bg-gray-200 flex-shrink-0">
                             <?php if(!empty($agenda_images)): ?>
-                                <img src="<?= $agenda_images[0] ?>" alt="Agenda" class="w-full h-full object-cover">
+                                <img src="<?= esc($agenda_images[0]) ?>" alt="Agenda" class="w-full h-full object-cover">
                             <?php else: ?>
                                 <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs"><i class="fas fa-image"></i></div>
                             <?php endif; ?>
@@ -441,8 +441,8 @@ if (!function_exists('renderBookCard')) {
                             <div class="text-xs text-gray-500 flex items-center gap-1 mb-1">
                                 <i class="far fa-calendar-alt"></i> <?= date('d M Y', strtotime($news['created_at'])) ?>
                             </div>
-                            <a href="<?= BASEURL; ?>/news/read/<?= $news['slug'] ?>" class="text-sm font-medium text-unsoed-darkblue hover:text-unsoed-yellow leading-tight line-clamp-2">
-                                <?= $news['title'] ?>
+                            <a href="<?= BASEURL; ?>/news/read/<?= esc($news['slug']) ?>" class="text-sm font-medium text-unsoed-darkblue hover:text-unsoed-yellow leading-tight line-clamp-2">
+                                <?= esc($news['title']) ?>
                             </a>
                         </div>
                     </div>

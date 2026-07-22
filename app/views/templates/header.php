@@ -44,22 +44,37 @@
                 <a href="<?= BASEURL; ?>/contact" class="hover:text-unsoed-yellow transition">Contact</a>
             </div>
             <div class="flex space-x-4 font-medium tracking-wide items-center">
-                <span class="text-white">Indonesia</span>
-                <span class="text-gray-400 border-l border-gray-600 pl-4">English</span>
-                <span class="border-l border-gray-600 pl-4 flex items-center space-x-4">
-                    <?php if(isset($_SESSION['user_id'])): ?>
-                        <span class="text-unsoed-yellow font-bold">Halo, <?= $_SESSION['user_name'] ?></span>
-                        <?php if($_SESSION['user_role'] == 'admin'): ?>
-                            <a href="<?= BASEURL; ?>/admin" class="hover:text-white transition">Panel Admin</a>
-                        <?php else: ?>
-                            <a href="<?= BASEURL; ?>/order" class="hover:text-white transition">Pesanan</a>
-                        <?php endif; ?>
-                        <a href="<?= BASEURL; ?>/auth/logout" class="hover:text-red-400 transition">Log out</a>
-                    <?php else: ?>
-                        <a href="<?= BASEURL; ?>/auth/login" class="hover:text-unsoed-yellow transition">Log in</a>
-                        <a href="<?= BASEURL; ?>/auth/register" class="hover:text-unsoed-yellow transition">Create an account</a>
-                    <?php endif; ?>
-                </span>
+                <?php if(isset($_SESSION['user_id'])): ?>
+                    <div class="relative group">
+                        <button class="flex items-center gap-2 text-unsoed-yellow font-bold hover:text-white transition cursor-pointer">
+                            <i class="fas fa-user-circle"></i> <?= esc($_SESSION['user_name']) ?> <i class="fas fa-chevron-down text-[10px] opacity-60"></i>
+                        </button>
+                        <div class="absolute right-0 top-full mt-1 w-52 bg-white rounded-xl shadow-2xl border border-gray-100 py-2 hidden group-hover:block z-[70] text-gray-800 font-medium">
+                            <a href="<?= BASEURL; ?>/user/profile" class="block px-4 py-2 text-sm hover:bg-unsoed-blue hover:text-white transition flex items-center gap-2">
+                                <i class="fas fa-user-cog w-4"></i> Profil Saya
+                            </a>
+                            <a href="<?= BASEURL; ?>/order" class="block px-4 py-2 text-sm hover:bg-unsoed-blue hover:text-white transition flex items-center gap-2">
+                                <i class="fas fa-receipt w-4"></i> Riwayat Pesanan
+                            </a>
+                            <a href="<?= BASEURL; ?>/ebook/my_ebooks" class="block px-4 py-2 text-sm hover:bg-unsoed-blue hover:text-white transition flex items-center gap-2">
+                                <i class="fas fa-tablet-alt w-4"></i> E-Book Saya
+                            </a>
+                            <?php if($_SESSION['user_role'] == 'admin'): ?>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <a href="<?= BASEURL; ?>/admin" class="block px-4 py-2 text-sm hover:bg-unsoed-blue hover:text-white transition flex items-center gap-2 text-unsoed-blue font-bold">
+                                <i class="fas fa-tachometer-alt w-4"></i> Panel Admin
+                            </a>
+                            <?php endif; ?>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <a href="<?= BASEURL; ?>/auth/logout" class="block px-4 py-2 text-sm hover:bg-red-500 hover:text-white transition flex items-center gap-2 text-red-500">
+                                <i class="fas fa-sign-out-alt w-4"></i> Keluar
+                            </a>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <a href="<?= BASEURL; ?>/auth/login" class="hover:text-unsoed-yellow transition">Log in</a>
+                    <a href="<?= BASEURL; ?>/auth/register" class="hover:text-unsoed-yellow transition">Create an account</a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -99,7 +114,7 @@
                         }
                     }
                     
-                    // Urutan khusus agar persis susunan navigasi UGM Press
+                    // Urutan khusus kategori navigasi Unsoed Press
                     $customOrder = [
                         'Sosial & Humaniora' => 1,
                         'Sains & Teknologi' => 2,
@@ -135,28 +150,28 @@
                         </div>
                     </div>
 
-                    <!-- Menu 2-5: Kategori Utama UGM Press -->
+                    <!-- Menu 2-5: Kategori Utama Unsoed Press -->
                     <?php foreach($navCategories as $cat): ?>
                         <?php if(!empty($cat['children'])): ?>
                         <div class="relative group">
-                            <a href="<?= BASEURL; ?>/book/category/<?= $cat['id'] ?>" class="flex items-center gap-1 hover:text-unsoed-yellow transition py-4 uppercase tracking-wide font-bold text-unsoed-darkblue">
-                                <?= $cat['name'] ?> <i class="fas fa-chevron-down text-[10px] ml-0.5 opacity-60"></i>
+                            <a href="<?= BASEURL; ?>/book/category/<?= esc($cat['slug']) ?>" class="flex items-center gap-1 hover:text-unsoed-yellow transition py-4 uppercase tracking-wide font-bold text-unsoed-darkblue">
+                                <?= esc($cat['name']) ?> <i class="fas fa-chevron-down text-[10px] ml-0.5 opacity-60"></i>
                             </a>
                             <div class="absolute top-full left-0 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top scale-95 group-hover:scale-100 z-50">
                                 <div class="glass rounded-xl shadow-xl p-2 flex flex-col max-h-96 overflow-y-auto">
-                                    <a href="<?= BASEURL; ?>/book/category/<?= $cat['id'] ?>" class="px-4 py-2 font-bold text-unsoed-blue hover:bg-gray-100 rounded-lg transition text-sm border-b border-gray-100">
-                                        Lihat Semua <?= $cat['name'] ?>
+                                    <a href="<?= BASEURL; ?>/book/category/<?= esc($cat['slug']) ?>" class="px-4 py-2 font-bold text-unsoed-blue hover:bg-gray-100 rounded-lg transition text-sm border-b border-gray-100">
+                                        Lihat Semua <?= esc($cat['name']) ?>
                                     </a>
                                     <?php foreach($cat['children'] as $child): ?>
-                                    <a href="<?= BASEURL; ?>/book/category/<?= $child['id'] ?>" class="px-4 py-2 hover:bg-gray-100 hover:text-unsoed-blue rounded-lg transition text-sm text-gray-700 font-normal">
-                                        <?= $child['name'] ?>
+                                    <a href="<?= BASEURL; ?>/book/category/<?= esc($child['slug']) ?>" class="px-4 py-2 hover:bg-gray-100 hover:text-unsoed-blue rounded-lg transition text-sm text-gray-700 font-normal">
+                                        <?= esc($child['name']) ?>
                                     </a>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
                         </div>
                         <?php else: ?>
-                        <a href="<?= BASEURL; ?>/book/category/<?= $cat['id'] ?>" class="hover:text-unsoed-yellow transition uppercase tracking-wide font-bold text-unsoed-darkblue py-4"><?= $cat['name'] ?></a>
+                        <a href="<?= BASEURL; ?>/book/category/<?= esc($cat['slug']) ?>" class="hover:text-unsoed-yellow transition uppercase tracking-wide font-bold text-unsoed-darkblue py-4"><?= esc($cat['name']) ?></a>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 </div>
@@ -176,7 +191,7 @@
                         <a href="javascript:void(0)" class="relative p-2 text-gray-600 hover:text-unsoed-blue transition flex items-center justify-center">
                             <i class="fas fa-bell text-xl"></i>
                             <?php if($user_unread > 0): ?>
-                            <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white translate-x-1 -translate-y-1 animate-pulse"><?= $user_unread ?></span>
+                            <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white translate-x-1 -translate-y-1 animate-pulse"><?= esc($user_unread) ?></span>
                             <?php endif; ?>
                         </a>
                         <div class="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right scale-95 group-hover:scale-100 z-50">
@@ -192,7 +207,7 @@
                                 <?php if(empty($user_notifs)): ?>
                                     <div class="p-6 text-center text-gray-400 text-xs">Belum ada notifikasi baru.</div>
                                 <?php else: foreach($user_notifs as $n): ?>
-                                    <a href="<?= BASEURL ?>/notification/read/<?= $n['id'] ?>?link=<?= urlencode($n['link'] ?? '#') ?>" class="block p-3 hover:bg-gray-50 transition <?= $n['is_read'] ? 'opacity-60 bg-white' : 'bg-blue-50/40 font-semibold' ?>">
+                                    <a href="<?= BASEURL ?>/notification/read/<?= esc($n['id']) ?>?link=<?= urlencode($n['link'] ?? '#') ?>" class="block p-3 hover:bg-gray-50 transition <?= $n['is_read'] ? 'opacity-60 bg-white' : 'bg-blue-50/40 font-semibold' ?>">
                                         <div class="flex items-start gap-2.5">
                                             <div class="w-2 h-2 rounded-full mt-1.5 flex-shrink-0 <?= $n['is_read'] ? 'bg-gray-300' : 'bg-blue-600' ?>"></div>
                                             <div class="flex-1">
@@ -219,7 +234,7 @@
                             }
                         ?>
                         <?php if($cart_count > 0): ?>
-                        <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs font-bold flex items-center justify-center rounded-full border-2 border-white translate-x-1 -translate-y-1"><?= $cart_count ?></span>
+                        <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs font-bold flex items-center justify-center rounded-full border-2 border-white translate-x-1 -translate-y-1"><?= esc($cart_count) ?></span>
                         <?php endif; ?>
                     </a>
                 </div>
@@ -231,7 +246,7 @@
                         <a href="javascript:void(0)" class="relative p-2 text-gray-600 hover:text-unsoed-blue transition flex items-center justify-center">
                             <i class="fas fa-bell text-xl"></i>
                             <?php if($user_unread > 0): ?>
-                            <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white translate-x-1 -translate-y-1"><?= $user_unread ?></span>
+                            <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white translate-x-1 -translate-y-1"><?= esc($user_unread) ?></span>
                             <?php endif; ?>
                         </a>
                         <div class="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
@@ -245,7 +260,7 @@
                                 <?php if(empty($user_notifs)): ?>
                                     <div class="p-4 text-center text-gray-400 text-xs">Belum ada notifikasi.</div>
                                 <?php else: foreach($user_notifs as $n): ?>
-                                    <a href="<?= BASEURL ?>/notification/read/<?= $n['id'] ?>?link=<?= urlencode($n['link'] ?? '#') ?>" class="block p-2.5 hover:bg-gray-50 text-xs <?= $n['is_read'] ? 'opacity-60 bg-white' : 'bg-blue-50/40 font-semibold' ?>">
+                                    <a href="<?= BASEURL ?>/notification/read/<?= esc($n['id']) ?>?link=<?= urlencode($n['link'] ?? '#') ?>" class="block p-2.5 hover:bg-gray-50 text-xs <?= $n['is_read'] ? 'opacity-60 bg-white' : 'bg-blue-50/40 font-semibold' ?>">
                                         <div class="text-gray-800 font-bold line-clamp-1"><?= htmlspecialchars($n['title']) ?></div>
                                         <div class="text-[11px] text-gray-600 font-normal line-clamp-2"><?= htmlspecialchars($n['message']) ?></div>
                                     </a>
@@ -258,7 +273,7 @@
                     <a href="<?= BASEURL; ?>/cart" class="relative p-2 text-gray-600 hover:text-unsoed-blue transition">
                         <i class="fas fa-shopping-cart text-xl"></i>
                         <?php if($cart_count > 0): ?>
-                        <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs font-bold flex items-center justify-center rounded-full border-2 border-white translate-x-1 -translate-y-1"><?= $cart_count ?></span>
+                        <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs font-bold flex items-center justify-center rounded-full border-2 border-white translate-x-1 -translate-y-1"><?= esc($cart_count) ?></span>
                         <?php endif; ?>
                     </a>
                     <button id="mobile-menu-btn" class="text-2xl text-unsoed-blue p-2 focus:outline-none">
@@ -283,11 +298,11 @@
                     </a>
                     <?php foreach($navCategories as $cat): ?>
                         <div class="py-2 border-b border-gray-100">
-                            <a href="<?= BASEURL; ?>/book/category/<?= $cat['id'] ?>" class="block uppercase tracking-wide text-unsoed-blue font-bold"><?= $cat['name'] ?></a>
+                            <a href="<?= BASEURL; ?>/book/category/<?= esc($cat['slug']) ?>" class="block uppercase tracking-wide text-unsoed-blue font-bold"><?= esc($cat['name']) ?></a>
                             <?php if(!empty($cat['children'])): ?>
                                 <div class="pl-4 mt-2 grid grid-cols-2 gap-1.5 font-normal text-xs text-gray-600">
                                     <?php foreach($cat['children'] as $child): ?>
-                                        <a href="<?= BASEURL; ?>/book/category/<?= $child['id'] ?>" class="hover:text-unsoed-yellow py-0.5">• <?= $child['name'] ?></a>
+                                        <a href="<?= BASEURL; ?>/book/category/<?= esc($child['slug']) ?>" class="hover:text-unsoed-yellow py-0.5">• <?= esc($child['name']) ?></a>
                                     <?php endforeach; ?>
                                 </div>
                             <?php endif; ?>

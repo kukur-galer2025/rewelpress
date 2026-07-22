@@ -139,4 +139,48 @@ class OrderModel {
 
         return $rowCount;
     }
+
+    public function getTotalRevenue()
+    {
+        $this->db->query("SELECT COALESCE(SUM(total_amount), 0) as total FROM orders WHERE status = 'confirmed'");
+        $result = $this->db->single();
+        return $result['total'] ?? 0;
+    }
+
+    public function getPendingOrdersCount()
+    {
+        $this->db->query("SELECT COUNT(*) as total FROM orders WHERE status = 'paid'");
+        $result = $this->db->single();
+        return $result['total'] ?? 0;
+    }
+
+    public function getLatestOrders($limit = 5)
+    {
+        $this->db->query("
+            SELECT orders.*, users.name as user_name, users.email
+            FROM orders 
+            JOIN users ON orders.user_id = users.id
+            ORDER BY orders.created_at DESC 
+            LIMIT :limit
+        ");
+        $this->db->bind(':limit', (int)$limit);
+        return $this->db->resultSet();
+    }
+
+    public function getMonthlySales()
+    {
+        $this->db->query("
+            SELECT 
+                DATE_FORMAT(created_at, '%Y-%m') as month_key,
+                DATE_FORMAT(created_at, '%b') as month_name,
+                COALESCE(SUM(total_amount), 0) as revenue,
+                COUNT(*) as order_count
+            FROM orders 
+            WHERE status = 'confirmed' 
+              AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+            GROUP BY month_key, month_name
+            ORDER BY month_key ASC
+        ");
+        return $this->db->resultSet();
+    }
 }

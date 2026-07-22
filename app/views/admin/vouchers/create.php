@@ -10,8 +10,7 @@
 
 <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-200 max-w-3xl">
     <form action="<?= BASEURL; ?>/admin/create_voucher" method="POST" class="space-y-6">
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<?= csrf_field() ?><div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-2">Kode Voucher <span class="text-red-500">*</span></label>
                 <input type="text" name="code" required placeholder="Contoh: UNSOED2026" 
@@ -106,3 +105,4 @@
 
     </form>
 </div>
+<?= csrf_field() ?>

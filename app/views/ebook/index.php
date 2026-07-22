@@ -80,10 +80,47 @@
                 <h3 class="text-2xl font-serif font-bold text-gray-900">Katalog E-Book & Edisi Digital</h3>
                 <p class="text-sm text-gray-500 mt-1">Pilih judul e-book untuk mengunduh sampel bab gratis atau membeli edisi digitalnya.</p>
             </div>
-            <span class="text-xs bg-blue-50 text-unsoed-blue font-bold px-3 py-1.5 rounded-full self-start md:self-auto border border-blue-100">
-                <?= count($koleksiList) ?> Koleksi Digital Tersedia
-            </span>
+            <div class="flex items-center gap-3">
+                <span class="text-xs bg-blue-50 text-unsoed-blue font-bold px-3 py-1.5 rounded-full border border-blue-100">
+                    Menampilkan <?= count($koleksiList) ?> dari <?= esc($data['total_ebooks']) ?> Koleksi
+                </span>
+            </div>
         </div>
+
+        <!-- Filter Bar -->
+        <form action="<?= BASEURL; ?>/ebook" method="GET" id="filterEbookForm" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col md:flex-row items-center gap-4">
+            <div class="flex-1 relative w-full">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" name="q" value="<?= htmlspecialchars($data['keyword'] ?? '') ?>" placeholder="Cari judul e-book..." class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue outline-none text-sm transition-all">
+            </div>
+            
+            <div class="w-full md:w-48 relative">
+                <i class="fas fa-user-edit absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <select name="author" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue outline-none text-sm transition-all appearance-none cursor-pointer">
+                    <option value="">Semua Penulis</option>
+                    <?php foreach($data['authors'] as $auth): ?>
+                        <option value="<?= htmlspecialchars($auth['author']) ?>" <?= ($data['active_author'] ?? '') == $auth['author'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($auth['author']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 pointer-events-none"></i>
+            </div>
+            
+            <div class="w-full md:w-auto flex items-center gap-2">
+                <span class="text-xs text-gray-500 font-bold uppercase tracking-wider hidden md:block">Tampil:</span>
+                <select name="per_page" class="w-full md:w-auto px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue outline-none text-sm transition-all appearance-none cursor-pointer">
+                    <option value="5" <?= ($data['per_page'] == 5) ? 'selected' : '' ?>>5</option>
+                    <option value="10" <?= ($data['per_page'] == 10) ? 'selected' : '' ?>>10</option>
+                    <option value="15" <?= ($data['per_page'] == 15) ? 'selected' : '' ?>>15</option>
+                    <option value="20" <?= ($data['per_page'] == 20) ? 'selected' : '' ?>>20</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="w-full md:w-auto bg-unsoed-blue text-white px-6 py-2.5 rounded-xl font-bold shadow-sm hover:bg-blue-800 transition">
+                Terapkan
+            </button>
+        </form>
 
         <?php if(empty($koleksiList)): ?>
             <div class="bg-white rounded-3xl p-16 text-center border border-gray-200 text-gray-400">
@@ -114,7 +151,7 @@
                                     $coverSrc = (strpos($cover, 'http') === 0) ? $cover : BASEURL . '/uploads/covers/' . $cover;
                                 }
                             ?>
-                            <img src="<?= $coverSrc ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <img src="<?= esc($coverSrc) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                             
                             <div class="absolute top-3 right-3 bg-unsoed-blue/90 backdrop-blur-sm text-white font-bold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
                                 <i class="fas fa-file-pdf mr-1"></i> E-BOOK EDITION
@@ -163,15 +200,15 @@
                                 <?php if(!$ebookId): ?>
                                     <!-- Bukan real ebook, skip -->
                                 <?php elseif($isFree): ?>
-                                    <a href="<?= BASEURL ?>/ebook/download/<?= $ebookId ?>" class="w-full py-2 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white rounded-xl text-xs font-bold text-center transition shadow-sm flex items-center justify-center gap-1.5">
+                                    <a href="<?= BASEURL ?>/ebook/download/<?= esc($ebookId) ?>" class="w-full py-2 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white rounded-xl text-xs font-bold text-center transition shadow-sm flex items-center justify-center gap-1.5">
                                         <i class="fas fa-cloud-download-alt"></i> Unduh Gratis
                                     </a>
                                 <?php else: ?>
                                     <div class="flex items-center gap-2">
-                                        <a href="<?= BASEURL ?>/ebook/detail/<?= $ebookId ?>" class="flex-1 py-2 bg-[#0f3460] hover:bg-blue-900 text-white rounded-xl text-xs font-bold text-center transition shadow-sm flex items-center justify-center gap-1.5">
+                                        <a href="<?= BASEURL ?>/ebook/detail/<?= esc($ebookId) ?>" class="flex-1 py-2 bg-[#0f3460] hover:bg-blue-900 text-white rounded-xl text-xs font-bold text-center transition shadow-sm flex items-center justify-center gap-1.5">
                                             <i class="fas fa-shopping-cart"></i> Beli E-Book
                                         </a>
-                                        <a href="<?= BASEURL ?>/ebook/detail/<?= $ebookId ?>" class="w-9 h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl flex items-center justify-center text-xs transition" title="Lihat Detail">
+                                        <a href="<?= BASEURL ?>/ebook/detail/<?= esc($ebookId) ?>" class="w-9 h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl flex items-center justify-center text-xs transition" title="Lihat Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </div>
@@ -181,6 +218,44 @@
                     </div>
                 <?php endforeach; ?>
             </div>
+        <?php endif; ?>
+
+        <!-- Pagination -->
+        <?php if($data['total_pages'] > 1): ?>
+        <div class="mt-12 flex items-center justify-center gap-2">
+            <?php 
+                $qs = $_GET;
+                unset($qs['url']);
+            ?>
+            
+            <!-- Prev -->
+            <?php if($data['current_page'] > 1): ?>
+                <?php $qs['page'] = $data['current_page'] - 1; ?>
+                <a href="<?= BASEURL; ?>/ebook?<?= http_build_query($qs) ?>" class="w-10 h-10 flex items-center justify-center bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 hover:text-unsoed-blue transition shadow-sm">
+                    <i class="fas fa-chevron-left text-sm"></i>
+                </a>
+            <?php endif; ?>
+
+            <!-- Page Numbers -->
+            <?php for($i = 1; $i <= $data['total_pages']; $i++): ?>
+                <?php if($i == $data['current_page']): ?>
+                    <span class="w-10 h-10 flex items-center justify-center bg-unsoed-blue text-white font-bold rounded-lg shadow-md"><?= esc($i) ?></span>
+                <?php else: ?>
+                    <?php $qs['page'] = $i; ?>
+                    <a href="<?= BASEURL; ?>/ebook?<?= http_build_query($qs) ?>" class="w-10 h-10 flex items-center justify-center bg-white border border-gray-200 text-gray-600 font-bold rounded-lg hover:bg-gray-50 hover:text-unsoed-blue transition shadow-sm">
+                        <?= esc($i) ?>
+                    </a>
+                <?php endif; ?>
+            <?php endfor; ?>
+
+            <!-- Next -->
+            <?php if($data['current_page'] < $data['total_pages']): ?>
+                <?php $qs['page'] = $data['current_page'] + 1; ?>
+                <a href="<?= BASEURL; ?>/ebook?<?= http_build_query($qs) ?>" class="w-10 h-10 flex items-center justify-center bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 hover:text-unsoed-blue transition shadow-sm">
+                    <i class="fas fa-chevron-right text-sm"></i>
+                </a>
+            <?php endif; ?>
+        </div>
         <?php endif; ?>
     </div>
 

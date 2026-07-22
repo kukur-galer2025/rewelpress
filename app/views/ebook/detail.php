@@ -37,9 +37,9 @@ if (!empty($e['cover_image'])) {
         ];
         $m = $_GET['msg'];
         if (isset($msgMap[$m])): [$cls, $icon, $text] = $msgMap[$m]; ?>
-        <div class="mb-8 rounded-2xl border p-4 flex items-center gap-3 text-sm font-semibold <?= $cls ?>">
-            <i class="<?= $icon ?> text-lg flex-shrink-0"></i>
-            <span><?= $text ?></span>
+        <div class="mb-8 rounded-2xl border p-4 flex items-center gap-3 text-sm font-semibold <?= esc($cls) ?>">
+            <i class="<?= esc($icon) ?> text-lg flex-shrink-0"></i>
+            <span><?= esc($text) ?></span>
         </div>
         <?php endif; ?>
     <?php endif; ?>
@@ -49,7 +49,7 @@ if (!empty($e['cover_image'])) {
         <!-- Kolom Kiri: Cover + Spesifikasi -->
         <div class="md:col-span-1 flex flex-col gap-5">
             <div class="rounded-3xl overflow-hidden shadow-2xl border border-gray-200 aspect-[3/4] bg-gray-100 relative">
-                <img src="<?= $coverSrc ?>" alt="<?= htmlspecialchars($e['title']) ?>" class="w-full h-full object-cover">
+                <img src="<?= esc($coverSrc) ?>" alt="<?= htmlspecialchars($e['title']) ?>" class="w-full h-full object-cover">
                 <?php if($isFree): ?>
                     <div class="absolute top-4 left-4 bg-green-500 text-white text-xs font-extrabold px-3 py-1 rounded-full shadow uppercase">
                         <i class="fas fa-gift mr-1"></i> Gratis
@@ -81,6 +81,10 @@ if (!empty($e['cover_image'])) {
                         <span class="text-gray-500 flex items-center gap-2"><i class="fas fa-cloud-download-alt text-purple-400 w-4"></i> Diunduh</span>
                         <span class="font-bold text-gray-800"><?= number_format($e['downloads_count'] ?? 0) ?> Kali</span>
                     </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-500 flex items-center gap-2"><i class="fas fa-eye text-indigo-400 w-4"></i> Dilihat</span>
+                        <span class="font-bold text-gray-800"><?= number_format($e['views_count'] ?? 0) ?> Kali</span>
+                    </div>
                     <?php if(!empty($e['isbn'])): ?>
                     <div class="flex items-center justify-between">
                         <span class="text-gray-500 flex items-center gap-2"><i class="fas fa-barcode text-gray-400 w-4"></i> ISBN</span>
@@ -111,7 +115,7 @@ if (!empty($e['cover_image'])) {
 
                 <?php if(!empty($e['book_id'])): ?>
                 <div class="mt-4">
-                    <a href="<?= BASEURL ?>/book/detail/<?= $e['book_id'] ?>" class="inline-flex items-center gap-2 text-sm font-semibold bg-indigo-50 text-indigo-700 px-4 py-2 rounded-xl hover:bg-indigo-100 transition-colors border border-indigo-200 shadow-sm">
+                    <a href="<?= BASEURL ?>/book/detail/<?= esc($e['book_slug'] ?? $e['book_id']) ?>" class="inline-flex items-center gap-2 text-sm font-semibold bg-indigo-50 text-indigo-700 px-4 py-2 rounded-xl hover:bg-indigo-100 transition-colors border border-indigo-200 shadow-sm">
                         <i class="fas fa-book"></i>
                         Tersedia Edisi Cetak (Buku Fisik) &rarr;
                     </a>
@@ -160,7 +164,7 @@ if (!empty($e['cover_image'])) {
                             <i class="fas fa-info-circle text-blue-500 text-lg"></i>
                             <div>
                                 <p class="font-bold text-blue-700 text-sm">Pesanan Menunggu Pembayaran</p>
-                                <p class="text-xs text-blue-600">Pesanan #EBO-<?= $existingOrder['id'] ?> sudah dibuat, silakan selesaikan pembayaran.</p>
+                                <p class="text-xs text-blue-600">Pesanan #EBO-<?= esc($existingOrder['id']) ?> sudah dibuat, silakan selesaikan pembayaran.</p>
                             </div>
                         </div>
                         <?php endif; ?>
@@ -173,7 +177,7 @@ if (!empty($e['cover_image'])) {
 
                 <?php if($isFree): ?>
                     <!-- GRATIS: langsung unduh -->
-                    <a href="<?= BASEURL ?>/ebook/download/<?= $e['id'] ?>"
+                    <a href="<?= BASEURL ?>/ebook/download/<?= esc($e['id']) ?>"
                        class="flex-1 py-4 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white rounded-2xl font-bold text-center transition shadow-lg flex items-center justify-center gap-2">
                         <i class="fas fa-cloud-download-alt text-xl"></i> Unduh Gratis Sekarang
                     </a>
@@ -187,9 +191,9 @@ if (!empty($e['cover_image'])) {
 
                 <?php elseif($existingOrder && $existingOrder['status'] === 'pending'): ?>
                     <!-- ADA ORDER PENDING: tombol selesaikan pembayaran -->
-                    <a href="<?= BASEURL ?>/ebook/pay/<?= $existingOrder['id'] ?>"
+                    <a href="<?= BASEURL ?>/ebook/pay/<?= esc($existingOrder['id']) ?>"
                        class="flex-1 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-2xl font-bold text-center transition shadow-lg flex items-center justify-center gap-2">
-                        <i class="fas fa-credit-card text-xl"></i> Selesaikan Pembayaran — #EBO-<?= $existingOrder['id'] ?>
+                        <i class="fas fa-credit-card text-xl"></i> Selesaikan Pembayaran — #EBO-<?= esc($existingOrder['id']) ?>
                     </a>
 
                 <?php elseif($existingOrder && $existingOrder['status'] === 'paid'): ?>
@@ -208,7 +212,7 @@ if (!empty($e['cover_image'])) {
 
                 <?php else: ?>
                     <!-- LOGIN + BELUM BELI: tombol beli sekarang menuju checkout -->
-                    <a href="<?= BASEURL ?>/ebook/checkout/<?= $e['id'] ?>"
+                    <a href="<?= BASEURL ?>/ebook/checkout/<?= esc($e['id']) ?>"
                        class="flex-1 py-4 bg-gradient-to-r from-unsoed-blue to-blue-700 hover:from-blue-800 hover:to-blue-900 text-white rounded-2xl font-bold text-center transition shadow-lg flex items-center justify-center gap-2">
                         <i class="fas fa-shopping-cart text-xl"></i>
                         Beli E-Book — Rp <?= number_format($e['ebook_price'], 0, ',', '.') ?>

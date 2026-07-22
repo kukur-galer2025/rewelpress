@@ -15,7 +15,7 @@
             <i class="fas fa-inbox"></i> Semua (<?= count($data['messages']) ?>)
         </button>
         <button onclick="filterMessages('unread')" id="btn-filter-unread" class="filter-btn px-4 py-2 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 shadow-sm font-bold text-xs flex items-center gap-2 transition">
-            <span class="w-2 h-2 rounded-full bg-red-500 <?= $unreadCount > 0 ? 'animate-ping' : '' ?>"></span> Belum Dibaca (<?= $unreadCount ?>)
+            <span class="w-2 h-2 rounded-full bg-red-500 <?= $unreadCount > 0 ? 'animate-ping' : '' ?>"></span> Belum Dibaca (<?= esc($unreadCount) ?>)
         </button>
         <button onclick="filterMessages('read')" id="btn-filter-read" class="filter-btn px-4 py-2 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 shadow-sm font-bold text-xs flex items-center gap-2 transition">
             <i class="fas fa-check-circle text-green-500"></i> Sudah Dibaca (<?= count($data['messages']) - $unreadCount ?>)
@@ -101,7 +101,7 @@
                 <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div class="flex items-center gap-2.5 flex-wrap">
                         <!-- Tombol Balas via Modal -->
-                        <button onclick="openReplyModal(<?= $msg['id'] ?>, '<?= htmlspecialchars(addslashes($msg['full_name'])) ?>', '<?= htmlspecialchars(addslashes($msg['email'])) ?>', '<?= htmlspecialchars(addslashes($msg['subject'])) ?>', '<?= htmlspecialchars(addslashes($msg['message'])) ?>')" class="px-4 py-2 bg-gradient-to-r from-unsoed-blue to-blue-700 hover:from-blue-800 hover:to-blue-900 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-2 group">
+                        <button onclick="openReplyModal(<?= esc($msg['id']) ?>, '<?= htmlspecialchars(addslashes($msg['full_name'])) ?>', '<?= htmlspecialchars(addslashes($msg['email'])) ?>', '<?= htmlspecialchars(addslashes($msg['subject'])) ?>', '<?= htmlspecialchars(addslashes($msg['message'])) ?>')" class="px-4 py-2 bg-gradient-to-r from-unsoed-blue to-blue-700 hover:from-blue-800 hover:to-blue-900 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-2 group">
                             <i class="fas fa-reply group-hover:-translate-x-0.5 transition-transform"></i> Balas Pesan (Email)
                         </button>
 
@@ -113,12 +113,12 @@
 
                     <div class="flex items-center gap-2 self-end sm:self-auto">
                         <?php if($msg['is_read'] == 0): ?>
-                            <a href="<?= BASEURL; ?>/admin/read_message/<?= $msg['id'] ?>" class="px-3.5 py-2 bg-green-50 text-green-700 hover:bg-green-600 hover:text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-green-200 hover:border-transparent" title="Tandai Sudah Dibaca">
+                            <a href="<?= BASEURL; ?>/admin/read_message/<?= esc($msg['id']) ?>" class="px-3.5 py-2 bg-green-50 text-green-700 hover:bg-green-600 hover:text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-green-200 hover:border-transparent" title="Tandai Sudah Dibaca">
                                 <i class="fas fa-check"></i> Tandai Dibaca
                             </a>
                         <?php endif; ?>
 
-                        <a href="<?= BASEURL; ?>/admin/delete_message/<?= $msg['id'] ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus pesan dari <?= htmlspecialchars(addslashes($msg['full_name'])) ?> ini secara permanen?')" class="w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition flex items-center justify-center flex-shrink-0 border border-red-100 hover:border-transparent shadow-sm" title="Hapus Pesan">
+                        <a href="<?= BASEURL; ?>/admin/delete_message/<?= esc($msg['id']) ?>" onclick="return confirmAction(this.href, 'Hapus Pesan', 'Apakah Anda yakin ingin menghapus pesan dari <?= htmlspecialchars(addslashes($msg['full_name'])) ?> ini secara permanen?')" class="w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition flex items-center justify-center flex-shrink-0 border border-red-100 hover:border-transparent shadow-sm" title="Hapus Pesan">
                             <i class="fas fa-trash-alt text-xs"></i>
                         </a>
                     </div>
@@ -254,7 +254,7 @@ function filterMessages(type) {
 // Salin ke Clipboard
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
-        alert('Alamat email (' + text + ') berhasil disalin ke clipboard!');
+        showAlert('Alamat email (' + text + ') berhasil disalin ke clipboard!', 'success');
     }).catch(err => {
         prompt('Salin alamat email di bawah ini:', text);
     });

@@ -7,6 +7,12 @@ class App {
 
     public function __construct()
     {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_POST['csrf_token']) || !isset($_SESSION['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+                die('Akses ditolak: CSRF token tidak valid atau telah kedaluwarsa. Silakan kembali dan muat ulang halaman.');
+            }
+        }
+
         $url = $this->parseURL();
 
         // Check if controller exists
@@ -41,7 +47,6 @@ class App {
     {
         if(isset($_GET['url'])) {
             $url = rtrim($_GET['url'], '/');
-            $url = filter_var($url, FILTER_SANITIZE_URL);
             $url = explode('/', $url);
             return $url;
         }

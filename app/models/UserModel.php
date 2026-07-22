@@ -24,9 +24,10 @@ class UserModel {
 
     public function registerUser($data)
     {
-        $this->db->query('INSERT INTO users (name, email, password, role) VALUES (:name, :email, :password, :role)');
+        $this->db->query('INSERT INTO users (name, email, phone, password, role) VALUES (:name, :email, :phone, :password, :role)');
         $this->db->bind(':name', $data['name']);
         $this->db->bind(':email', $data['email']);
+        $this->db->bind(':phone', isset($data['phone']) ? $data['phone'] : null);
         
         $hashed_password = password_hash($data['password'], PASSWORD_BCRYPT);
         $this->db->bind(':password', $hashed_password);
@@ -164,6 +165,26 @@ class UserModel {
         }
 
         $this->db->query('DELETE FROM users WHERE id = :id');
+        $this->db->bind(':id', (int)$id);
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
+
+    public function updateProfile($id, $data)
+    {
+        $sql = 'UPDATE users SET name = :name, email = :email, phone = :phone';
+        if (!empty($data['password'])) {
+            $sql .= ', password = :password';
+        }
+        $sql .= ' WHERE id = :id';
+
+        $this->db->query($sql);
+        $this->db->bind(':name', $data['name']);
+        $this->db->bind(':email', $data['email']);
+        $this->db->bind(':phone', $data['phone'] ?? null);
+        if (!empty($data['password'])) {
+            $this->db->bind(':password', password_hash($data['password'], PASSWORD_BCRYPT));
+        }
         $this->db->bind(':id', (int)$id);
         $this->db->execute();
         return $this->db->rowCount();

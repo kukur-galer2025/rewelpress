@@ -17,6 +17,11 @@ class Admin extends Controller {
         $data['total_books'] = count($this->model('BookModel')->getAllBooks());
         $data['total_orders'] = count($this->model('OrderModel')->getAllOrders());
         $data['total_users'] = count($this->model('UserModel')->getAllUsers());
+        $data['total_ebooks'] = count($this->model('EbookModel')->getAllEbooks());
+        $data['total_revenue'] = $this->model('OrderModel')->getTotalRevenue();
+        $data['pending_orders'] = $this->model('OrderModel')->getPendingOrdersCount();
+        $data['latest_orders'] = $this->model('OrderModel')->getLatestOrders(5);
+        $data['monthly_sales'] = $this->model('OrderModel')->getMonthlySales();
         
         $this->view('templates/admin_header', $data);
         $this->view('admin/dashboard', $data);
@@ -42,7 +47,16 @@ class Admin extends Controller {
         $data['authors'] = $this->model('AuthorModel')->getAllAuthors();
 
         if($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->model('AuthorModel')->addAuthorIfNotExists($_POST['author']);
+            if (isset($_POST['author'])) {
+                if (is_array($_POST['author'])) {
+                    foreach($_POST['author'] as $a) {
+                        $this->model('AuthorModel')->addAuthorIfNotExists($a);
+                    }
+                    $_POST['author'] = implode('; ', $_POST['author']);
+                } else {
+                    $this->model('AuthorModel')->addAuthorIfNotExists($_POST['author']);
+                }
+            }
             // Handle Image Upload
             $image_path = null;
             if(isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
@@ -65,6 +79,9 @@ class Admin extends Controller {
             if($this->model('BookModel')->addBook($_POST) > 0) {
                 header('Location: ' . BASEURL . '/admin/books?msg=success_add');
                 exit;
+            } else {
+                header('Location: ' . BASEURL . '/admin/books?msg=error');
+                exit;
             }
         }
 
@@ -81,7 +98,16 @@ class Admin extends Controller {
         $data['authors'] = $this->model('AuthorModel')->getAllAuthors();
 
         if($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->model('AuthorModel')->addAuthorIfNotExists($_POST['author']);
+            if (isset($_POST['author'])) {
+                if (is_array($_POST['author'])) {
+                    foreach($_POST['author'] as $a) {
+                        $this->model('AuthorModel')->addAuthorIfNotExists($a);
+                    }
+                    $_POST['author'] = implode('; ', $_POST['author']);
+                } else {
+                    $this->model('AuthorModel')->addAuthorIfNotExists($_POST['author']);
+                }
+            }
             // Handle Image Upload
             $image_path = $_POST['old_image']; // keep old image by default
             
@@ -105,6 +131,9 @@ class Admin extends Controller {
             
             if($this->model('BookModel')->updateBook($_POST) >= 0) { // >= 0 because if no changes made, rowCount is 0
                 header('Location: ' . BASEURL . '/admin/books?msg=success_edit');
+                exit;
+            } else {
+                header('Location: ' . BASEURL . '/admin/books?msg=error');
                 exit;
             }
         }
@@ -145,6 +174,9 @@ class Admin extends Controller {
             if($this->model('CategoryModel')->addCategory($_POST) > 0) {
                 header('Location: ' . BASEURL . '/admin/categories?msg=success_add');
                 exit;
+            } else {
+                header('Location: ' . BASEURL . '/admin/categories?msg=error');
+                exit;
             }
         }
 
@@ -163,6 +195,9 @@ class Admin extends Controller {
             $_POST['id'] = $id;
             if($this->model('CategoryModel')->updateCategory($_POST) >= 0) {
                 header('Location: ' . BASEURL . '/admin/categories?msg=success_edit');
+                exit;
+            } else {
+                header('Location: ' . BASEURL . '/admin/categories?msg=error');
                 exit;
             }
         }
@@ -236,6 +271,54 @@ class Admin extends Controller {
         $this->view('templates/admin_header', $data);
         $this->view('admin/orders/index', $data);
         $this->view('templates/admin_footer');
+    }
+
+    public function export_pdf()
+    {
+        // Pastikan vendor/autoload.php dimuat
+        require_once '../vendor/autoload.php';
+        
+        $orders = $this->model('OrderModel')->getAllOrders();
+        
+        // Buat HTML untuk PDF
+        $html = '<!DOCTYPE html><html><head><title>Laporan Pesanan</title>';
+        $html .= '<style>
+            body { font-family: sans-serif; font-size: 12px; }
+            table { w-full; border-collapse: collapse; margin-top: 20px; width: 100%; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #f4f4f4; }
+            h2 { text-align: center; color: #0f3460; }
+        </style></head><body>';
+        $html .= '<h2>Laporan Pesanan - Unsoed Press</h2>';
+        $html .= '<p>Tanggal Cetak: ' . date('d M Y H:i') . '</p>';
+        $html .= '<table>';
+        $html .= '<tr><th>ID Pesanan</th><th>Pelanggan</th><th>Tanggal</th><th>Total</th><th>Status</th></tr>';
+        
+        $totalRev = 0;
+        foreach($orders as $o) {
+            if ($o['status'] == 'confirmed') $totalRev += $o['total_amount'];
+            
+            $html .= '<tr>';
+            $html .= '<td>#INV-' . $o['id'] . '</td>';
+            $html .= '<td>' . htmlspecialchars($o['email']) . '</td>';
+            $html .= '<td>' . date('d M Y H:i', strtotime($o['created_at'])) . '</td>';
+            $html .= '<td>Rp ' . number_format($o['total_amount'], 0, ',', '.') . '</td>';
+            $html .= '<td>' . strtoupper($o['status']) . '</td>';
+            $html .= '</tr>';
+        }
+        
+        $html .= '</table>';
+        $html .= '<p style="margin-top: 20px; font-weight: bold; text-align: right;">Total Pendapatan (Confirmed): Rp ' . number_format($totalRev, 0, ',', '.') . '</p>';
+        $html .= '</body></html>';
+
+        $dompdf = new \Dompdf\Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        
+        // Attachment 0 untuk preview di browser, 1 untuk langsung download
+        $dompdf->stream("Laporan_Pesanan_" . date('Ymd') . ".pdf", array("Attachment" => 0));
+        exit;
     }
 
     public function order_detail($id)

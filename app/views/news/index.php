@@ -34,15 +34,15 @@
                 ?>
                 <div class="py-8 first:pt-0 flex flex-col md:flex-row gap-6 lg:gap-8 items-start">
                     
-                    <!-- Left Thumbnail (Persis UGM Press landscape ratio) -->
-                    <a href="<?= BASEURL; ?>/news/read/<?= $news['slug'] ?>" class="w-full md:w-[280px] lg:w-[320px] aspect-[16/10] flex-shrink-0 bg-gray-100 rounded overflow-hidden border border-gray-200 shadow-sm group">
-                        <img src="<?= $thumbUrl ?>" alt="<?= htmlspecialchars($news['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+                    <!-- Left Thumbnail (landscape ratio) -->
+                    <a href="<?= BASEURL; ?>/news/read/<?= esc($news['slug']) ?>" class="w-full md:w-[280px] lg:w-[320px] aspect-[16/10] flex-shrink-0 bg-gray-100 rounded overflow-hidden border border-gray-200 shadow-sm group">
+                        <img src="<?= esc($thumbUrl) ?>" alt="<?= htmlspecialchars($news['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
                     </a>
 
                     <!-- Middle Content (Title & Excerpt) -->
                     <div class="flex-1 space-y-3">
                         <h3 class="text-xl md:text-2xl font-bold font-serif text-gray-800 hover:text-unsoed-blue transition leading-snug">
-                            <a href="<?= BASEURL; ?>/news/read/<?= $news['slug'] ?>">
+                            <a href="<?= BASEURL; ?>/news/read/<?= esc($news['slug']) ?>">
                                 <?= htmlspecialchars($news['title']) ?>
                             </a>
                         </h3>
@@ -57,7 +57,7 @@
                         <span class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">Tanggal Posting</span>
                         <div class="flex items-center gap-2 text-xs text-gray-500 font-medium">
                             <i class="far fa-calendar-alt text-gray-400"></i>
-                            <span><?= $formattedDate ?></span>
+                            <span><?= esc($formattedDate) ?></span>
                         </div>
                     </div>
 
@@ -65,7 +65,7 @@
             <?php endforeach; ?>
         </div>
 
-        <!-- Pagination (Persis Contoh UGM Press: 1 2 3 4 › ») -->
+        <!-- Pagination -->
         <div class="flex items-center gap-1.5 pt-12">
             <span class="w-10 h-10 bg-[#0f3460] text-white font-bold flex items-center justify-center rounded text-sm shadow cursor-default">1</span>
             <a href="#" class="w-10 h-10 border border-gray-200 text-gray-600 font-bold flex items-center justify-center rounded text-sm hover:bg-gray-100 transition">2</a>

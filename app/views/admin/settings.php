@@ -11,8 +11,7 @@
 
 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 max-w-4xl">
     <form action="<?= BASEURL; ?>/admin/update_settings" method="POST" enctype="multipart/form-data" class="space-y-8">
-        
-        <input type="hidden" name="old_qris" value="<?= isset($data['settings']['qris_image']) ? $data['settings']['qris_image'] : '' ?>">
+<?= csrf_field() ?><input type="hidden" name="old_qris" value="<?= isset($data['settings']['qris_image']) ? $data['settings']['qris_image'] : '' ?>">
 
         <div>
             <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Informasi Rekening Bank</h3>
@@ -37,7 +36,7 @@
                 <div class="w-full md:w-1/2 bg-gray-50 rounded-xl p-6 border border-gray-100 flex flex-col items-center justify-center">
                     <p class="text-sm font-semibold text-gray-700 mb-4">QRIS Saat Ini:</p>
                     <?php if(!empty($data['settings']['qris_image'])): ?>
-                        <img src="<?= $data['settings']['qris_image'] ?>" alt="QRIS" class="max-w-full h-auto max-h-64 rounded-lg shadow-sm">
+                        <img src="<?= esc($data['settings']['qris_image']) ?>" alt="QRIS" class="max-w-full h-auto max-h-64 rounded-lg shadow-sm">
                     <?php else: ?>
                         <div class="w-48 h-48 bg-gray-200 border-2 border-dashed border-gray-300 flex items-center justify-center rounded-lg">
                             <span class="text-gray-400 text-sm">Belum ada QRIS</span>
@@ -54,3 +53,4 @@
         </div>
     </form>
 </div>
+<?= csrf_field() ?>

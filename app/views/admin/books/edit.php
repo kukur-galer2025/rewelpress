@@ -10,6 +10,7 @@
 
 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
     <form action="<?= BASEURL; ?>/admin/edit_book/<?= $data['buku']['id'] ?>" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <?= csrf_field() ?>
         <input type="hidden" name="old_image" value="<?= $data['buku']['image'] ?>">
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -22,13 +23,24 @@
                 
                 <div>
                     <label for="author" class="block text-sm font-bold text-gray-700 mb-2">Penulis <span class="text-red-500">*</span></label>
-                    <input type="text" name="author" id="author" list="author_list" value="<?= htmlspecialchars($data['buku']['author']) ?>" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" required placeholder="Pilih dari daftar atau Ketik nama baru">
-                    <datalist id="author_list">
+                    <?php 
+                        $book_author_string = trim($data['buku']['author'] ?? '');
+                        $has_semicolon = strpos($book_author_string, ';') !== false;
+                        $exact_authors = $has_semicolon ? array_map('trim', explode(';', $book_author_string)) : [];
+                    ?>
+                    <select name="author[]" id="author" multiple="multiple" class="select2-multiple w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" required>
                         <?php foreach($data['authors'] as $auth): ?>
-                            <option value="<?= htmlspecialchars($auth['name']) ?>"></option>
+                            <?php 
+                                if ($has_semicolon) {
+                                    $is_selected = in_array(trim($auth['name']), $exact_authors);
+                                } else {
+                                    // Fallback for old comma-separated data (susceptible to partial matches but necessary for backward compatibility)
+                                    $is_selected = $book_author_string !== '' && strpos($book_author_string, $auth['name']) !== false;
+                                }
+                            ?>
+                            <option value="<?= htmlspecialchars($auth['name']) ?>" <?= $is_selected ? 'selected' : '' ?>><?= htmlspecialchars($auth['name']) ?></option>
                         <?php endforeach; ?>
-                    </datalist>
-                    <p class="text-[11px] text-gray-500 mt-1">* Mengetik nama baru akan otomatis mendaftarkannya ke sistem Penulis.</p>
+                    </select>
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

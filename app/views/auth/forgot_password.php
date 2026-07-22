@@ -41,19 +41,19 @@
             <?php if(isset($data['error'])): ?>
                 <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg flex items-center gap-3">
                     <i class="fas fa-exclamation-circle text-red-500"></i>
-                    <p class="text-sm text-red-700 font-medium"><?= $data['error'] ?></p>
+                    <p class="text-sm text-red-700 font-medium"><?= esc($data['error']) ?></p>
                 </div>
             <?php endif; ?>
             
             <?php if(isset($data['success'])): ?>
                 <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded-r-lg flex items-center gap-3">
                     <i class="fas fa-check-circle text-green-500"></i>
-                    <p class="text-sm text-green-700 font-medium"><?= $data['success'] ?></p>
+                    <p class="text-sm text-green-700 font-medium"><?= esc($data['success']) ?></p>
                 </div>
             <?php endif; ?>
 
             <form action="<?= BASEURL; ?>/auth/forgot_password" method="POST" class="space-y-6">
-                <div>
+<?= csrf_field() ?><div>
                     <label for="email" class="block text-sm font-bold text-gray-700 mb-2">Alamat Email Terdaftar</label>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-unsoed-blue text-gray-400">
@@ -91,3 +91,4 @@
         </div>
     </div>
 </div>
+<?= csrf_field() ?>

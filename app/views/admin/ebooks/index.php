@@ -55,7 +55,7 @@
         </div>
         <div>
             <p class="text-xs font-semibold text-gray-400 uppercase">E-Book Aktif</p>
-            <h4 class="text-xl font-extrabold text-gray-800"><?= $activeCount ?> Tersedia</h4>
+            <h4 class="text-xl font-extrabold text-gray-800"><?= esc($activeCount) ?> Tersedia</h4>
         </div>
     </div>
     <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-4">
@@ -101,7 +101,7 @@
                 <?php else: foreach($data['ebooks'] as $ebook): ?>
                 <tr class="hover:bg-gray-50/80 transition-colors">
                     <td class="p-4 pl-6 font-bold text-gray-500 text-sm">
-                        #<?= $ebook['id'] ?>
+                        #<?= esc($ebook['id']) ?>
                     </td>
                     <td class="p-4">
                         <div class="flex items-center gap-3.5">
@@ -112,7 +112,7 @@
                                             ? $ebook['cover_image']
                                             : BASEURL . '/uploads/covers/' . $ebook['cover_image'];
                                     ?>
-                                    <img src="<?= $imgSrc ?>" class="w-full h-full object-cover">
+                                    <img src="<?= esc($imgSrc) ?>" class="w-full h-full object-cover">
                                 <?php else: ?>
                                     <div class="w-full h-full bg-unsoed-darkblue text-white flex items-center justify-center text-xs font-bold p-1 text-center">PDF</div>
                                 <?php endif; ?>
@@ -177,10 +177,10 @@
                     </td>
                     <td class="p-4 text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <a href="<?= BASEURL; ?>/admin/edit_ebook/<?= $ebook['id'] ?>" class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition flex items-center justify-center shadow-sm" title="Edit E-Book">
+                            <a href="<?= BASEURL; ?>/admin/edit_ebook/<?= esc($ebook['id']) ?>" class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition flex items-center justify-center shadow-sm" title="Edit E-Book">
                                 <i class="fas fa-edit text-sm"></i>
                             </a>
-                            <a href="<?= BASEURL; ?>/admin/delete_ebook/<?= $ebook['id'] ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus E-Book <?= htmlspecialchars(addslashes($ebook['title'])) ?> ini secara permanen?')" class="w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition flex items-center justify-center shadow-sm" title="Hapus E-Book">
+                            <a href="<?= BASEURL; ?>/admin/delete_ebook/<?= esc($ebook['id']) ?>" onclick="return confirmAction(this.href, 'Hapus E-Book', 'Apakah Anda yakin ingin menghapus E-Book <?= htmlspecialchars(addslashes($ebook['title'])) ?> ini secara permanen?')" class="w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition flex items-center justify-center shadow-sm" title="Hapus E-Book">
                                 <i class="fas fa-trash-alt text-sm"></i>
                             </a>
                         </div>

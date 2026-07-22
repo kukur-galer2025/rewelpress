@@ -8,7 +8,7 @@
                 <span class="hover:text-unsoed-blue transition"><?= $data['buku']['parent_category_name'] ?></span>
                 <span class="mx-2">/</span>
             <?php endif; ?>
-            <a href="<?= BASEURL; ?>/book/category/<?= $data['buku']['category_id'] ?>" class="hover:text-unsoed-blue transition"><?= $data['buku']['category_name'] ?></a>
+            <a href="<?= BASEURL; ?>/book/category/<?= $data['buku']['category_slug'] ?>" class="hover:text-unsoed-blue transition"><?= $data['buku']['category_name'] ?></a>
             <span class="mx-2">/</span>
             <span class="text-gray-800 font-medium truncate"><?= $data['buku']['title'] ?></span>
         </div>
@@ -53,7 +53,19 @@
                         <h1 class="text-3xl md:text-5xl font-serif font-bold text-gray-900 leading-tight mb-4">
                             <?= $data['buku']['title'] ?>
                         </h1>
-                        <p class="text-lg text-gray-600 font-medium">Penulis: <a href="<?= BASEURL; ?>/penulis/detail/<?= urlencode($data['buku']['author']) ?>" class="text-unsoed-blue hover:text-unsoed-yellow hover:underline font-bold transition"><?= htmlspecialchars($data['buku']['author']) ?></a></p>
+                        <p class="text-lg text-gray-600 font-medium flex flex-wrap items-center gap-1">
+                            <span>Penulis:</span> 
+                            <?php 
+                            // Split by semicolon OR comma if semicolon doesn't exist (for backward compatibility)
+                            $delimiter = strpos($data['buku']['author'], ';') !== false ? ';' : (strpos($data['buku']['author'], ', ') !== false ? ',' : ';');
+                            $authors = array_map('trim', explode($delimiter, $data['buku']['author']));
+                            $authorLinks = [];
+                            foreach ($authors as $author) {
+                                $authorLinks[] = '<a href="' . BASEURL . '/penulis/detail/' . urlencode($author) . '" class="text-unsoed-blue hover:text-unsoed-yellow hover:underline font-bold transition">' . htmlspecialchars($author) . '</a>';
+                            }
+                            echo implode('<span class="text-gray-400">,</span> ', $authorLinks);
+                            ?>
+                        </p>
                     </div>
 
                     <div class="mb-8">
@@ -85,33 +97,65 @@
                     </div>
 
                     <!-- Tabs Information -->
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-4 border-l-4 border-unsoed-yellow pl-3">Sinopsis & Spesifikasi</h3>
-                        <p class="text-gray-600 leading-relaxed mb-6">
+                    <div class="mt-8 pt-8 border-t border-gray-200">
+                        <h3 class="text-2xl font-serif font-bold text-gray-900 mb-6 border-l-4 border-unsoed-yellow pl-4">Sinopsis Buku</h3>
+                        <div class="prose prose-blue max-w-none text-gray-600 leading-relaxed mb-10 text-justify">
                             <?php if(!empty($data['buku']['synopsis'])): ?>
                                 <?= nl2br(htmlspecialchars($data['buku']['synopsis'])) ?>
                             <?php else: ?>
-                                Buku <strong><?= $data['buku']['title'] ?></strong> karya <?= $data['buku']['author'] ?> ini merupakan literatur penting di bidang <?= $data['buku']['category_name'] ?>. 
-                                Disusun secara komprehensif berdasarkan riset terbaru, buku ini ditujukan bagi mahasiswa, praktisi, dan akademisi yang ingin memperdalam pengetahuan mereka.
+                                <p>Buku <strong><?= $data['buku']['title'] ?></strong> karya <?= $data['buku']['author'] ?> ini merupakan literatur penting di bidang <?= $data['buku']['category_name'] ?>. Disusun secara komprehensif berdasarkan riset terbaru, buku ini ditujukan bagi mahasiswa, praktisi, dan akademisi yang ingin memperdalam pengetahuan mereka.</p>
                             <?php endif; ?>
-                        </p>
+                        </div>
                         
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 rounded-2xl p-6 border border-gray-100">
-                            <div>
-                                <span class="block text-xs text-gray-500 mb-1">ISBN</span>
-                                <span class="font-semibold text-gray-800 text-sm"><?= !empty($data['buku']['isbn']) ? $data['buku']['isbn'] : '-' ?></span>
+                        <h3 class="text-2xl font-serif font-bold text-gray-900 mb-6 border-l-4 border-unsoed-yellow pl-4">Detail Spesifikasi</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <!-- Left Col -->
+                            <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)] transition-shadow duration-300 space-y-4">
+                                <div class="flex justify-between items-center border-b border-gray-50 pb-3 group">
+                                    <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-book-open text-unsoed-blue/70 w-5"></i> Judul Buku</span>
+                                    <span class="text-gray-900 font-bold text-right ml-4 truncate w-48 group-hover:text-unsoed-blue transition-colors" title="<?= htmlspecialchars($data['buku']['title']) ?>"><?= $data['buku']['title'] ?></span>
+                                </div>
+                                <div class="flex justify-between items-center border-b border-gray-50 pb-3 group">
+                                    <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-user-edit text-unsoed-blue/70 w-5"></i> Penulis</span>
+                                    <span class="text-gray-900 font-bold text-right ml-4 group-hover:text-unsoed-blue transition-colors"><?= $data['buku']['author'] ?></span>
+                                </div>
+                                <div class="flex justify-between items-center border-b border-gray-50 pb-3 group">
+                                    <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-building text-unsoed-blue/70 w-5"></i> Penerbit</span>
+                                    <span class="text-gray-900 font-bold text-right ml-4 group-hover:text-unsoed-blue transition-colors">Unsoed Press</span>
+                                </div>
+                                <div class="flex justify-between items-center pb-1 group">
+                                    <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-calendar-alt text-unsoed-blue/70 w-5"></i> Tahun Terbit</span>
+                                    <span class="text-gray-900 font-bold text-right ml-4 group-hover:text-unsoed-blue transition-colors"><?= !empty($data['buku']['publication_year']) ? $data['buku']['publication_year'] : date('Y', strtotime($data['buku']['created_at'])) ?></span>
+                                </div>
                             </div>
-                            <div>
-                                <span class="block text-xs text-gray-500 mb-1">Tahun Terbit</span>
-                                <span class="font-semibold text-gray-800 text-sm"><?= !empty($data['buku']['publication_year']) ? $data['buku']['publication_year'] : date('Y', strtotime($data['buku']['created_at'])) ?></span>
-                            </div>
-                            <div>
-                                <span class="block text-xs text-gray-500 mb-1">Halaman</span>
-                                <span class="font-semibold text-gray-800 text-sm"><?= !empty($data['buku']['pages']) ? $data['buku']['pages'] . ' Halaman' : '-' ?></span>
-                            </div>
-                            <div>
-                                <span class="block text-xs text-gray-500 mb-1">Berat</span>
-                                <span class="font-semibold text-gray-800 text-sm"><?= !empty($data['buku']['weight']) ? $data['buku']['weight'] . ' Gram' : '-' ?></span>
+                            
+                            <!-- Right Col -->
+                            <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)] transition-shadow duration-300 space-y-4">
+                                <div class="flex justify-between items-center border-b border-gray-50 pb-3 group">
+                                    <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-barcode text-unsoed-blue/70 w-5"></i> ISBN</span>
+                                    <span class="text-gray-900 font-bold text-right ml-4 group-hover:text-unsoed-blue transition-colors"><?= !empty($data['buku']['isbn']) ? $data['buku']['isbn'] : '-' ?></span>
+                                </div>
+                                <div class="flex justify-between items-center border-b border-gray-50 pb-3 group">
+                                    <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-file-alt text-unsoed-blue/70 w-5"></i> Hal & Bahasa</span>
+                                    <span class="text-gray-900 font-bold text-right ml-4 group-hover:text-unsoed-blue transition-colors">
+                                        <?= !empty($data['buku']['pages']) ? $data['buku']['pages'] . ' hal' : '-' ?> 
+                                        <?= !empty($data['buku']['language']) ? ' <span class="text-gray-300">&bull;</span> ' . $data['buku']['language'] : '' ?>
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center border-b border-gray-50 pb-3 group">
+                                    <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-weight-hanging text-unsoed-blue/70 w-5"></i> Dimensi & Berat</span>
+                                    <span class="text-gray-900 font-bold text-right ml-4 group-hover:text-unsoed-blue transition-colors">
+                                        <?= !empty($data['buku']['dimensions']) ? $data['buku']['dimensions'] : '-' ?> 
+                                        <?= !empty($data['buku']['weight']) ? ' <span class="text-gray-300">&bull;</span> ' . $data['buku']['weight'] . ' gr' : '' ?>
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center pb-1 group">
+                                    <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-layer-group text-unsoed-blue/70 w-5"></i> Kover & Edisi</span>
+                                    <span class="text-gray-900 font-bold text-right ml-4 group-hover:text-unsoed-blue transition-colors">
+                                        <?= !empty($data['buku']['cover_type']) ? $data['buku']['cover_type'] : '-' ?> 
+                                        <?= !empty($data['buku']['edition']) ? ' <span class="text-gray-300">&bull;</span> ' . $data['buku']['edition'] : '' ?>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -76,7 +76,7 @@
                 referrerpolicy="no-referrer-when-downgrade">
             </iframe>
         </div>
-        <!-- Banner Alamat Biru Gelap Di Bawah Peta (Persis UGM Press) -->
+        <!-- Banner Alamat Biru Gelap Di Bawah Peta -->
         <div class="bg-[#0f3460] text-white font-semibold text-center py-4 px-6 text-sm tracking-wide rounded-b-2xl shadow-md border-t border-blue-900">
             UNSOED PRESS, Dukuhbandong, Grendeng, Kec. Purwokerto Utara, Kabupaten Banyumas, Jawa Tengah 53125
         </div>

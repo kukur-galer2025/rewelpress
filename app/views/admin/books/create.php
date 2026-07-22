@@ -10,6 +10,7 @@
 
 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
     <form action="<?= BASEURL; ?>/admin/create_book" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <?= csrf_field() ?>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Left Col -->
@@ -21,13 +22,11 @@
                 
                 <div>
                     <label for="author" class="block text-sm font-bold text-gray-700 mb-2">Penulis <span class="text-red-500">*</span></label>
-                    <input type="text" name="author" id="author" list="author_list" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" required placeholder="Pilih dari daftar atau Ketik nama baru">
-                    <datalist id="author_list">
+                    <select name="author[]" id="author" multiple="multiple" class="select2-multiple w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" required>
                         <?php foreach($data['authors'] as $auth): ?>
-                            <option value="<?= htmlspecialchars($auth['name']) ?>"></option>
+                            <option value="<?= htmlspecialchars($auth['name']) ?>"><?= htmlspecialchars($auth['name']) ?></option>
                         <?php endforeach; ?>
-                    </datalist>
-                    <p class="text-[11px] text-gray-500 mt-1">* Mengetik nama baru akan otomatis mendaftarkannya ke sistem Penulis.</p>
+                    </select>
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -114,6 +113,44 @@
                             <span class="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">PROMO</span>
                         </label>
                         <input type="number" name="old_price" id="old_price" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" placeholder="Rp">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="edition" class="block text-sm font-bold text-gray-700 mb-2">Edisi / Cetakan</label>
+                        <input type="text" name="edition" id="edition" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" placeholder="Contoh: Cetak 1">
+                    </div>
+                    <div>
+                        <label for="dimensions" class="block text-sm font-bold text-gray-700 mb-2">Dimensi Fisik</label>
+                        <input type="text" name="dimensions" id="dimensions" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition" placeholder="Contoh: 14 x 21 cm">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label for="cover_type" class="block text-sm font-bold text-gray-700 mb-2">Jenis Kover</label>
+                        <select name="cover_type" id="cover_type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition">
+                            <option value="">-- Pilih Kover --</option>
+                            <option value="Soft Cover">Soft Cover</option>
+                            <option value="Hard Cover">Hard Cover</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="language" class="block text-sm font-bold text-gray-700 mb-2">Bahasa</label>
+                        <select name="language" id="language" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition">
+                            <option value="Bahasa Indonesia">Indonesia</option>
+                            <option value="English">English</option>
+                            <option value="Bilingual">Bilingual</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="status" class="block text-sm font-bold text-gray-700 mb-2">Status</label>
+                        <select name="status" id="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-unsoed-blue focus:border-unsoed-blue outline-none transition">
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                            <option value="archived">Archived</option>
+                        </select>
                     </div>
                 </div>
 

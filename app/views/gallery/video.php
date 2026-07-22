@@ -42,10 +42,10 @@
                         }
                     }
                 ?>
-                <div onclick="openVideoModal('<?= $embedUrl ?>', '<?= htmlspecialchars($video['title'], ENT_QUOTES) ?>')" class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-200 flex flex-col cursor-pointer group transform hover:-translate-y-1.5">
+                <div onclick="openVideoModal('<?= esc($embedUrl) ?>', '<?= htmlspecialchars($video['title'], ENT_QUOTES) ?>')" class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-200 flex flex-col cursor-pointer group transform hover:-translate-y-1.5">
                     <!-- Thumbnail Preview + Play Overlay -->
                     <div class="aspect-video w-full bg-gray-900 relative overflow-hidden">
-                        <img src="<?= $thumbUrl ?>" alt="<?= htmlspecialchars($video['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <img src="<?= esc($thumbUrl) ?>" alt="<?= htmlspecialchars($video['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                         
                         <!-- Dark Gradient Overlay -->
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col items-center justify-center group-hover:bg-black/40 transition-colors duration-300">
@@ -68,7 +68,7 @@
             <?php endforeach; ?>
         </div>
 
-        <!-- Pagination (Persis contoh UGM Press input_file_2.png) -->
+        <!-- Pagination -->
         <div class="mt-12 flex items-center justify-start gap-1.5 text-sm font-semibold">
             <a href="#" class="w-9 h-9 flex items-center justify-center bg-[#0f3460] text-white rounded shadow-sm">1</a>
             <a href="#" class="w-9 h-9 flex items-center justify-center bg-white border border-gray-200 text-gray-800 rounded hover:bg-gray-50 transition">2</a>

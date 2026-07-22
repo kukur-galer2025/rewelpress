@@ -4,8 +4,22 @@ class Ebook extends Controller {
 
     public function index()
     {
+        $keyword = isset($_GET['q']) ? trim($_GET['q']) : '';
+        $author = isset($_GET['author']) ? trim($_GET['author']) : '';
+        $per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        if (!in_array($per_page, [5, 10, 15, 20])) $per_page = 10;
+        $offset = ($page - 1) * $per_page;
+
         $data['judul'] = 'Katalog E-Book & Publikasi Digital - Unsoed Press';
-        $data['ebooks'] = $this->model('EbookModel')->getActiveEbooks();
+        $data['ebooks'] = $this->model('EbookModel')->getFilteredEbooks($keyword, $author, $per_page, $offset);
+        $data['total_ebooks'] = $this->model('EbookModel')->getFilteredEbooksCount($keyword, $author);
+        $data['authors'] = $this->model('EbookModel')->getEbookAuthors();
+        $data['keyword'] = $keyword;
+        $data['active_author'] = $author;
+        $data['per_page'] = $per_page;
+        $data['current_page'] = $page;
+        $data['total_pages'] = ceil($data['total_ebooks'] / $per_page);
 
         $this->view('templates/header', $data);
         $this->view('ebook/index', $data);
@@ -30,6 +44,9 @@ class Ebook extends Controller {
 
         $data['judul'] = $ebook['title'] . ' - E-Book Unsoed Press';
         $data['ebook'] = $ebook;
+
+        // Increment view counter
+        $this->model('EbookModel')->incrementViews($id);
         $data['has_access'] = false;
         $data['user_logged_in'] = isset($_SESSION['user_id']);
         $data['existing_order'] = null;
@@ -344,5 +361,23 @@ class Ebook extends Controller {
             header('Location: ' . BASEURL . '/ebook/detail/' . $id . '?msg=file_not_ready');
             exit;
         }
+    }
+
+    /**
+     * Halaman "E-Book Saya" menampilkan daftar e-book yang sudah dibeli
+     */
+    public function my_ebooks()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASEURL . '/auth/login');
+            exit;
+        }
+
+        $data['judul'] = 'E-Book Saya - Unsoed Press';
+        $data['my_ebooks'] = $this->model('EbookModel')->getUserPurchasedEbooks($_SESSION['user_id']);
+
+        $this->view('templates/header', $data);
+        $this->view('ebook/my_ebooks', $data);
+        $this->view('templates/footer');
     }
 }

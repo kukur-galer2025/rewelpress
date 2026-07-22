@@ -38,7 +38,7 @@ $formattedDate = date('F d, Y', strtotime($data['news']['created_at']));
                 <h4 class="font-bold text-gray-800 text-base mb-2.5">Tanggal Posting</h4>
                 <div class="flex items-center gap-2 text-sm text-gray-500 font-medium">
                     <i class="far fa-calendar-alt text-gray-400"></i>
-                    <span><?= $formattedDate ?></span>
+                    <span><?= esc($formattedDate) ?></span>
                 </div>
             </div>
 
@@ -74,7 +74,7 @@ $formattedDate = date('F d, Y', strtotime($data['news']['created_at']));
             <!-- Cover Image / Banner -->
             <?php if(!empty($mainImageUrl)): ?>
                 <div class="w-full aspect-[16/10] bg-gray-100 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-                    <img src="<?= $mainImageUrl ?>" alt="<?= htmlspecialchars($data['news']['title']) ?>" class="w-full h-full object-cover">
+                    <img src="<?= esc($mainImageUrl) ?>" alt="<?= htmlspecialchars($data['news']['title']) ?>" class="w-full h-full object-cover">
                 </div>
             <?php endif; ?>
 
@@ -87,7 +87,7 @@ $formattedDate = date('F d, Y', strtotime($data['news']['created_at']));
                             prose-img:rounded-lg prose-img:shadow-sm prose-img:border prose-img:border-gray-200
                             prose-strong:text-gray-900 prose-strong:font-bold
                             prose-blockquote:border-l-4 prose-blockquote:border-unsoed-blue prose-blockquote:bg-gray-50 prose-blockquote:py-2.5 prose-blockquote:px-6 prose-blockquote:text-gray-600 prose-blockquote:italic font-sans">
-                    <?= $data['news']['content'] ?>
+                    <?= esc($data['news']['content']) ?>
                 </div>
             </div>
 

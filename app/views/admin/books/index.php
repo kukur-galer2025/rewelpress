@@ -13,21 +13,7 @@
     </div>
 </div>
 
-<?php if(isset($_GET['msg'])): ?>
-    <?php if($_GET['msg'] == 'success_add'): ?>
-        <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded-r-lg">
-            <p class="text-sm text-green-700 font-medium">Buku berhasil ditambahkan!</p>
-        </div>
-    <?php elseif($_GET['msg'] == 'success_edit'): ?>
-        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg">
-            <p class="text-sm text-blue-700 font-medium">Data buku berhasil diperbarui!</p>
-        </div>
-    <?php elseif($_GET['msg'] == 'success_delete'): ?>
-        <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg">
-            <p class="text-sm text-red-700 font-medium">Buku berhasil dihapus!</p>
-        </div>
-    <?php endif; ?>
-<?php endif; ?>
+
 
 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="overflow-x-auto">
@@ -45,16 +31,16 @@
                 <tr class="hover:bg-gray-50 transition-colors">
                     <td class="p-4 pl-6 flex items-center gap-4">
                         <?php $img_src = !empty($buku['image']) ? $buku['image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400'; ?>
-                        <img src="<?= $img_src ?>" alt="<?= $buku['title'] ?>" class="w-12 h-16 object-cover rounded shadow-sm">
+                        <img src="<?= esc($img_src) ?>" alt="<?= esc($buku['title']) ?>" class="w-12 h-16 object-cover rounded shadow-sm">
                         <div>
-                            <p class="font-bold text-gray-800 line-clamp-1"><?= $buku['title'] ?></p>
-                            <p class="text-sm text-gray-500"><?= $buku['author'] ?></p>
+                            <p class="font-bold text-gray-800 line-clamp-1"><?= esc($buku['title']) ?></p>
+                            <p class="text-sm text-gray-500"><?= esc($buku['author']) ?></p>
                         </div>
                     </td>
                     <td class="p-4">
                         <span class="px-3 py-1.5 bg-blue-50 text-unsoed-blue text-xs font-bold rounded-full border border-blue-100/50 inline-block">
                             <?= !empty($buku['parent_category_name']) ? $buku['parent_category_name'] . ' <i class="fas fa-chevron-right text-[10px] mx-1 opacity-50"></i> ' : '' ?>
-                            <?= $buku['category_name'] ?>
+                            <?= esc($buku['category_name']) ?>
                         </span>
                     </td>
                     <td class="p-4">
@@ -63,16 +49,16 @@
                             <?php $disc = round((($buku['old_price'] - $buku['price']) / $buku['old_price']) * 100); ?>
                             <div class="flex items-center gap-1.5 mt-1">
                                 <span class="text-xs text-gray-400 line-through">Rp <?= number_format($buku['old_price'], 0, ',', '.') ?></span>
-                                <span class="bg-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded uppercase tracking-wide">🔥 -<?= $disc ?>% PROMO</span>
+                                <span class="bg-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded uppercase tracking-wide">🔥 -<?= esc($disc) ?>% PROMO</span>
                             </div>
                         <?php endif; ?>
                     </td>
                     <td class="p-4 text-center">
                         <div class="flex justify-center gap-2">
-                            <a href="<?= BASEURL; ?>/admin/edit_book/<?= $buku['id'] ?>" class="w-8 h-8 rounded bg-gray-100 hover:bg-unsoed-yellow hover:text-white flex items-center justify-center text-gray-500 transition" title="Edit">
+                            <a href="<?= BASEURL; ?>/admin/edit_book/<?= esc($buku['id']) ?>" class="w-8 h-8 rounded bg-gray-100 hover:bg-unsoed-yellow hover:text-white flex items-center justify-center text-gray-500 transition" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <a href="<?= BASEURL; ?>/admin/delete_book/<?= $buku['id'] ?>" class="w-8 h-8 rounded bg-gray-100 hover:bg-red-500 hover:text-white flex items-center justify-center text-gray-500 transition" onclick="return confirm('Yakin ingin menghapus buku ini?')" title="Hapus">
+                            <a href="<?= BASEURL; ?>/admin/delete_book/<?= esc($buku['id']) ?>" class="w-8 h-8 rounded bg-gray-100 hover:bg-red-500 hover:text-white flex items-center justify-center text-gray-500 transition" onclick="return confirmAction(this.href, 'Hapus Buku', 'Yakin ingin menghapus buku ini? Data tidak dapat dikembalikan.')" title="Hapus">
                                 <i class="fas fa-trash"></i>
                             </a>
                         </div>

@@ -43,19 +43,19 @@
             <?php if(isset($data['error'])): ?>
                 <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg flex items-center gap-3">
                     <i class="fas fa-exclamation-circle text-red-500"></i>
-                    <p class="text-sm text-red-700 font-medium"><?= $data['error'] ?></p>
+                    <p class="text-sm text-red-700 font-medium"><?= esc($data['error']) ?></p>
                 </div>
             <?php endif; ?>
             
             <?php if(isset($data['success'])): ?>
                 <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded-r-lg flex items-center gap-3">
                     <i class="fas fa-check-circle text-green-500"></i>
-                    <p class="text-sm text-green-700 font-medium"><?= $data['success'] ?></p>
+                    <p class="text-sm text-green-700 font-medium"><?= esc($data['success']) ?></p>
                 </div>
             <?php endif; ?>
 
             <form action="<?= BASEURL; ?>/auth/register" method="POST" class="space-y-5">
-                <div>
+<?= csrf_field() ?><div>
                     <label for="name" class="block text-sm font-bold text-gray-700 mb-2">Nama Lengkap</label>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-unsoed-blue text-gray-400">
@@ -76,12 +76,22 @@
                 </div>
 
                 <div>
+                    <label for="phone" class="block text-sm font-bold text-gray-700 mb-2">Nomor Telepon / WhatsApp</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-unsoed-blue text-gray-400">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <input type="tel" name="phone" id="phone" class="w-full pl-11 pr-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-unsoed-blue/20 focus:border-unsoed-blue transition-all" placeholder="08123456789" required>
+                    </div>
+                </div>
+
+                <div>
                     <label for="password" class="block text-sm font-bold text-gray-700 mb-2">Kata Sandi</label>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-unsoed-blue text-gray-400">
                             <i class="fas fa-lock"></i>
                         </div>
-                        <input type="password" name="password" id="password" class="w-full pl-11 pr-12 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-unsoed-blue/20 focus:border-unsoed-blue transition-all" placeholder="Minimal 6 karakter" minlength="6" required>
+                        <input type="password" name="password" id="password" class="w-full pl-11 pr-12 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-unsoed-blue/20 focus:border-unsoed-blue transition-all" placeholder="Min 8 karakter, huruf besar, angka & simbol" minlength="8" required>
                         <button type="button" onclick="togglePassword('password', 'eye-icon-register')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-unsoed-blue focus:outline-none transition-colors">
                             <i id="eye-icon-register" class="fas fa-eye"></i>
                         </button>
@@ -131,3 +141,4 @@
         </div>
     </div>
 </div>
+<?= csrf_field() ?>

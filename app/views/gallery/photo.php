@@ -24,8 +24,8 @@
                 </a>
                 <?php foreach ($data['albums'] as $album): ?>
                     <?php $isActive = ($data['current_album_id'] == $album['id']); ?>
-                    <a href="<?= BASEURL; ?>/gallery/photo/<?= $album['id'] ?>" class="block px-5 py-3.5 transition <?= $isActive ? 'bg-blue-50/80 text-unsoed-blue font-bold pl-6 border-l-4 border-unsoed-blue' : 'text-gray-600 hover:bg-gray-50 hover:text-unsoed-blue pl-5' ?>">
-                        <?= htmlspecialchars($album['title']) ?> (<?= $album['photo_count'] ?>)
+                    <a href="<?= BASEURL; ?>/gallery/photo/<?= esc($album['id']) ?>" class="block px-5 py-3.5 transition <?= $isActive ? 'bg-blue-50/80 text-unsoed-blue font-bold pl-6 border-l-4 border-unsoed-blue' : 'text-gray-600 hover:bg-gray-50 hover:text-unsoed-blue pl-5' ?>">
+                        <?= htmlspecialchars($album['title']) ?> (<?= esc($album['photo_count']) ?>)
                     </a>
                 <?php endforeach; ?>
             </div>
@@ -41,9 +41,9 @@
             <?php else: ?>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     <?php foreach ($data['photos'] as $photo): ?>
-                        <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group flex flex-col cursor-pointer" onclick="openPhotoModal('<?= $photo['image_url'] ?>', '<?= htmlspecialchars($photo['title'], ENT_QUOTES) ?>')">
+                        <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group flex flex-col cursor-pointer" onclick="openPhotoModal('<?= esc($photo['image_url']) ?>', '<?= htmlspecialchars($photo['title'], ENT_QUOTES) ?>')">
                             <div class="aspect-[4/3] w-full overflow-hidden bg-gray-100 relative">
-                                <img src="<?= $photo['image_url'] ?>" alt="<?= htmlspecialchars($photo['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <img src="<?= esc($photo['image_url']) ?>" alt="<?= htmlspecialchars($photo['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                     <span class="w-10 h-10 rounded-full bg-white/90 text-unsoed-blue flex items-center justify-center shadow-md">
                                         <i class="fas fa-search-plus"></i>
@@ -59,7 +59,7 @@
                     <?php endforeach; ?>
                 </div>
 
-                <!-- Pagination (Persis contoh UGM Press) -->
+                <!-- Pagination -->
                 <div class="mt-12 flex items-center justify-start gap-1.5 text-sm font-semibold">
                     <span class="w-9 h-9 flex items-center justify-center bg-[#0f3460] text-white rounded shadow-sm">1</span>
                     <a href="#" class="w-9 h-9 flex items-center justify-center bg-white border border-gray-200 text-gray-600 rounded hover:bg-gray-50 transition">2</a>

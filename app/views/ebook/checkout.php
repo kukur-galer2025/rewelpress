@@ -21,7 +21,7 @@
                 
                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-200 flex flex-col sm:flex-row gap-6 items-start">
                     <?php $cover = !empty($ebook['cover_image']) ? BASEURL . '/assets/uploads/covers/' . $ebook['cover_image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400'; ?>
-                    <img src="<?= $cover ?>" alt="<?= htmlspecialchars($ebook['title']) ?>" class="w-28 sm:w-36 rounded-2xl shadow-lg object-cover aspect-[3/4] flex-shrink-0 mx-auto sm:mx-0">
+                    <img src="<?= esc($cover) ?>" alt="<?= htmlspecialchars($ebook['title']) ?>" class="w-28 sm:w-36 rounded-2xl shadow-lg object-cover aspect-[3/4] flex-shrink-0 mx-auto sm:mx-0">
                     
                     <div class="flex-1">
                         <span class="inline-block px-2.5 py-0.5 bg-blue-50 text-unsoed-blue font-bold text-[11px] rounded-md mb-2 border border-blue-100 uppercase">
@@ -57,14 +57,14 @@
                                 <span class="font-mono font-bold text-sm text-green-900"><?= htmlspecialchars($data['applied_voucher']['code']) ?></span>
                                 <p class="text-xs text-green-700 font-semibold mt-0.5">Hemat Rp <?= number_format($data['applied_voucher']['discount_amount'], 0, ',', '.') ?></p>
                             </div>
-                            <a href="<?= BASEURL; ?>/ebook/remove_voucher_checkout/<?= $ebook['id'] ?>" class="p-2 text-red-500 hover:bg-red-100 rounded-xl transition font-bold text-xs" title="Hapus Voucher">
+                            <a href="<?= BASEURL; ?>/ebook/remove_voucher_checkout/<?= esc($ebook['id']) ?>" class="p-2 text-red-500 hover:bg-red-100 rounded-xl transition font-bold text-xs" title="Hapus Voucher">
                                 <i class="fas fa-times text-base"></i>
                             </a>
                         </div>
                     <?php else: ?>
                         <!-- Form Input Voucher -->
-                        <form action="<?= BASEURL; ?>/ebook/apply_voucher_checkout/<?= $ebook['id'] ?>" method="POST" class="flex gap-2 mb-4">
-                            <input type="text" name="voucher_code" placeholder="Ketik kode promo..." 
+                        <form action="<?= BASEURL; ?>/ebook/apply_voucher_checkout/<?= esc($ebook['id']) ?>" method="POST" class="flex gap-2 mb-4">
+<?= csrf_field() ?><input type="text" name="voucher_code" placeholder="Ketik kode promo..." 
                                    class="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:border-unsoed-blue text-xs font-mono font-bold uppercase text-gray-800">
                             <button type="submit" class="bg-unsoed-blue hover:bg-blue-800 text-white px-5 py-3 rounded-xl font-bold text-xs shadow transition">
                                 Pakai
@@ -83,8 +83,8 @@
                                                 <p class="text-[11px] font-bold text-gray-800 truncate mt-1"><?= htmlspecialchars($av['title']) ?></p>
                                                 <p class="text-[10px] text-gray-500">Min. Belanja: Rp <?= number_format($av['min_purchase'], 0, ',', '.') ?></p>
                                             </div>
-                                            <form action="<?= BASEURL; ?>/ebook/apply_voucher_checkout/<?= $ebook['id'] ?>" method="POST">
-                                                <input type="hidden" name="voucher_code" value="<?= htmlspecialchars($av['code']) ?>">
+                                            <form action="<?= BASEURL; ?>/ebook/apply_voucher_checkout/<?= esc($ebook['id']) ?>" method="POST">
+<?= csrf_field() ?><input type="hidden" name="voucher_code" value="<?= htmlspecialchars($av['code']) ?>">
                                                 <button type="submit" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-extrabold rounded-lg shadow-sm transition whitespace-nowrap">
                                                     Klaim
                                                 </button>
@@ -134,8 +134,8 @@
                         </div>
                     </div>
 
-                    <form action="<?= BASEURL; ?>/ebook/order_ebook/<?= $ebook['id'] ?>" method="POST">
-                        <button type="submit" class="w-full bg-unsoed-blue hover:bg-blue-800 text-white font-bold py-4 px-6 rounded-2xl shadow-lg hover:shadow-xl transition flex items-center justify-center gap-2 text-sm">
+                    <form action="<?= BASEURL; ?>/ebook/order_ebook/<?= esc($ebook['id']) ?>" method="POST">
+<?= csrf_field() ?><button type="submit" class="w-full bg-unsoed-blue hover:bg-blue-800 text-white font-bold py-4 px-6 rounded-2xl shadow-lg hover:shadow-xl transition flex items-center justify-center gap-2 text-sm">
                             <span>Buat Pesanan & Bayar</span>
                             <i class="fas fa-arrow-right"></i>
                         </button>
@@ -151,3 +151,4 @@
 
     </div>
 </section>
+<?= csrf_field() ?>

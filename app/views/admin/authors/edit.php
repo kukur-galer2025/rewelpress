@@ -9,8 +9,8 @@
         </div>
     </div>
 
-    <form action="<?= BASEURL; ?>/admin/edit_author/<?= $data['author']['id'] ?>" method="POST" enctype="multipart/form-data" class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
-        <input type="hidden" name="old_photo" value="<?= htmlspecialchars($data['author']['photo'] ?? '') ?>">
+    <form action="<?= BASEURL; ?>/admin/edit_author/<?= esc($data['author']['id']) ?>" method="POST" enctype="multipart/form-data" class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+<?= csrf_field() ?><input type="hidden" name="old_photo" value="<?= htmlspecialchars($data['author']['photo'] ?? '') ?>">
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Upload Foto Col -->
@@ -22,7 +22,7 @@
                             <i class="fas fa-user-circle text-6xl text-gray-300 mb-3 group-hover:text-unsoed-blue transition-colors"></i>
                             <p class="text-sm text-gray-600 font-medium">Klik untuk ganti foto</p>
                         </div>
-                        <img id="photo_preview" src="<?= $data['author']['photo'] ?>" class="absolute inset-0 w-full h-full object-cover">
+                        <img id="photo_preview" src="<?= esc($data['author']['photo']) ?>" class="absolute inset-0 w-full h-full object-cover">
                     <?php else: ?>
                         <div id="upload_placeholder">
                             <i class="fas fa-user-circle text-6xl text-gray-300 mb-3 group-hover:text-unsoed-blue transition-colors"></i>
@@ -96,3 +96,4 @@ function previewPhotoUrl(url) {
     }
 }
 </script>
+<?= csrf_field() ?>

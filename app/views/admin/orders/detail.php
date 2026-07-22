@@ -1,10 +1,10 @@
 <div class="mb-8 flex items-center justify-between">
     <div>
-        <h1 class="text-3xl font-bold text-gray-800">Detail Pesanan #<?= $data['order']['id'] ?></h1>
+        <h1 class="text-3xl font-bold text-gray-800">Detail Pesanan #<?= esc($data['order']['id']) ?></h1>
         <p class="text-gray-500 mt-1">Informasi pelanggan, item, dan bukti pembayaran.</p>
     </div>
     <div class="flex items-center gap-3">
-        <a href="<?= BASEURL; ?>/admin/resend_invoice/<?= $data['order']['id'] ?>" class="bg-unsoed-yellow text-white px-4 py-2 rounded-lg font-bold shadow hover:bg-yellow-600 transition flex items-center gap-2 text-sm" onclick="return confirm('Kirim ulang email invoice ke pelanggan ini?')">
+        <a href="<?= BASEURL; ?>/admin/resend_invoice/<?= esc($data['order']['id']) ?>" class="bg-unsoed-yellow text-white px-4 py-2 rounded-lg font-bold shadow hover:bg-yellow-600 transition flex items-center gap-2 text-sm" onclick="return confirmAction(this.href, 'Kirim Invoice', 'Kirim ulang email invoice ke pelanggan ini?', 'info')">
             <i class="fas fa-envelope"></i> Kirim Invoice
         </a>
         <a href="<?= BASEURL; ?>/admin/orders" class="text-gray-500 hover:text-unsoed-blue transition font-semibold flex items-center gap-2">
@@ -20,8 +20,8 @@
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-wrap gap-12">
             <div>
                 <p class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Pelanggan</p>
-                <p class="font-bold text-gray-800"><?= $data['order']['user_name'] ?></p>
-                <p class="text-sm text-gray-500"><?= $data['order']['email'] ?></p>
+                <p class="font-bold text-gray-800"><?= esc($data['order']['user_name']) ?></p>
+                <p class="text-sm text-gray-500"><?= esc($data['order']['email']) ?></p>
             </div>
             <div>
                 <p class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Tanggal Pesanan</p>
@@ -72,11 +72,11 @@
                     <tr>
                         <td class="p-4 pl-6 flex items-center gap-4">
                             <?php $img_src = !empty($item['image']) ? $item['image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400'; ?>
-                            <img src="<?= $img_src ?>" class="w-10 h-14 object-cover rounded shadow-sm">
-                            <span class="font-semibold text-gray-800 line-clamp-1"><?= $item['title'] ?></span>
+                            <img src="<?= esc($img_src) ?>" class="w-10 h-14 object-cover rounded shadow-sm">
+                            <span class="font-semibold text-gray-800 line-clamp-1"><?= esc($item['title']) ?></span>
                         </td>
                         <td class="p-4 text-center text-sm text-gray-600">Rp <?= number_format($item['price'], 0, ',', '.') ?></td>
-                        <td class="p-4 text-center font-bold text-gray-800"><?= $item['quantity'] ?></td>
+                        <td class="p-4 text-center font-bold text-gray-800"><?= esc($item['quantity']) ?></td>
                         <td class="p-4 text-right pr-6 font-bold text-unsoed-blue">Rp <?= number_format($item['price'] * $item['quantity'], 0, ',', '.') ?></td>
                     </tr>
                     <?php endforeach; ?>
@@ -96,16 +96,16 @@
             
             <?php if(!empty($data['order']['payment_receipt'])): ?>
                 <div class="border rounded-xl p-2 mb-6 bg-gray-50 text-center">
-                    <img src="<?= $data['order']['payment_receipt'] ?>" alt="Bukti Transfer" class="max-w-full h-auto max-h-96 mx-auto rounded shadow-sm cursor-pointer" onclick="window.open(this.src)">
+                    <img src="<?= esc($data['order']['payment_receipt']) ?>" alt="Bukti Transfer" class="max-w-full h-auto max-h-96 mx-auto rounded shadow-sm cursor-pointer" onclick="window.open(this.src)">
                     <p class="text-xs text-gray-400 mt-2">Klik gambar untuk memperbesar</p>
                 </div>
                 
                 <?php if($data['order']['status'] == 'paid'): ?>
                     <div class="flex flex-col gap-3">
-                        <a href="<?= BASEURL; ?>/admin/update_order/<?= $data['order']['id'] ?>/confirmed" class="bg-green-500 text-white text-center py-3 rounded-xl font-bold shadow-lg shadow-green-500/30 hover:bg-green-600 transition" onclick="return confirm('Konfirmasi bahwa uang telah diterima dan pesanan valid?')">
+                        <a href="<?= BASEURL; ?>/admin/update_order/<?= esc($data['order']['id']) ?>/confirmed" class="bg-green-500 text-white text-center py-3 rounded-xl font-bold shadow-lg shadow-green-500/30 hover:bg-green-600 transition" onclick="return confirmAction(this.href, 'Konfirmasi Pesanan', 'Konfirmasi bahwa uang telah diterima dan pesanan valid?', 'warning')">
                             <i class="fas fa-check-circle mr-2"></i> Konfirmasi Pesanan
                         </a>
-                        <a href="<?= BASEURL; ?>/admin/update_order/<?= $data['order']['id'] ?>/rejected" class="bg-red-50 text-red-500 border border-red-200 text-center py-3 rounded-xl font-bold hover:bg-red-500 hover:text-white transition" onclick="return confirm('Tolak pesanan ini karena bukti palsu/tidak valid?')">
+                        <a href="<?= BASEURL; ?>/admin/update_order/<?= esc($data['order']['id']) ?>/rejected" class="bg-red-50 text-red-500 border border-red-200 text-center py-3 rounded-xl font-bold hover:bg-red-500 hover:text-white transition" onclick="return confirmAction(this.href, 'Tolak Pesanan', 'Tolak pesanan ini karena bukti palsu/tidak valid?')">
                             <i class="fas fa-times-circle mr-2"></i> Tolak Bukti Bayar
                         </a>
                     </div>

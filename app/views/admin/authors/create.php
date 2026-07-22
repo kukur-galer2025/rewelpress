@@ -10,7 +10,7 @@
     </div>
 
     <form action="<?= BASEURL; ?>/admin/create_author" method="POST" enctype="multipart/form-data" class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<?= csrf_field() ?><div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Upload Foto Col -->
             <div class="md:col-span-1">
                 <label class="block text-sm font-bold text-gray-700 mb-2">Foto Profil Penulis</label>
@@ -86,3 +86,4 @@ function previewPhotoUrl(url) {
     }
 }
 </script>
+<?= csrf_field() ?>

@@ -34,6 +34,18 @@ class CategoryModel {
         return $this->db->single();
     }
 
+    public function getCategoryByIdOrSlug($identifier)
+    {
+        if (is_numeric($identifier)) {
+            $this->db->query('SELECT * FROM ' . $this->table . ' WHERE id = :id');
+            $this->db->bind(':id', $identifier);
+        } else {
+            $this->db->query('SELECT * FROM ' . $this->table . ' WHERE slug = :slug');
+            $this->db->bind(':slug', $identifier);
+        }
+        return $this->db->single();
+    }
+
     public function addCategory($data)
     {
         $query = "INSERT INTO categories (name, slug, parent_id) VALUES (:name, :slug, :parent_id)";
@@ -71,7 +83,7 @@ class CategoryModel {
 
     public function deleteCategory($id)
     {
-        // Check if there are books using this category
+        // Check if there are physical books using this category
         $this->db->query('SELECT count(*) as count FROM books WHERE category_id = :id');
         $this->db->bind(':id', $id);
         $result = $this->db->single();
@@ -80,12 +92,30 @@ class CategoryModel {
             return -1; // Specific code for "has books"
         }
 
+        // Check if there are ebooks using this category
+        $this->db->query('SELECT count(*) as count FROM ebooks WHERE category_id = :id');
+        $this->db->bind(':id', $id);
+        $resultEbook = $this->db->single();
+
+        if($resultEbook['count'] > 0) {
+            return -1; 
+        }
+
         // Check if it's a parent category that has child categories with books
         $this->db->query('SELECT count(*) as count FROM books JOIN categories ON books.category_id = categories.id WHERE categories.parent_id = :id');
         $this->db->bind(':id', $id);
         $childResult = $this->db->single();
 
         if($childResult['count'] > 0) {
+            return -1;
+        }
+
+        // Check if it's a parent category that has child categories with ebooks
+        $this->db->query('SELECT count(*) as count FROM ebooks JOIN categories ON ebooks.category_id = categories.id WHERE categories.parent_id = :id');
+        $this->db->bind(':id', $id);
+        $childResultEbook = $this->db->single();
+
+        if($childResultEbook['count'] > 0) {
             return -1;
         }
 
@@ -115,7 +145,7 @@ class CategoryModel {
             }
         }
 
-        // Urutkan kategori utama sesuai standar UGM Press
+        // Urutkan kategori utama sesuai standar Unsoed Press
         $customOrder = [
             'Sosial & Humaniora' => 1,
             'Sains & Teknologi' => 2,

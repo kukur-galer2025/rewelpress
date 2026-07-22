@@ -15,12 +15,12 @@
         </div>
         <div>
             <h3 class="font-bold text-lg">Edit Pengguna: <?= htmlspecialchars($data['user']['name']) ?></h3>
-            <p class="text-xs text-gray-300">ID Akun: #<?= $data['user']['id'] ?> | Terdaftar pada <?= date('d M Y', strtotime($data['user']['created_at'])) ?></p>
+            <p class="text-xs text-gray-300">ID Akun: #<?= esc($data['user']['id']) ?> | Terdaftar pada <?= date('d M Y', strtotime($data['user']['created_at'])) ?></p>
         </div>
     </div>
 
     <form action="<?= BASEURL; ?>/admin/update_user" method="POST" class="p-8 space-y-6">
-        <input type="hidden" name="id" value="<?= $data['user']['id'] ?>">
+<?= csrf_field() ?><input type="hidden" name="id" value="<?= esc($data['user']['id']) ?>">
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -82,3 +82,4 @@
         </div>
     </form>
 </div>
+<?= csrf_field() ?>

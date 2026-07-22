@@ -10,26 +10,7 @@
         </a>
     </div>
 
-    <!-- Alerts -->
-    <?php if(isset($_GET['msg'])): ?>
-        <?php if($_GET['msg'] == 'success_add'): ?>
-            <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded-r-xl">
-                <p class="text-sm text-green-700 font-bold"><i class="fas fa-check-circle mr-2"></i> Kategori berhasil ditambahkan!</p>
-            </div>
-        <?php elseif($_GET['msg'] == 'success_edit'): ?>
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-xl">
-                <p class="text-sm text-blue-700 font-bold"><i class="fas fa-check-circle mr-2"></i> Kategori berhasil diperbarui!</p>
-            </div>
-        <?php elseif($_GET['msg'] == 'success_delete'): ?>
-            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-xl">
-                <p class="text-sm text-red-700 font-bold"><i class="fas fa-check-circle mr-2"></i> Kategori berhasil dihapus!</p>
-            </div>
-        <?php elseif($_GET['msg'] == 'error_has_books'): ?>
-            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-xl">
-                <p class="text-sm text-red-700 font-bold"><i class="fas fa-exclamation-circle mr-2"></i> Kategori gagal dihapus karena masih ada buku yang terhubung!</p>
-            </div>
-        <?php endif; ?>
-    <?php endif; ?>
+    <!-- Alerts handled globally via Toast -->
 
     <!-- Info Super Sale / Promo -->
     <div class="bg-gradient-to-r from-red-50 to-orange-50 border border-red-100 rounded-2xl p-5 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -68,15 +49,15 @@
                                     <i class="fas fa-folder"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-gray-800 text-lg"><?= $cat['name'] ?></h4>
-                                    <span class="text-xs text-gray-500 font-medium font-mono"><?= $cat['slug'] ?></span>
+                                    <h4 class="font-bold text-gray-800 text-lg"><?= esc($cat['name']) ?></h4>
+                                    <span class="text-xs text-gray-500 font-medium font-mono"><?= esc($cat['slug']) ?></span>
                                 </div>
                             </div>
                             <div class="flex gap-2 w-full md:w-auto justify-end">
-                                <a href="<?= BASEURL; ?>/admin/edit_category/<?= $cat['id'] ?>" class="px-3 py-1.5 bg-blue-50 text-unsoed-blue text-sm rounded-lg hover:bg-unsoed-blue hover:text-white transition-colors">
+                                <a href="<?= BASEURL; ?>/admin/edit_category/<?= esc($cat['id']) ?>" class="px-3 py-1.5 bg-blue-50 text-unsoed-blue text-sm rounded-lg hover:bg-unsoed-blue hover:text-white transition-colors">
                                     <i class="fas fa-edit mr-1"></i> Edit
                                 </a>
-                                <a href="<?= BASEURL; ?>/admin/delete_category/<?= $cat['id'] ?>" onclick="return confirm('Yakin ingin menghapus kategori ini dan seluruh subkategorinya?');" class="px-3 py-1.5 bg-red-50 text-red-500 text-sm rounded-lg hover:bg-red-500 hover:text-white transition-colors">
+                                <a href="<?= BASEURL; ?>/admin/delete_category/<?= esc($cat['id']) ?>" onclick="return confirmAction(this.href, 'Hapus Kategori', 'Yakin ingin menghapus kategori ini dan seluruh subkategorinya?');" class="px-3 py-1.5 bg-red-50 text-red-500 text-sm rounded-lg hover:bg-red-500 hover:text-white transition-colors">
                                     <i class="fas fa-trash-alt mr-1"></i> Hapus
                                 </a>
                             </div>
@@ -98,13 +79,13 @@
                                                 <i class="fas fa-tag"></i>
                                             </div>
                                             <div>
-                                                <h5 class="font-bold text-gray-700"><?= $child['name'] ?></h5>
-                                                <span class="text-[10px] text-gray-400 font-mono"><?= $child['slug'] ?></span>
+                                                <h5 class="font-bold text-gray-700"><?= esc($child['name']) ?></h5>
+                                                <span class="text-[10px] text-gray-400 font-mono"><?= esc($child['slug']) ?></span>
                                             </div>
                                         </div>
                                         <div class="flex gap-2">
-                                            <a href="<?= BASEURL; ?>/admin/edit_category/<?= $child['id'] ?>" class="text-xs text-gray-400 hover:text-unsoed-blue transition-colors px-2 py-1"><i class="fas fa-edit"></i></a>
-                                            <a href="<?= BASEURL; ?>/admin/delete_category/<?= $child['id'] ?>" onclick="return confirm('Yakin?');" class="text-xs text-gray-400 hover:text-red-500 transition-colors px-2 py-1"><i class="fas fa-trash"></i></a>
+                                            <a href="<?= BASEURL; ?>/admin/edit_category/<?= esc($child['id']) ?>" class="text-xs text-gray-400 hover:text-unsoed-blue transition-colors px-2 py-1"><i class="fas fa-edit"></i></a>
+                                            <a href="<?= BASEURL; ?>/admin/delete_category/<?= esc($child['id']) ?>" onclick="return confirmAction(this.href, 'Hapus Sub-Kategori', 'Yakin ingin menghapus sub-kategori ini?');" class="text-xs text-gray-400 hover:text-red-500 transition-colors px-2 py-1"><i class="fas fa-trash"></i></a>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>

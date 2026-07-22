@@ -14,8 +14,7 @@
     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden max-w-3xl">
         <div class="p-6 md:p-8">
             <form action="<?= BASEURL; ?>/admin/create_category" method="POST" class="space-y-6">
-                
-                <div>
+<?= csrf_field() ?><div>
                     <label for="name" class="block text-sm font-bold text-gray-700 mb-2">Nama Kategori <span class="text-red-500">*</span></label>
                     <input type="text" name="name" id="name" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue transition-all" required placeholder="Contoh: Sosial & Humaniora">
                     <p class="text-xs text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i> Slug akan di-generate otomatis dari nama kategori.</p>
@@ -41,7 +40,7 @@
                         <option value="">-- Pilih Induk Kategori --</option>
                         <?php foreach($data['parent_categories'] as $parent): ?>
                             <?php if(is_null($parent['parent_id'])): ?>
-                                <option value="<?= $parent['id'] ?>"><?= $parent['name'] ?></option>
+                                <option value="<?= esc($parent['id']) ?>"><?= esc($parent['name']) ?></option>
                             <?php endif; ?>
                         <?php endforeach; ?>
                     </select>
@@ -74,3 +73,4 @@
         </div>
     </div>
 </div>
+<?= csrf_field() ?>

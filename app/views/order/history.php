@@ -79,7 +79,7 @@
                                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-100 pb-4 mb-5 gap-4">
                                     <div class="flex items-center gap-3">
                                         <span class="bg-blue-50 text-unsoed-blue text-xs font-mono font-bold px-3 py-1 rounded-lg border border-blue-100">
-                                            #EBO-<?= $eo['id'] ?>
+                                            #EBO-<?= esc($eo['id']) ?>
                                         </span>
                                         <span class="text-xs text-gray-400">
                                             <i class="far fa-calendar-alt mr-1"></i> <?= date('d M Y, H:i', strtotime($eo['created_at'])) ?>
@@ -110,11 +110,11 @@
                                 <div class="flex flex-col md:flex-row gap-6 items-center md:items-start justify-between">
                                     <div class="flex gap-4 items-center md:items-start w-full md:w-auto">
                                         <div class="w-16 h-20 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0 shadow-sm relative">
-                                            <img src="<?= $coverSrc ?>" alt="Cover" class="w-full h-full object-cover">
+                                            <img src="<?= esc($coverSrc) ?>" alt="Cover" class="w-full h-full object-cover">
                                             <div class="absolute bottom-0 inset-x-0 bg-red-600 text-white text-[8px] font-extrabold text-center py-0.5 uppercase">PDF</div>
                                         </div>
                                         <div>
-                                            <a href="<?= BASEURL ?>/ebook/detail/<?= $eo['ebook_id'] ?>" class="text-base md:text-lg font-bold text-gray-800 hover:text-unsoed-blue transition line-clamp-1">
+                                            <a href="<?= BASEURL ?>/ebook/detail/<?= esc($eo['ebook_id']) ?>" class="text-base md:text-lg font-bold text-gray-800 hover:text-unsoed-blue transition line-clamp-1">
                                                 <?= htmlspecialchars($eo['ebook_title']) ?>
                                             </a>
                                             <p class="text-xs text-gray-500 mt-1 flex items-center gap-3">
@@ -123,7 +123,7 @@
                                                     <span>• <?= htmlspecialchars($eo['file_size']) ?></span>
                                                 <?php endif; ?>
                                                 <?php if(!empty($eo['page_count'])): ?>
-                                                    <span>• <?= $eo['page_count'] ?> Halaman</span>
+                                                    <span>• <?= esc($eo['page_count']) ?> Halaman</span>
                                                 <?php endif; ?>
                                             </p>
 
@@ -146,12 +146,12 @@
                                         <div class="flex items-center gap-2.5 w-full sm:w-auto">
                                             <?php if($eo['status'] == 'confirmed'): ?>
                                                 <!-- TOMBOL UNDUH E-BOOK (UTAMA Sesuai Permintaan User) -->
-                                                <a href="<?= BASEURL ?>/ebook/download/<?= $eo['ebook_id'] ?>"
+                                                <a href="<?= BASEURL ?>/ebook/download/<?= esc($eo['ebook_id']) ?>"
                                                    class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm whitespace-nowrap">
                                                     <i class="fas fa-cloud-download-alt text-lg"></i> Unduh File E-Book
                                                 </a>
                                             <?php elseif($eo['status'] == 'pending'): ?>
-                                                <a href="<?= BASEURL ?>/ebook/pay/<?= $eo['id'] ?>"
+                                                <a href="<?= BASEURL ?>/ebook/pay/<?= esc($eo['id']) ?>"
                                                    class="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm whitespace-nowrap">
                                                     <i class="fas fa-credit-card"></i> Bayar Sekarang
                                                 </a>
@@ -161,7 +161,7 @@
                                                 </div>
                                             <?php endif; ?>
 
-                                            <a href="<?= BASEURL ?>/ebook/detail/<?= $eo['ebook_id'] ?>" title="Lihat Detail E-Book"
+                                            <a href="<?= BASEURL ?>/ebook/detail/<?= esc($eo['ebook_id']) ?>" title="Lihat Detail E-Book"
                                                class="p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl transition flex items-center justify-center">
                                                 <i class="fas fa-external-link-alt text-sm"></i>
                                             </a>
@@ -197,7 +197,7 @@
                                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-100 pb-4 mb-4 gap-4">
                                     <div class="flex items-center gap-3">
                                         <span class="bg-gray-100 text-gray-700 text-xs font-mono font-bold px-3 py-1 rounded-lg border border-gray-200">
-                                            Pesanan #<?= $order['id'] ?>
+                                            Pesanan #<?= esc($order['id']) ?>
                                         </span>
                                         <span class="text-xs text-gray-400">
                                             <i class="far fa-calendar-alt mr-1"></i> <?= date('d M Y, H:i', strtotime($order['created_at'])) ?>
@@ -248,7 +248,7 @@
                                     </div>
                                     
                                     <?php if($order['status'] == 'pending'): ?>
-                                        <a href="<?= BASEURL; ?>/order/pay/<?= $order['id'] ?>" class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-md transition text-sm flex items-center gap-2">
+                                        <a href="<?= BASEURL; ?>/order/pay/<?= esc($order['id']) ?>" class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-md transition text-sm flex items-center gap-2">
                                             <i class="fas fa-credit-card"></i> Bayar Sekarang
                                         </a>
                                     <?php elseif($order['status'] == 'paid'): ?>

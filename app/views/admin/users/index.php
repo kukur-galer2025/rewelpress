@@ -70,7 +70,7 @@
                 <?php else: foreach($data['users'] as $user): ?>
                 <tr class="hover:bg-gray-50/80 transition-colors">
                     <td class="p-4 pl-6 font-bold text-gray-500 text-sm">
-                        #<?= $user['id'] ?>
+                        #<?= esc($user['id']) ?>
                     </td>
                     <td class="p-4">
                         <div class="flex items-center gap-3.5">
@@ -116,11 +116,11 @@
                     </td>
                     <td class="p-4 text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <a href="<?= BASEURL; ?>/admin/edit_user/<?= $user['id'] ?>" class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition flex items-center justify-center shadow-sm" title="Edit Data Pengguna">
+                            <a href="<?= BASEURL; ?>/admin/edit_user/<?= esc($user['id']) ?>" class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition flex items-center justify-center shadow-sm" title="Edit Data Pengguna">
                                 <i class="fas fa-edit text-sm"></i>
                             </a>
                             <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != $user['id']): ?>
-                            <a href="<?= BASEURL; ?>/admin/delete_user/<?= $user['id'] ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus akun pengguna <?= htmlspecialchars(addslashes($user['name'])) ?> secara permanen?')" class="w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition flex items-center justify-center shadow-sm" title="Hapus Pengguna">
+                            <a href="<?= BASEURL; ?>/admin/delete_user/<?= esc($user['id']) ?>" onclick="return confirmAction(this.href, 'Hapus Pengguna', 'Apakah Anda yakin ingin menghapus akun pengguna <?= htmlspecialchars(addslashes($user['name'])) ?> secara permanen?')" class="w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition flex items-center justify-center shadow-sm" title="Hapus Pengguna">
                                 <i class="fas fa-trash-alt text-sm"></i>
                             </a>
                             <?php else: ?>

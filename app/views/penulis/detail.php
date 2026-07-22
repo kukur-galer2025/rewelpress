@@ -21,7 +21,7 @@
                 <h3 class="text-xl font-serif font-bold text-gray-800 mb-4 pb-2 border-b-2 border-gray-200 inline-block">Photograph</h3>
                 <div class="w-full aspect-[3/4] bg-gray-100 overflow-hidden rounded-xl shadow-md border border-gray-200 relative group">
                     <?php $photo = !empty($data['author']['photo']) ? $data['author']['photo'] : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&h=400&q=80'; ?>
-                    <img src="<?= $photo ?>" alt="<?= htmlspecialchars($data['author']['name']) ?>" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500">
+                    <img src="<?= esc($photo) ?>" alt="<?= htmlspecialchars($data['author']['name']) ?>" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500">
                 </div>
             </div>
 
@@ -32,13 +32,13 @@
                     <?php $page_url = urlencode(BASEURL . '/penulis/detail/' . ($data['author']['id'] ? $data['author']['id'] : urlencode($data['author']['name']))); ?>
                     <?php $share_text = urlencode('Profil Tokoh Penulis: ' . $data['author']['name'] . ' - Unsoed Press'); ?>
                     
-                    <a href="https://api.whatsapp.com/send?text=<?= $share_text ?>%20<?= $page_url ?>" target="_blank" class="w-10 h-10 rounded-full bg-[#25D366] text-white flex items-center justify-center text-lg hover:scale-110 hover:shadow-lg transition-all" title="Bagikan ke WhatsApp">
+                    <a href="https://api.whatsapp.com/send?text=<?= esc($share_text) ?>%20<?= esc($page_url) ?>" target="_blank" class="w-10 h-10 rounded-full bg-[#25D366] text-white flex items-center justify-center text-lg hover:scale-110 hover:shadow-lg transition-all" title="Bagikan ke WhatsApp">
                         <i class="fab fa-whatsapp"></i>
                     </a>
-                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?= $page_url ?>" target="_blank" class="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center text-lg hover:scale-110 hover:shadow-lg transition-all" title="Bagikan ke Facebook">
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?= esc($page_url) ?>" target="_blank" class="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center text-lg hover:scale-110 hover:shadow-lg transition-all" title="Bagikan ke Facebook">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a href="https://twitter.com/intent/tweet?url=<?= $page_url ?>&text=<?= $share_text ?>" target="_blank" class="w-10 h-10 rounded-full bg-[#1DA1F2] text-white flex items-center justify-center text-lg hover:scale-110 hover:shadow-lg transition-all" title="Bagikan ke Twitter">
+                    <a href="https://twitter.com/intent/tweet?url=<?= esc($page_url) ?>&text=<?= esc($share_text) ?>" target="_blank" class="w-10 h-10 rounded-full bg-[#1DA1F2] text-white flex items-center justify-center text-lg hover:scale-110 hover:shadow-lg transition-all" title="Bagikan ke Twitter">
                         <i class="fab fa-twitter"></i>
                     </a>
                     <button onclick="copyToClipboard(window.location.href)" class="w-10 h-10 rounded-full bg-gray-600 text-white flex items-center justify-center text-lg hover:bg-unsoed-blue hover:scale-110 hover:shadow-lg transition-all" title="Salin Tautan">
@@ -96,19 +96,19 @@
                 <?php else: ?>
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
                         <?php foreach($data['books'] as $buku): ?>
-                            <a href="<?= BASEURL; ?>/book/detail/<?= $buku['id'] ?>" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col group border border-gray-100 relative">
+                            <a href="<?= BASEURL; ?>/book/detail/<?= esc($buku['slug']) ?>" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col group border border-gray-100 relative">
                                 <?php if($buku['old_price'] > $buku['price']): ?>
                                     <?php $disc = round((($buku['old_price'] - $buku['price']) / $buku['old_price']) * 100); ?>
                                     <div class="absolute top-2 right-2 z-20">
                                         <span class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow-md">
-                                            -<?= $disc ?>%
+                                            -<?= esc($disc) ?>%
                                         </span>
                                     </div>
                                 <?php endif; ?>
 
                                 <div class="relative w-full pt-[140%] bg-gray-100 overflow-hidden">
                                     <?php $img_src = !empty($buku['image']) ? $buku['image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400'; ?>
-                                    <img src="<?= $img_src ?>" alt="<?= htmlspecialchars($buku['title']) ?>" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                    <img src="<?= esc($img_src) ?>" alt="<?= htmlspecialchars($buku['title']) ?>" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                                 </div>
 
                                 <div class="p-4 flex-1 flex flex-col justify-between">

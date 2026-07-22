@@ -19,9 +19,9 @@
         'error'          => ['bg-red-50 border-red-300 text-red-800',       'Terjadi kesalahan saat menyimpan data.'],
     ];
     if(isset($msgs[$m])): [$cls, $text] = $msgs[$m]; ?>
-    <div class="mb-6 border p-4 rounded-2xl flex items-center gap-3 <?= $cls ?>">
+    <div class="mb-6 border p-4 rounded-2xl flex items-center gap-3 <?= esc($cls) ?>">
         <i class="fas fa-check-circle text-lg"></i>
-        <span class="text-sm font-bold"><?= $text ?></span>
+        <span class="text-sm font-bold"><?= esc($text) ?></span>
     </div>
     <?php endif; ?>
 <?php endif; ?>
@@ -91,7 +91,7 @@
                         <?php if($v['quota'] > 0): ?>
                             <?php $pct = min(100, round(($v['used_count'] / $v['quota']) * 100)); ?>
                             <div class="w-20 bg-gray-200 h-1.5 rounded-full mt-1 overflow-hidden">
-                                <div class="bg-unsoed-blue h-full" style="width: <?= $pct ?>%;"></div>
+                                <div class="bg-unsoed-blue h-full" style="width: <?= esc($pct) ?>%;"></div>
                             </div>
                         <?php endif; ?>
                     </td>
@@ -120,10 +120,10 @@
                     </td>
 
                     <td class="py-4 px-6 text-right space-x-2 whitespace-nowrap">
-                        <a href="<?= BASEURL; ?>/admin/edit_voucher/<?= $v['id'] ?>" class="p-2 bg-blue-50 text-unsoed-blue hover:bg-blue-100 rounded-xl transition inline-block font-semibold text-xs">
+                        <a href="<?= BASEURL; ?>/admin/edit_voucher/<?= esc($v['id']) ?>" class="p-2 bg-blue-50 text-unsoed-blue hover:bg-blue-100 rounded-xl transition inline-block font-semibold text-xs">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <a href="<?= BASEURL; ?>/admin/delete_voucher/<?= $v['id'] ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus voucher ini?')" class="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl transition inline-block font-semibold text-xs">
+                        <a href="<?= BASEURL; ?>/admin/delete_voucher/<?= esc($v['id']) ?>" onclick="return confirmAction(this.href, 'Hapus Voucher', 'Apakah Anda yakin ingin menghapus voucher ini?')" class="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl transition inline-block font-semibold text-xs">
                             <i class="fas fa-trash"></i>
                         </a>
                     </td>

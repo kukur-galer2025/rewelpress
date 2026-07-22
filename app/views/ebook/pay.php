@@ -9,12 +9,12 @@ $isPaid   = in_array($order['status'], ['paid', 'confirmed', 'rejected']);
     <div class="absolute inset-0 bg-gradient-to-r from-unsoed-darkblue to-unsoed-blue"></div>
     <div class="container mx-auto px-4 max-w-[900px] relative z-10">
         <div class="flex items-center gap-3 mb-2">
-            <a href="<?= BASEURL ?>/ebook/detail/<?= $order['ebook_id'] ?>" class="text-white/60 hover:text-white text-sm transition flex items-center gap-1">
+            <a href="<?= BASEURL ?>/ebook/detail/<?= esc($order['ebook_id']) ?>" class="text-white/60 hover:text-white text-sm transition flex items-center gap-1">
                 <i class="fas fa-arrow-left text-xs"></i> Kembali
             </a>
         </div>
         <h1 class="text-3xl font-serif font-bold text-white">Pembayaran E-Book</h1>
-        <p class="text-gray-300 text-sm mt-1">Pesanan #EBO-<?= $order['id'] ?> · <?= htmlspecialchars($order['ebook_title']) ?></p>
+        <p class="text-gray-300 text-sm mt-1">Pesanan #EBO-<?= esc($order['id']) ?> · <?= htmlspecialchars($order['ebook_title']) ?></p>
     </div>
 </div>
 
@@ -53,8 +53,8 @@ $isPaid   = in_array($order['status'], ['paid', 'confirmed', 'rejected']);
             ];
             [$statusCls, $statusIcon, $statusLabel] = $statusMap[$order['status']] ?? $statusMap['pending'];
             ?>
-            <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-extrabold uppercase tracking-wider <?= $statusCls ?>">
-                <i class="<?= $statusIcon ?>"></i> <?= $statusLabel ?>
+            <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-extrabold uppercase tracking-wider <?= esc($statusCls) ?>">
+                <i class="<?= esc($statusIcon) ?>"></i> <?= esc($statusLabel) ?>
             </span>
         </div>
 
@@ -91,11 +91,11 @@ $isPaid   = in_array($order['status'], ['paid', 'confirmed', 'rejected']);
                             <?php if(!empty($order['voucher_code'])): ?>
                                 <div class="flex items-center justify-between bg-green-50 px-3 py-2 rounded-xl border border-green-200 text-xs font-bold text-green-800">
                                     <span>Voucher aktif: <?= htmlspecialchars($order['voucher_code']) ?> (-Rp <?= number_format($order['discount_amount'], 0, ',', '.') ?>)</span>
-                                    <a href="<?= BASEURL ?>/ebook/remove_voucher_pay/<?= $order['id'] ?>" class="text-red-500 hover:text-red-700 font-bold text-sm" title="Hapus"><i class="fas fa-times"></i></a>
+                                    <a href="<?= BASEURL ?>/ebook/remove_voucher_pay/<?= esc($order['id']) ?>" class="text-red-500 hover:text-red-700 font-bold text-sm" title="Hapus"><i class="fas fa-times"></i></a>
                                 </div>
                             <?php else: ?>
-                                <form action="<?= BASEURL ?>/ebook/apply_voucher_pay/<?= $order['id'] ?>" method="POST" class="flex gap-2">
-                                    <input type="text" name="voucher_code" placeholder="Ketik kode promo..." 
+                                <form action="<?= BASEURL ?>/ebook/apply_voucher_pay/<?= esc($order['id']) ?>" method="POST" class="flex gap-2">
+<?= csrf_field() ?><input type="text" name="voucher_code" placeholder="Ketik kode promo..." 
                                            class="flex-1 px-3 py-2 rounded-xl border border-gray-300 focus:border-unsoed-blue text-xs font-mono font-bold uppercase">
                                     <button type="submit" class="bg-unsoed-blue hover:bg-blue-800 text-white px-4 py-2 rounded-xl font-bold text-xs shadow transition">Pakai</button>
                                 </form>
@@ -108,8 +108,8 @@ $isPaid   = in_array($order['status'], ['paid', 'confirmed', 'rejected']);
                                                     <span class="font-mono font-extrabold text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded text-[10px]"><?= htmlspecialchars($av['code']) ?></span>
                                                     <span class="text-gray-700 text-[11px] font-semibold ml-1"><?= htmlspecialchars($av['title']) ?></span>
                                                 </div>
-                                                <form action="<?= BASEURL ?>/ebook/apply_voucher_pay/<?= $order['id'] ?>" method="POST">
-                                                    <input type="hidden" name="voucher_code" value="<?= htmlspecialchars($av['code']) ?>">
+                                                <form action="<?= BASEURL ?>/ebook/apply_voucher_pay/<?= esc($order['id']) ?>" method="POST">
+<?= csrf_field() ?><input type="hidden" name="voucher_code" value="<?= htmlspecialchars($av['code']) ?>">
                                                     <button type="submit" class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-bold rounded-lg transition">Pakai</button>
                                                 </form>
                                             </div>
@@ -128,7 +128,7 @@ $isPaid   = in_array($order['status'], ['paid', 'confirmed', 'rejected']);
                                 <i class="fas fa-qrcode text-unsoed-yellow text-xl"></i> QRIS
                             </div>
                             <?php if(!empty($settings['qris_image'])): ?>
-                                <img src="<?= $settings['qris_image'] ?>" alt="QRIS" class="w-full max-w-[180px] mx-auto rounded-xl shadow-sm border">
+                                <img src="<?= esc($settings['qris_image']) ?>" alt="QRIS" class="w-full max-w-[180px] mx-auto rounded-xl shadow-sm border">
                             <?php else: ?>
                                 <p class="text-sm text-gray-400 text-center py-4">QRIS belum tersedia. Hubungi admin.</p>
                             <?php endif; ?>
@@ -154,7 +154,7 @@ $isPaid   = in_array($order['status'], ['paid', 'confirmed', 'rejected']);
                             </div>
                             <h3 class="text-xl font-bold text-gray-800 mb-2">Pembayaran Terverifikasi!</h3>
                             <p class="text-gray-500 text-sm mb-6">E-Book Anda sudah siap untuk diunduh. Selamat membaca!</p>
-                            <a href="<?= BASEURL ?>/ebook/download/<?= $order['ebook_id'] ?>"
+                            <a href="<?= BASEURL ?>/ebook/download/<?= esc($order['ebook_id']) ?>"
                                class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold rounded-2xl shadow-lg hover:from-green-700 hover:to-teal-700 transition text-sm">
                                 <i class="fas fa-cloud-download-alt text-lg"></i> Unduh E-Book Sekarang
                             </a>
@@ -197,9 +197,8 @@ $isPaid   = in_array($order['status'], ['paid', 'confirmed', 'rejected']);
                         <h3 class="text-xl font-bold text-gray-800 mb-3">Unggah Bukti Pembayaran</h3>
                         <p class="text-sm text-gray-500 mb-5">Setelah transfer, unggah foto/screenshot bukti transfer Anda. Admin akan memverifikasi dalam 1×24 jam.</p>
 
-                        <form action="<?= BASEURL ?>/ebook/pay/<?= $order['id'] ?>" method="POST" enctype="multipart/form-data" class="space-y-5">
-
-                            <!-- Drop zone -->
+                        <form action="<?= BASEURL ?>/ebook/pay/<?= esc($order['id']) ?>" method="POST" enctype="multipart/form-data" class="space-y-5">
+<?= csrf_field() ?><!-- Drop zone -->
                             <div class="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:bg-gray-50 hover:border-unsoed-blue transition cursor-pointer relative"
                                  id="dropzone" onclick="document.getElementById('receipt').click()">
                                 <i class="fas fa-file-invoice-dollar text-5xl text-gray-300 mb-3" id="dropzoneIcon"></i>
@@ -253,3 +252,4 @@ function previewFile(input) {
     }
 }
 </script>
+<?= csrf_field() ?>

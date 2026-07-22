@@ -37,9 +37,33 @@ class BookModel {
         return $this->db->resultSet();
     }
 
-    public function getPromoBooks()
+    public function getPromoBooks($keyword = '', $author = '')
     {
-        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id WHERE books.old_price > books.price ORDER BY (books.old_price - books.price) DESC, books.created_at DESC');
+        $sql = "
+            SELECT books.*, categories.name as category_name, parent.name as parent_category_name 
+            FROM " . $this->table . " 
+            JOIN categories ON books.category_id = categories.id 
+            LEFT JOIN categories parent ON categories.parent_id = parent.id 
+            WHERE books.old_price > books.price
+        ";
+        if (!empty($keyword)) {
+            $sql .= " AND (books.title LIKE :keyword OR books.author LIKE :keyword2 OR books.isbn LIKE :keyword3)";
+        }
+        if (!empty($author)) {
+            $sql .= " AND books.author = :author";
+        }
+        $sql .= " ORDER BY (books.old_price - books.price) DESC, books.created_at DESC";
+
+        $this->db->query($sql);
+        if (!empty($keyword)) {
+            $kw = '%' . $keyword . '%';
+            $this->db->bind(':keyword', $kw);
+            $this->db->bind(':keyword2', $kw);
+            $this->db->bind(':keyword3', $kw);
+        }
+        if (!empty($author)) {
+            $this->db->bind(':author', $author);
+        }
         return $this->db->resultSet();
     }
 
@@ -47,6 +71,19 @@ class BookModel {
     {
         $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id WHERE books.id = :id');
         $this->db->bind(':id', $id);
+        return $this->db->single();
+    }
+
+    public function getBookByIdOrSlug($identifier)
+    {
+        // Check if numeric, assume ID, otherwise Slug
+        if (is_numeric($identifier)) {
+            $this->db->query('SELECT books.*, categories.name as category_name, categories.slug as category_slug, parent.name as parent_category_name FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id WHERE books.id = :id');
+            $this->db->bind(':id', $identifier);
+        } else {
+            $this->db->query('SELECT books.*, categories.name as category_name, categories.slug as category_slug, parent.name as parent_category_name FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id WHERE books.slug = :slug');
+            $this->db->bind(':slug', $identifier);
+        }
         return $this->db->single();
     }
 
@@ -88,7 +125,7 @@ class BookModel {
     public function getBooksByAuthorName($author_name)
     {
         $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id WHERE books.author LIKE :author_name ORDER BY books.created_at DESC');
-        $this->db->bind(':author_name', "%$author_name%");
+        $this->db->bind(':author_name', '%' . $author_name . '%');
         return $this->db->resultSet();
     }
 
@@ -176,5 +213,89 @@ class BookModel {
         $this->db->bind(':id', $id);
         $this->db->execute();
         return $this->db->rowCount();
+    }
+
+    public function getFilteredBooks($keyword = '', $author = '', $category_id = null, $limit = 10, $offset = 0)
+    {
+        $sql = "
+            SELECT books.*, 
+                   categories.name as category_name, 
+                   parent.name as parent_category_name 
+            FROM books 
+            JOIN categories ON books.category_id = categories.id 
+            LEFT JOIN categories parent ON categories.parent_id = parent.id 
+            WHERE 1=1
+        ";
+        if (!empty($keyword)) {
+            $sql .= " AND (books.title LIKE :keyword OR books.author LIKE :keyword2 OR books.isbn LIKE :keyword3)";
+        }
+        if (!empty($author)) {
+            $sql .= " AND books.author = :author";
+        }
+        if (!empty($category_id)) {
+            $sql .= " AND (books.category_id = :cat_id OR categories.parent_id = :cat_parent_id)";
+        }
+        $sql .= " ORDER BY books.created_at DESC LIMIT :limit OFFSET :offset";
+
+        $this->db->query($sql);
+        if (!empty($keyword)) {
+            $kw = '%' . $keyword . '%';
+            $this->db->bind(':keyword', $kw);
+            $this->db->bind(':keyword2', $kw);
+            $this->db->bind(':keyword3', $kw);
+        }
+        if (!empty($author)) {
+            $this->db->bind(':author', $author);
+        }
+        if (!empty($category_id)) {
+            $this->db->bind(':cat_id', (int)$category_id);
+            $this->db->bind(':cat_parent_id', (int)$category_id);
+        }
+        $this->db->bind(':limit', (int)$limit);
+        $this->db->bind(':offset', (int)$offset);
+        return $this->db->resultSet();
+    }
+
+    public function getFilteredBooksCount($keyword = '', $author = '', $category_id = null)
+    {
+        $sql = "
+            SELECT COUNT(*) as total
+            FROM books 
+            JOIN categories ON books.category_id = categories.id 
+            LEFT JOIN categories parent ON categories.parent_id = parent.id 
+            WHERE 1=1
+        ";
+        if (!empty($keyword)) {
+            $sql .= " AND (books.title LIKE :keyword OR books.author LIKE :keyword2 OR books.isbn LIKE :keyword3)";
+        }
+        if (!empty($author)) {
+            $sql .= " AND books.author = :author";
+        }
+        if (!empty($category_id)) {
+            $sql .= " AND (books.category_id = :cat_id OR categories.parent_id = :cat_parent_id)";
+        }
+
+        $this->db->query($sql);
+        if (!empty($keyword)) {
+            $kw = '%' . $keyword . '%';
+            $this->db->bind(':keyword', $kw);
+            $this->db->bind(':keyword2', $kw);
+            $this->db->bind(':keyword3', $kw);
+        }
+        if (!empty($author)) {
+            $this->db->bind(':author', $author);
+        }
+        if (!empty($category_id)) {
+            $this->db->bind(':cat_id', (int)$category_id);
+            $this->db->bind(':cat_parent_id', (int)$category_id);
+        }
+        $result = $this->db->single();
+        return $result['total'] ?? 0;
+    }
+
+    public function getBookAuthors()
+    {
+        $this->db->query("SELECT DISTINCT author FROM books WHERE author IS NOT NULL AND author != '' ORDER BY author ASC");
+        return $this->db->resultSet();
     }
 }

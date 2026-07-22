@@ -74,17 +74,17 @@ if (!function_exists('renderBookCard')) {
                 <div class="relative z-20 container mx-auto px-4 h-full flex items-center">
                     <div class="max-w-2xl text-white transform translate-y-8">
                         <span class="inline-block py-1 px-3 rounded-full bg-unsoed-yellow/20 border border-unsoed-yellow/50 text-unsoed-yellow text-sm font-semibold tracking-wider mb-4">UNIVERSITAS JENDERAL SOEDIRMAN</span>
-                        <h1 class="text-5xl md:text-7xl font-serif font-bold leading-tight mb-6 text-gradient drop-shadow-lg">
+                        <h1 class="text-4xl md:text-5xl lg:text-7xl font-serif font-bold leading-tight mb-6 text-gradient drop-shadow-lg">
                             Membangun Peradaban Lewat Tulisan
                         </h1>
                         <p class="text-lg md:text-xl text-gray-200 mb-10 font-light leading-relaxed">
                             Temukan ribuan karya akademis, hasil penelitian, dan referensi berstandar nasional untuk mendukung ekosistem pendidikan.
                         </p>
-                        <div class="flex gap-4">
-                            <a href="<?= BASEURL; ?>/book" class="btn-primary">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="<?= BASEURL; ?>/book" class="btn-primary text-center">
                                 Jelajahi Katalog <i class="fas fa-arrow-right ml-2"></i>
                             </a>
-                            <a href="#" class="px-6 py-3 rounded-full font-semibold text-white border border-white/30 hover:bg-white/10 transition-all duration-300 glass-dark">
+                            <a href="#" class="px-6 py-3 rounded-full font-semibold text-white border border-white/30 hover:bg-white/10 transition-all duration-300 glass-dark text-center">
                                 Cara Menerbitkan
                             </a>
                         </div>
@@ -99,13 +99,13 @@ if (!function_exists('renderBookCard')) {
                 <div class="relative z-20 container mx-auto px-4 h-full flex items-center justify-end text-right">
                     <div class="max-w-2xl text-white">
                         <span class="inline-block py-1 px-3 rounded-full bg-white/20 border border-white/50 text-white text-sm font-semibold tracking-wider mb-4">LAYANAN PUBLIKASI</span>
-                        <h1 class="text-5xl md:text-7xl font-serif font-bold leading-tight mb-6 drop-shadow-lg">
+                        <h1 class="text-4xl md:text-5xl lg:text-7xl font-serif font-bold leading-tight mb-6 drop-shadow-lg">
                             Wujudkan Naskah Anda Menjadi <span class="text-unsoed-yellow">Buku Berkualitas</span>
                         </h1>
                         <p class="text-lg md:text-xl text-gray-200 mb-10 font-light leading-relaxed">
                             Kami memfasilitasi penerbitan buku ber-ISBN dengan proses yang profesional, cepat, dan standar mutu tinggi.
                         </p>
-                        <a href="#" class="btn-primary inline-block">
+                        <a href="#" class="btn-primary inline-block text-center w-full sm:w-auto">
                             Kirim Naskah Sekarang <i class="fas fa-paper-plane ml-2"></i>
                         </a>
                     </div>
@@ -181,7 +181,7 @@ if (!function_exists('renderBookCard')) {
             </div>
             <a href="<?= BASEURL; ?>/book" class="text-xs text-unsoed-blue hover:text-unsoed-yellow transition-colors font-semibold bg-unsoed-blue/5 hover:bg-unsoed-blue/10 px-3 py-1.5 rounded-full">Lihat semua</a>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-10">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-10">
             <?php foreach ($buku_terbaru as $buku) { renderBookCard($buku); } ?>
         </div>
     </section>
@@ -195,7 +195,7 @@ if (!function_exists('renderBookCard')) {
             </div>
             <a href="<?= BASEURL; ?>/book" class="text-xs text-unsoed-blue hover:text-unsoed-yellow transition-colors font-semibold bg-unsoed-blue/5 hover:bg-unsoed-blue/10 px-3 py-1.5 rounded-full">Lihat semua</a>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-10">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-10">
             <?php foreach ($buku_terpopuler as $buku) { renderBookCard($buku); } ?>
         </div>
     </section>
@@ -209,7 +209,7 @@ if (!function_exists('renderBookCard')) {
             </div>
             <a href="<?= BASEURL; ?>/book" class="text-xs text-unsoed-blue hover:text-unsoed-yellow transition-colors font-semibold bg-unsoed-blue/5 hover:bg-unsoed-blue/10 px-3 py-1.5 rounded-full">Lihat semua</a>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-10">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-10">
             <?php foreach ($buku_terlaris as $buku) { renderBookCard($buku); } ?>
         </div>
     </section>
@@ -223,7 +223,7 @@ if (!function_exists('renderBookCard')) {
             </div>
             <a href="<?= BASEURL; ?>/ebook" class="text-xs text-unsoed-blue hover:text-unsoed-yellow transition-colors font-semibold bg-unsoed-blue/5 hover:bg-unsoed-blue/10 px-3 py-1.5 rounded-full">Lihat semua</a>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-10">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-10">
             <?php 
             $latest_ebooks = !empty($data['latest_ebooks']) ? $data['latest_ebooks'] : [];
             if(empty($latest_ebooks)): ?>

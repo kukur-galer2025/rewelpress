@@ -88,15 +88,18 @@
         </div>
 
         <!-- Filter Bar -->
-        <form action="<?= BASEURL; ?>/ebook" method="GET" id="filterEbookForm" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col md:flex-row items-center gap-3 md:gap-4">
-            <div class="flex-1 relative w-full">
+        <form action="<?= BASEURL; ?>/ebook" method="GET" id="filterEbookForm" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 items-center">
+            
+            <!-- Pencarian -->
+            <div class="md:col-span-5 lg:col-span-6 relative w-full">
                 <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" name="q" value="<?= htmlspecialchars($data['keyword'] ?? '') ?>" placeholder="Cari judul e-book..." class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue outline-none text-sm transition-all">
+                <input type="text" name="q" value="<?= htmlspecialchars($data['keyword'] ?? '') ?>" placeholder="Cari judul e-book..." class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue outline-none text-sm transition-all min-w-0">
             </div>
             
-            <div class="w-full md:w-48 relative">
+            <!-- Penulis -->
+            <div class="md:col-span-4 lg:col-span-3 relative w-full">
                 <i class="fas fa-user-edit absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <select name="author" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue outline-none text-sm transition-all appearance-none cursor-pointer">
+                <select name="author" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue outline-none text-sm transition-all appearance-none cursor-pointer min-w-0 text-ellipsis">
                     <option value="">Semua Penulis</option>
                     <?php foreach($data['authors'] as $auth): ?>
                         <option value="<?= htmlspecialchars($auth['author']) ?>" <?= ($data['active_author'] ?? '') == $auth['author'] ? 'selected' : '' ?>>
@@ -107,19 +110,26 @@
                 <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 pointer-events-none"></i>
             </div>
             
-            <div class="w-full md:w-auto flex items-center gap-2">
-                <span class="text-xs text-gray-500 font-bold uppercase tracking-wider hidden md:block">Tampil:</span>
-                <select name="per_page" class="w-full md:w-auto px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue outline-none text-sm transition-all appearance-none cursor-pointer">
-                    <option value="5" <?= ($data['per_page'] == 5) ? 'selected' : '' ?>>5</option>
-                    <option value="10" <?= ($data['per_page'] == 10) ? 'selected' : '' ?>>10</option>
-                    <option value="15" <?= ($data['per_page'] == 15) ? 'selected' : '' ?>>15</option>
-                    <option value="20" <?= ($data['per_page'] == 20) ? 'selected' : '' ?>>20</option>
-                </select>
+            <!-- Tampil -->
+            <div class="md:col-span-3 lg:col-span-3 flex flex-col md:flex-row items-stretch md:items-center gap-3">
+                <div class="flex-1 flex items-center gap-2">
+                    <span class="text-xs text-gray-500 font-bold uppercase tracking-wider hidden lg:block">Tampil:</span>
+                    <div class="relative flex-1">
+                        <select name="per_page" class="w-full pl-4 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue outline-none text-sm transition-all appearance-none cursor-pointer">
+                            <option value="5" <?= ($data['per_page'] == 5) ? 'selected' : '' ?>>5</option>
+                            <option value="10" <?= ($data['per_page'] == 10) ? 'selected' : '' ?>>10</option>
+                            <option value="15" <?= ($data['per_page'] == 15) ? 'selected' : '' ?>>15</option>
+                            <option value="20" <?= ($data['per_page'] == 20) ? 'selected' : '' ?>>20</option>
+                        </select>
+                        <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 pointer-events-none"></i>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full md:w-auto bg-unsoed-blue text-white px-5 py-2.5 rounded-xl font-bold shadow-sm hover:bg-blue-800 transition flex items-center justify-center gap-2 flex-shrink-0">
+                    <i class="fas fa-filter hidden md:block lg:hidden"></i>
+                    <span class="md:hidden lg:block">Terapkan</span>
+                </button>
             </div>
-            
-            <button type="submit" class="w-full md:w-auto bg-unsoed-blue text-white px-6 py-2.5 rounded-xl font-bold shadow-sm hover:bg-blue-800 transition">
-                Terapkan
-            </button>
         </form>
 
         <?php if(empty($koleksiList)): ?>

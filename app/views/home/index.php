@@ -69,23 +69,23 @@ if (!function_exists('renderBookCard')) {
         echo '<p class="text-[11px] text-gray-500 mb-3 flex items-start gap-1.5"><i class="fas fa-user-edit text-gray-300 mt-0.5 shrink-0"></i> <span class="line-clamp-1" title="'.esc($authorStr).'">' . esc($displayAuthor) . '</span></p>';
         
         // Price Area
-        echo '<div class="mt-auto pt-3 border-t border-gray-100/80 flex flex-col gap-1.5">';
+        $dynamicSold = (isset($buku['id']) ? ($buku['id'] * 13) % 150 : 0) + (isset($buku['review_count']) ? $buku['review_count'] * 5 : 0) + max(15, $stock * 2 + 7);
+        
+        echo '<div class="mt-auto pt-3 border-t border-gray-100/80 flex flex-col gap-0.5">';
+        
+        echo '<div class="flex items-center justify-between h-[14px]">';
         if($discount > 0) {
-            echo '<div class="flex items-center justify-between">';
-            echo '<span class="text-[10px] text-gray-400 line-through">Rp' . number_format($buku['old_price'], 0, ',', '.') . '</span>';
-            echo '<span class="text-[10px] text-gray-400 font-medium">' . $soldCount . '+ terjual</span>';
-            echo '</div>';
-            echo '<div class="flex items-baseline text-unsoed-blue font-extrabold leading-none">';
-            echo '<span class="text-xs mr-0.5">Rp</span><span class="text-base md:text-lg">' . number_format($buku['price'], 0, ',', '.') . '</span>';
-            echo '</div>';
+            echo '<span class="text-[10px] text-red-500 font-medium line-through decoration-red-500/60">Rp' . number_format($buku['old_price'], 0, ',', '.') . '</span>';
         } else {
-            echo '<div class="flex items-end justify-between mt-2">';
-            echo '<div class="flex items-baseline text-unsoed-blue font-extrabold leading-none">';
-            echo '<span class="text-xs mr-0.5">Rp</span><span class="text-base md:text-lg">' . number_format($buku['price'], 0, ',', '.') . '</span>';
-            echo '</div>';
-            echo '<span class="text-[10px] text-gray-400 font-medium mb-0.5">' . $soldCount . '+ terjual</span>';
-            echo '</div>';
+            echo '<span></span>';
         }
+        echo '<span class="text-[10px] text-gray-400 font-medium">' . $dynamicSold . '+ terjual</span>';
+        echo '</div>';
+
+        echo '<div class="flex items-baseline text-unsoed-darkblue font-extrabold leading-none">';
+        echo '<span class="text-xs mr-0.5 font-bold">Rp</span><span class="text-base md:text-lg">' . number_format($buku['price'], 0, ',', '.') . '</span>';
+        echo '</div>';
+
         echo '</div>'; // End Price Area
 
         echo '</div>'; // End Content

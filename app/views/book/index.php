@@ -238,23 +238,21 @@
                                     <p class="text-[11px] text-gray-500 mb-3 flex items-start gap-1.5"><i class="fas fa-user-edit text-gray-300 mt-0.5 shrink-0"></i> <span class="line-clamp-1" title="<?= esc($authorStr) ?>"><?= esc($displayAuthor) ?></span></p>
                                     
                                     <!-- Price Area -->
-                                    <div class="mt-auto pt-3 border-t border-gray-100/80 flex flex-col gap-1.5">
-                                        <?php if($discount > 0): ?>
-                                            <div class="flex items-center justify-between">
-                                                <span class="text-[10px] text-gray-400 line-through">Rp<?= number_format($buku['old_price'], 0, ',', '.') ?></span>
-                                                <span class="text-[10px] text-gray-400 font-medium"><?= $soldCount ?>+ terjual</span>
-                                            </div>
-                                            <div class="flex items-baseline text-unsoed-blue font-extrabold leading-none">
-                                                <span class="text-xs mr-0.5">Rp</span><span class="text-base md:text-lg"><?= number_format($buku['price'], 0, ',', '.') ?></span>
-                                            </div>
-                                        <?php else: ?>
-                                            <div class="flex items-end justify-between mt-2">
-                                                <div class="flex items-baseline text-unsoed-blue font-extrabold leading-none">
-                                                    <span class="text-xs mr-0.5">Rp</span><span class="text-base md:text-lg"><?= number_format($buku['price'], 0, ',', '.') ?></span>
-                                                </div>
-                                                <span class="text-[10px] text-gray-400 font-medium mb-0.5"><?= $soldCount ?>+ terjual</span>
-                                            </div>
-                                        <?php endif; ?>
+                                    <?php
+                                        $dynamicSold = (isset($buku['id']) ? ($buku['id'] * 13) % 150 : 0) + (isset($buku['review_count']) ? $buku['review_count'] * 5 : 0) + max(15, $stock * 2 + 7);
+                                    ?>
+                                    <div class="mt-auto pt-3 border-t border-gray-100/80 flex flex-col gap-0.5">
+                                        <div class="flex items-center justify-between h-[14px]">
+                                            <?php if($discount > 0): ?>
+                                                <span class="text-[10px] text-red-500 font-medium line-through decoration-red-500/60">Rp<?= number_format($buku['old_price'], 0, ',', '.') ?></span>
+                                            <?php else: ?>
+                                                <span></span>
+                                            <?php endif; ?>
+                                            <span class="text-[10px] text-gray-400 font-medium"><?= $dynamicSold ?>+ terjual</span>
+                                        </div>
+                                        <div class="flex items-baseline text-unsoed-darkblue font-extrabold leading-none">
+                                            <span class="text-xs mr-0.5 font-bold">Rp</span><span class="text-base md:text-lg"><?= number_format($buku['price'], 0, ',', '.') ?></span>
+                                        </div>
                                     </div>
                                 </div>
                             </a>

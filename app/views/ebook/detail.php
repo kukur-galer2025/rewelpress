@@ -48,47 +48,59 @@ if (!empty($e['cover_image'])) {
 
         <!-- Kolom Kiri: Cover + Spesifikasi -->
         <div class="md:col-span-1 flex flex-col gap-5">
-            <div class="rounded-3xl overflow-hidden shadow-2xl border border-gray-200 aspect-[3/4] bg-gray-100 relative">
-                <img src="<?= esc($coverSrc) ?>" alt="<?= htmlspecialchars($e['title']) ?>" class="w-full h-full object-cover">
+            <div class="rounded-3xl overflow-hidden shadow-2xl border border-gray-200 aspect-[3/4] bg-gray-100 relative group cursor-pointer">
+                <img src="<?= esc($coverSrc) ?>" alt="<?= htmlspecialchars($e['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <?php if($isFree): ?>
-                    <div class="absolute top-4 left-4 bg-green-500 text-white text-xs font-extrabold px-3 py-1 rounded-full shadow uppercase">
-                        <i class="fas fa-gift mr-1"></i> Gratis
+                    <div class="absolute top-4 left-4 z-10 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-extrabold px-4 py-1.5 rounded-full shadow-lg uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fas fa-gift"></i> Gratis
                     </div>
                 <?php else: ?>
-                    <div class="absolute top-4 left-4 bg-unsoed-blue text-white text-xs font-extrabold px-3 py-1 rounded-full shadow uppercase">
-                        <i class="fas fa-file-pdf mr-1"></i> PDF E-Book
+                    <div class="absolute top-4 left-4 z-10 bg-gradient-to-r from-unsoed-blue to-blue-600 text-white text-xs font-extrabold px-4 py-1.5 rounded-full shadow-lg uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fas fa-file-pdf"></i> PDF E-Book
                     </div>
                 <?php endif; ?>
+                
+                <!-- Quick Look Button on Hover -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none">
+                    <?php if(!empty($e['preview_pdf'])): ?>
+                    <span class="bg-white/90 backdrop-blur-sm text-unsoed-darkblue font-bold px-5 py-2.5 rounded-full shadow-2xl flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 pointer-events-auto">
+                        <i class="fas fa-book-open text-unsoed-yellow"></i> Lihat Sampel
+                    </span>
+                    <?php endif; ?>
+                </div>
             </div>
 
             <!-- Spesifikasi File -->
-            <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm space-y-3">
-                <h4 class="font-bold text-gray-700 text-xs uppercase tracking-wider border-b border-gray-100 pb-2">Spesifikasi File</h4>
-                <div class="space-y-2.5 text-sm">
-                    <div class="flex items-center justify-between">
+            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm space-y-4 hover:shadow-md transition-shadow">
+                <h4 class="font-bold text-gray-800 text-xs uppercase tracking-widest border-b border-gray-100 pb-3 flex items-center gap-2">
+                    <i class="fas fa-info-circle text-unsoed-blue"></i> Spesifikasi File
+                </h4>
+                <div class="space-y-1 text-sm">
+                    <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors">
                         <span class="text-gray-500 flex items-center gap-2"><i class="fas fa-file-pdf text-red-400 w-4"></i> Format</span>
-                        <span class="font-bold text-gray-800">PDF</span>
+                        <span class="font-bold text-gray-800 bg-gray-100 px-2 py-0.5 rounded-md text-[11px]">PDF</span>
                     </div>
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors">
                         <span class="text-gray-500 flex items-center gap-2"><i class="fas fa-hdd text-blue-400 w-4"></i> Ukuran</span>
-                        <span class="font-bold text-gray-800"><?= htmlspecialchars($e['file_size'] ?? '–') ?></span>
+                        <span class="font-bold text-gray-800 bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md text-[11px]"><?= htmlspecialchars($e['file_size'] ?? '–') ?></span>
                     </div>
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors">
                         <span class="text-gray-500 flex items-center gap-2"><i class="fas fa-book-open text-green-500 w-4"></i> Halaman</span>
                         <span class="font-bold text-gray-800"><?= ($e['page_count'] ?? '–') ?> Hal</span>
                     </div>
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors">
                         <span class="text-gray-500 flex items-center gap-2"><i class="fas fa-cloud-download-alt text-purple-400 w-4"></i> Diunduh</span>
                         <span class="font-bold text-gray-800"><?= number_format($e['downloads_count'] ?? 0) ?> Kali</span>
                     </div>
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors">
                         <span class="text-gray-500 flex items-center gap-2"><i class="fas fa-eye text-indigo-400 w-4"></i> Dilihat</span>
                         <span class="font-bold text-gray-800"><?= number_format($e['views_count'] ?? 0) ?> Kali</span>
                     </div>
                     <?php if(!empty($e['isbn'])): ?>
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors mt-2 border-t border-dashed border-gray-200 pt-3">
                         <span class="text-gray-500 flex items-center gap-2"><i class="fas fa-barcode text-gray-400 w-4"></i> ISBN</span>
-                        <span class="font-bold text-gray-800 text-xs font-mono"><?= htmlspecialchars($e['isbn']) ?></span>
+                        <span class="font-bold text-gray-800 text-xs font-mono tracking-wider"><?= htmlspecialchars($e['isbn']) ?></span>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -100,17 +112,20 @@ if (!empty($e['cover_image'])) {
 
             <!-- Judul & Penulis -->
             <div>
-                <span class="text-xs font-bold uppercase tracking-widest text-unsoed-blue bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
-                    Publikasi Digital · Unsoed Press
+                <span class="text-[10px] font-bold uppercase tracking-widest text-unsoed-blue bg-unsoed-blue/5 px-3 py-1.5 rounded-full border border-unsoed-blue/10 flex inline-flex items-center gap-1.5 w-fit">
+                    <i class="fas fa-laptop-code"></i> Publikasi Digital · Unsoed Press
                 </span>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mt-4 leading-snug">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mt-5 leading-tight">
                     <?= htmlspecialchars($e['title']) ?>
                 </h1>
                 <?php if(!empty($e['book_author'])): ?>
-                <p class="text-base text-gray-600 mt-2 flex items-center gap-2">
-                    <i class="fas fa-user-edit text-unsoed-blue text-sm"></i>
-                    <span class="font-semibold"><?= htmlspecialchars($e['book_author']) ?></span>
-                </p>
+                <div class="mt-4 flex items-start gap-2 text-gray-600 bg-gray-50 p-3 rounded-xl border border-gray-100 inline-flex max-w-full">
+                    <i class="fas fa-user-edit text-unsoed-blue text-sm mt-0.5 shrink-0"></i>
+                    <div class="flex flex-col">
+                        <span class="text-xs text-gray-400 uppercase tracking-widest font-bold mb-0.5">Penulis</span>
+                        <span class="font-medium text-gray-800 leading-relaxed"><?= htmlspecialchars(str_replace(';', ', ', $e['book_author'])) ?></span>
+                    </div>
+                </div>
                 <?php endif; ?>
 
                 <?php if(!empty($e['book_id'])): ?>

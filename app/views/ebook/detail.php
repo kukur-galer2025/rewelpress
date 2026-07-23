@@ -146,15 +146,19 @@ if (!empty($e['cover_image'])) {
                     <p class="text-xs text-gray-400 mt-1">Open Access — Tidak memerlukan pembayaran</p>
                 <?php else: ?>
                     <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Harga E-Book</p>
-                    <p class="text-3xl font-extrabold text-unsoed-blue mt-1">
-                        Rp <?= number_format($e['ebook_price'], 0, ',', '.') ?>
-                    </p>
-                    <?php if(!empty($e['normal_price']) && $e['normal_price'] > $e['ebook_price']): ?>
-                        <p class="text-sm text-gray-400 line-through mt-0.5">Rp <?= number_format($e['normal_price'], 0, ',', '.') ?></p>
-                        <span class="text-xs font-bold bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
-                            Hemat <?= round((1 - $e['ebook_price']/$e['normal_price']) * 100) ?>%
-                        </span>
-                    <?php endif; ?>
+                    <div class="flex items-center gap-3 mt-1">
+                        <p class="text-3xl font-extrabold text-unsoed-darkblue">
+                            Rp <?= number_format($e['ebook_price'], 0, ',', '.') ?>
+                        </p>
+                        <?php if(!empty($e['normal_price']) && $e['normal_price'] > $e['ebook_price']): ?>
+                            <div class="flex flex-col items-start">
+                                <p class="text-sm text-red-500 font-semibold line-through decoration-red-500/60">Rp <?= number_format($e['normal_price'], 0, ',', '.') ?></p>
+                                <span class="text-[10px] font-bold bg-red-100 text-red-600 px-2 py-0.5 rounded-full uppercase tracking-widest mt-0.5 shadow-sm">
+                                    Hemat <?= round((1 - $e['ebook_price']/$e['normal_price']) * 100) ?>%
+                                </span>
+                            </div>
+                        <?php endif; ?>
+                    </div>
 
                     <!-- Status akses -->
                     <?php if($hasAccess): ?>
@@ -258,15 +262,15 @@ if (!empty($e['cover_image'])) {
                 <ol class="space-y-2.5 text-sm text-gray-600 pl-1">
                     <li class="flex items-start gap-3">
                         <span class="w-5 h-5 rounded-full bg-unsoed-blue text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-                        Klik <strong>"Beli E-Book"</strong> di atas. Sistem akan membuat pesanan untuk Anda.
+                        <span>Klik <strong>"Beli E-Book"</strong> di atas. Sistem akan membuat pesanan untuk Anda.</span>
                     </li>
                     <li class="flex items-start gap-3">
                         <span class="w-5 h-5 rounded-full bg-unsoed-blue text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
-                        Lakukan transfer ke rekening yang tertera, lalu <strong>unggah bukti pembayaran</strong>.
+                        <span>Lakukan transfer ke rekening yang tertera, lalu <strong>unggah bukti pembayaran</strong>.</span>
                     </li>
                     <li class="flex items-start gap-3">
                         <span class="w-5 h-5 rounded-full bg-green-600 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-                        Setelah admin <strong>memverifikasi pembayaran</strong>, tombol unduhan PDF otomatis aktif di menu <strong>Riwayat Pesanan</strong> Anda.
+                        <span>Setelah admin <strong>memverifikasi pembayaran</strong>, tombol unduhan PDF otomatis aktif di menu <strong>Riwayat Pesanan</strong> Anda.</span>
                     </li>
                 </ol>
             </div>

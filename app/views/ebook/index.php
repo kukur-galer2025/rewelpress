@@ -142,49 +142,61 @@
                         $hargaEbook  = $isRealEbook ? $book['ebook_price'] : round(($book['price'] ?? 0) * 0.7, -2);
                         $hargaNormal = $isRealEbook ? ($book['normal_price'] ?? 0) : ($book['price'] ?? 0);
                     ?>
-                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden group">
+                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-2xl hover:shadow-unsoed-blue/20 hover:-translate-y-2 transition-all duration-500 flex flex-col overflow-hidden group">
                         <!-- Cover & E-book Badge -->
-                        <div class="aspect-[3/4] w-full bg-gray-100 relative overflow-hidden">
+                        <div class="aspect-[3/4] w-full bg-gray-100 relative overflow-hidden shrink-0 cursor-pointer">
                             <?php
                                 $coverSrc = 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80';
                                 if(!empty($cover)) {
                                     $coverSrc = (strpos($cover, 'http') === 0) ? $cover : BASEURL . '/uploads/covers/' . $cover;
                                 }
                             ?>
-                            <img src="<?= esc($coverSrc) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <img src="<?= esc($coverSrc) ?>" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
                             
-                            <div class="absolute top-3 right-3 bg-unsoed-blue/90 backdrop-blur-sm text-white font-bold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
-                                <i class="fas fa-file-pdf mr-1"></i> E-BOOK EDITION
+                            <div class="absolute top-3 left-3 bg-unsoed-blue/90 backdrop-blur-sm text-white font-bold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider shadow z-20">
+                                <i class="fas fa-file-pdf mr-1"></i> E-BOOK
                             </div>
 
-                            <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3 pt-8 flex items-end justify-between">
+                            <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-3 pt-12 flex flex-col gap-0.5 items-end z-20">
                                 <?php if($isFree): ?>
                                     <span class="text-xs font-extrabold text-green-400 bg-black/60 px-2 py-0.5 rounded-lg border border-green-400/30">
                                         <i class="fas fa-gift mr-1"></i> OPEN ACCESS
                                     </span>
                                 <?php else: ?>
-                                    <span class="text-xs font-bold text-yellow-300">
-                                        <i class="fas fa-tag"></i> Rp <?= number_format($hargaEbook, 0, ',', '.') ?>
+                                    <div class="flex items-center justify-end w-full min-h-[16px]">
+                                        <?php if($hargaNormal > $hargaEbook): ?>
+                                            <span class="text-[11px] font-bold text-red-400 line-through decoration-red-400/80 drop-shadow-md">
+                                                Rp <?= number_format($hargaNormal, 0, ',', '.') ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <span class="text-sm font-extrabold text-unsoed-yellow">
+                                        Rp <?= number_format($hargaEbook, 0, ',', '.') ?>
                                     </span>
-                                    <?php if($hargaNormal > $hargaEbook): ?>
-                                        <span class="text-[10px] text-gray-300 line-through">
-                                            Rp <?= number_format($hargaNormal, 0, ',', '.') ?>
-                                        </span>
-                                    <?php endif; ?>
                                 <?php endif; ?>
+                            </div>
+                            
+                            <!-- Center button overlay -->
+                            <div class="absolute inset-0 bg-unsoed-darkblue/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex items-center justify-center">
+                                <span class="bg-unsoed-yellow text-unsoed-darkblue hover:bg-white text-[11px] font-bold px-5 py-2.5 rounded-full shadow-2xl flex items-center gap-2 transform scale-75 group-hover:scale-100 transition-all duration-500 delay-75 pointer-events-none"><i class="fas fa-shopping-bag"></i> Lihat Detail</span>
                             </div>
                         </div>
 
                         <!-- Book Details -->
-                        <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                        <div class="p-4 flex-1 flex flex-col justify-between space-y-3 z-30 bg-white">
                             <div>
-                                <h4 class="font-bold text-gray-900 text-sm line-clamp-2 group-hover:text-unsoed-blue transition leading-snug">
-                                    <a href="<?= $ebookId ? BASEURL . '/ebook/detail/' . $ebookId : BASEURL . '/ebook' ?>">
+                                <h4 class="font-bold text-gray-900 text-sm md:text-[14px] line-clamp-2 group-hover:text-unsoed-blue transition leading-snug">
+                                    <a href="<?= $ebookId ? BASEURL . '/ebook/detail/' . $ebookId : BASEURL . '/ebook' ?>" class="before:absolute before:inset-0 before:z-40">
                                         <?= htmlspecialchars($judulEbook) ?>
                                     </a>
                                 </h4>
-                                <p class="text-xs text-gray-500 mt-1 line-clamp-1 font-medium">
-                                    <?= htmlspecialchars($penulis) ?>
+                                <?php 
+                                    $penulisArr = explode(';', $penulis);
+                                    $displayPenulis = trim($penulisArr[0]);
+                                    if(count($penulisArr) > 1) $displayPenulis .= ' dkk.';
+                                ?>
+                                <p class="text-[11px] text-gray-500 mt-2 flex items-start gap-1.5 font-medium">
+                                    <i class="fas fa-user-edit text-gray-300 mt-0.5 shrink-0"></i> <span class="line-clamp-1" title="<?= esc($penulis) ?>"><?= htmlspecialchars($displayPenulis) ?></span>
                                 </p>
                                 
                                 <?php if($isRealEbook): ?>

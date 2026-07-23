@@ -8,7 +8,6 @@
             <div class="absolute inset-0 p-12 flex flex-col justify-end text-right items-end">
                 <div class="flex items-center gap-3 mb-6">
                     <span class="px-4 py-1.5 bg-unsoed-yellow rounded-full text-unsoed-darkblue text-xs font-bold tracking-widest uppercase shadow-lg shadow-unsoed-yellow/30">Member</span>
-                    <span class="px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-bold tracking-widest uppercase border border-white/30">Free</span>
                 </div>
                 <h2 class="text-4xl font-serif font-bold text-white mb-4 leading-tight">Mulai Perjalanan Intelektual Anda</h2>
                 <p class="text-white/80 leading-relaxed max-w-sm">Buat akun sekarang dan nikmati kemudahan membeli buku cetak maupun digital, serta akses eksklusif ke berbagai promo.</p>

@@ -14,13 +14,13 @@ class EbookModel {
         $this->db->query('
             SELECT ebooks.*, 
                    books.title as book_title, 
-                   books.author as book_author, 
+                   COALESCE(ebooks.author, books.author) as book_author, 
                    books.image as cover_image, 
                    books.isbn,
                    books.price as normal_price,
                    COALESCE(cat_ebook.name, cat_book.name) as category_name,
-                   COALESCE(rev.avg_rating, 4.9) AS avg_rating,
-                   COALESCE(rev.review_count, 15) AS review_count
+                   COALESCE(rev.avg_rating, 0) AS avg_rating,
+                   COALESCE(rev.review_count, 0) AS review_count
             FROM ebooks 
             LEFT JOIN books ON ebooks.book_id = books.id 
             LEFT JOIN categories cat_ebook ON ebooks.category_id = cat_ebook.id
@@ -36,14 +36,14 @@ class EbookModel {
         $this->db->query("
             SELECT ebooks.*, 
                    books.title as book_title, 
-                   books.author as book_author, 
+                   COALESCE(ebooks.author, books.author) as book_author, 
                    books.image as cover_image, 
                    books.isbn,
                    books.price as normal_price,
                    books.synopsis,
                    COALESCE(cat_ebook.name, cat_book.name) as category_name,
-                   COALESCE(rev.avg_rating, 4.9) AS avg_rating,
-                   COALESCE(rev.review_count, 15) AS review_count
+                   COALESCE(rev.avg_rating, 0) AS avg_rating,
+                   COALESCE(rev.review_count, 0) AS review_count
             FROM ebooks 
             LEFT JOIN books ON ebooks.book_id = books.id 
             LEFT JOIN categories cat_ebook ON ebooks.category_id = cat_ebook.id
@@ -60,14 +60,14 @@ class EbookModel {
         $this->db->query("
             SELECT ebooks.*, 
                    books.title as book_title, 
-                   books.author as book_author, 
+                   COALESCE(ebooks.author, books.author) as book_author, 
                    books.image as cover_image, 
                    books.isbn,
                    books.price as normal_price,
                    books.synopsis,
                    COALESCE(cat_ebook.name, cat_book.name) as category_name,
-                   COALESCE(rev.avg_rating, 4.9) AS avg_rating,
-                   COALESCE(rev.review_count, 15) AS review_count
+                   COALESCE(rev.avg_rating, 0) AS avg_rating,
+                   COALESCE(rev.review_count, 0) AS review_count
             FROM ebooks 
             LEFT JOIN books ON ebooks.book_id = books.id 
             LEFT JOIN categories cat_ebook ON ebooks.category_id = cat_ebook.id
@@ -86,19 +86,19 @@ class EbookModel {
         $this->db->query('
             SELECT ebooks.*, 
                    books.title as book_title, 
-                   books.author as book_author, 
+                   COALESCE(ebooks.author, books.author) as book_author, 
                    books.image as cover_image, 
                    books.isbn,
                    books.slug as book_slug,
                    COALESCE(cat_ebook.name, cat_book.name) as category_name,
-                   COALESCE(rev.avg_rating, 4.9) AS avg_rating,
-                   COALESCE(rev.review_count, 15) AS review_count
+                   COALESCE(rev.avg_rating, 0) AS avg_rating,
+                   COALESCE(rev.review_count, 0) AS review_count
             FROM ebooks 
             LEFT JOIN books ON ebooks.book_id = books.id 
             LEFT JOIN categories cat_ebook ON ebooks.category_id = cat_ebook.id
             LEFT JOIN categories cat_book ON books.category_id = cat_book.id
             LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "ebook" GROUP BY item_id) rev ON ebooks.id = rev.item_id
-            WHERE ebooks.id = :id
+            WHERE ebooks.id = :id OR ebooks.slug = :id
         ');
         $this->db->bind(':id', $id);
         return $this->db->single();
@@ -113,9 +113,11 @@ class EbookModel {
 
     public function addEbook($data)
     {
+        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $data['title'])));
+
         $this->db->query('
-            INSERT INTO ebooks (book_id, category_id, title, file_pdf, preview_pdf, file_size, page_count, ebook_price, is_free, status, is_flashsale, downloads_count, created_at) 
-            VALUES (:book_id, :category_id, :title, :file_pdf, :preview_pdf, :file_size, :page_count, :ebook_price, :is_free, :status, :is_flashsale, 0, NOW())
+            INSERT INTO ebooks (book_id, category_id, title, slug, author, file_pdf, preview_pdf, file_size, page_count, ebook_price, is_free, status, is_flashsale, downloads_count, created_at) 
+            VALUES (:book_id, :category_id, :title, :slug, :author, :file_pdf, :preview_pdf, :file_size, :page_count, :ebook_price, :is_free, :status, :is_flashsale, 0, NOW())
         ');
 
         $book_id = !empty($data['book_id']) ? (int)$data['book_id'] : null;
@@ -124,6 +126,8 @@ class EbookModel {
         $this->db->bind(':book_id', $book_id);
         $this->db->bind(':category_id', $category_id);
         $this->db->bind(':title', trim($data['title']));
+        $this->db->bind(':slug', $slug);
+        $this->db->bind(':author', isset($data['author']) ? trim($data['author']) : null);
         $this->db->bind(':file_pdf', trim($data['file_pdf'] ?? ''));
         $this->db->bind(':preview_pdf', trim($data['preview_pdf'] ?? ''));
         $this->db->bind(':file_size', trim($data['file_size'] ?? '15 MB'));
@@ -143,11 +147,15 @@ class EbookModel {
 
     public function updateEbook($data)
     {
+        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $data['title'])));
+
         $query = '
             UPDATE ebooks SET 
                 book_id = :book_id,
                 category_id = :category_id,
                 title = :title,
+                slug = :slug,
+                author = :author,
                 file_size = :file_size,
                 page_count = :page_count,
                 ebook_price = :ebook_price,
@@ -171,6 +179,7 @@ class EbookModel {
         $this->db->bind(':book_id', $book_id);
         $this->db->bind(':category_id', $category_id);
         $this->db->bind(':title', trim($data['title']));
+        $this->db->bind(':author', isset($data['author']) ? trim($data['author']) : null);
         $this->db->bind(':file_size', trim($data['file_size'] ?? '15 MB'));
         $this->db->bind(':page_count', !empty($data['page_count']) ? (int)$data['page_count'] : 150);
         
@@ -178,10 +187,16 @@ class EbookModel {
         $ebook_price = $is_free ? 0 : (!empty($data['ebook_price']) ? floatval(str_replace(['.', ','], ['', '.'], $data['ebook_price'])) : 0);
         
         $this->db->bind(':ebook_price', $ebook_price);
-        $this->db->bind(':is_free', $is_free);
+        if (isset($data['is_free'])) {
+            $this->db->bind(':is_free', $data['is_free'] == 1 ? 1 : 0);
+        } else {
+            $this->db->bind(':is_free', 0);
+        }
+
         $this->db->bind(':is_flashsale', isset($data['is_flashsale']) ? $data['is_flashsale'] : 0);
         $this->db->bind(':status', $data['status'] ?? 'active');
-        $this->db->bind(':id', (int)$data['id']);
+        $this->db->bind(':id', $data['id']);
+        $this->db->bind(':slug', $slug);
 
         if (!empty($data['file_pdf'])) {
             $this->db->bind(':file_pdf', trim($data['file_pdf']));
@@ -261,7 +276,7 @@ class EbookModel {
         $this->db->query("
             SELECT DISTINCT e.*, 
                    b.title as book_title, 
-                   b.author as book_author, 
+                   COALESCE(e.author, b.author) as book_author, 
                    b.image as cover_image, 
                    COALESCE(cat_e.name, cat_b.name) as category_name
             FROM ebooks e
@@ -286,12 +301,12 @@ class EbookModel {
         $this->db->execute();
     }
 
-    public function getFilteredEbooks($keyword = '', $author = '', $limit = 10, $offset = 0)
+    public function getFilteredEbooks($keyword = '', $author = '', $limit = 10, $offset = 0, $category_id = null)
     {
         $sql = "
             SELECT ebooks.*, 
                    books.title as book_title, 
-                   books.author as book_author, 
+                   COALESCE(ebooks.author, books.author) as book_author, 
                    books.image as cover_image, 
                    books.isbn,
                    books.price as normal_price,
@@ -309,6 +324,9 @@ class EbookModel {
         if (!empty($author)) {
             $sql .= " AND books.author = :author";
         }
+        if (!empty($category_id)) {
+            $sql .= " AND (ebooks.category_id = :category_id OR books.category_id = :category_id2)";
+        }
         $sql .= " ORDER BY ebooks.created_at DESC LIMIT :limit OFFSET :offset";
 
         $this->db->query($sql);
@@ -321,12 +339,16 @@ class EbookModel {
         if (!empty($author)) {
             $this->db->bind(':author', $author);
         }
+        if (!empty($category_id)) {
+            $this->db->bind(':category_id', $category_id);
+            $this->db->bind(':category_id2', $category_id);
+        }
         $this->db->bind(':limit', (int)$limit);
         $this->db->bind(':offset', (int)$offset);
         return $this->db->resultSet();
     }
 
-    public function getFilteredEbooksCount($keyword = '', $author = '')
+    public function getFilteredEbooksCount($keyword = '', $author = '', $category_id = null)
     {
         $sql = "
             SELECT COUNT(*) as total
@@ -340,6 +362,9 @@ class EbookModel {
         if (!empty($author)) {
             $sql .= " AND books.author = :author";
         }
+        if (!empty($category_id)) {
+            $sql .= " AND (ebooks.category_id = :category_id OR books.category_id = :category_id2)";
+        }
 
         $this->db->query($sql);
         if (!empty($keyword)) {
@@ -351,6 +376,10 @@ class EbookModel {
         if (!empty($author)) {
             $this->db->bind(':author', $author);
         }
+        if (!empty($category_id)) {
+            $this->db->bind(':category_id', $category_id);
+            $this->db->bind(':category_id2', $category_id);
+        }
         $result = $this->db->single();
         return $result['total'] ?? 0;
     }
@@ -358,11 +387,11 @@ class EbookModel {
     public function getEbookAuthors()
     {
         $this->db->query("
-            SELECT DISTINCT books.author 
+            SELECT DISTINCT COALESCE(ebooks.author, books.author) as author
             FROM ebooks 
             LEFT JOIN books ON ebooks.book_id = books.id 
-            WHERE ebooks.status = 'active' AND books.author IS NOT NULL AND books.author != ''
-            ORDER BY books.author ASC
+            WHERE ebooks.status = 'active' AND COALESCE(ebooks.author, books.author) IS NOT NULL AND COALESCE(ebooks.author, books.author) != ''
+            ORDER BY author ASC
         ");
         return $this->db->resultSet();
     }

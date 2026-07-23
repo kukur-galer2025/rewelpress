@@ -9,11 +9,15 @@ $isPaid   = in_array($order['status'], ['paid', 'confirmed', 'rejected']);
     <div class="absolute inset-0 bg-gradient-to-r from-unsoed-darkblue to-unsoed-blue"></div>
     <div class="container mx-auto px-4 max-w-[900px] relative z-10">
         <div class="flex items-center gap-3 mb-2">
-            <a href="<?= BASEURL ?>/ebook/detail/<?= esc($order['ebook_id']) ?>" class="text-white/60 hover:text-white text-sm transition flex items-center gap-1">
+            <?php $link = isset($order['ebook_slug']) ? $order['ebook_slug'] : $order['ebook_id']; ?>
+            <a href="<?= BASEURL ?>/ebook/detail/<?= esc($link) ?>" class="text-white/60 hover:text-white text-sm transition flex items-center gap-1">
                 <i class="fas fa-arrow-left text-xs"></i> Kembali
             </a>
         </div>
-        <h1 class="text-3xl font-serif font-bold text-white">Pembayaran E-Book</h1>
+        <div class="flex items-center gap-3 mb-2">
+            <h1 class="text-3xl font-serif font-bold text-white">Pembayaran</h1>
+            <span class="bg-indigo-500/80 backdrop-blur border border-indigo-400 text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-widest shadow-sm"><i class="fas fa-laptop-code mr-1"></i> Beli E-Book Digital</span>
+        </div>
         <p class="text-gray-300 text-sm mt-1">Pesanan #EBO-<?= esc($order['id']) ?> · <?= htmlspecialchars($order['ebook_title']) ?></p>
     </div>
 </div>

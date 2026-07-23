@@ -114,9 +114,15 @@
                                             <div class="absolute bottom-0 inset-x-0 bg-red-600 text-white text-[8px] font-extrabold text-center py-0.5 uppercase">PDF</div>
                                         </div>
                                         <div>
-                                            <a href="<?= BASEURL ?>/ebook/detail/<?= esc($eo['ebook_id']) ?>" class="text-base md:text-lg font-bold text-gray-800 hover:text-unsoed-blue transition line-clamp-1">
-                                                <?= htmlspecialchars($eo['ebook_title']) ?>
-                                            </a>
+                                            <?php if(isset($eo['ebook_slug'])): ?>
+                                                <a href="<?= BASEURL ?>/ebook/detail/<?= esc($eo['ebook_slug']) ?>" class="text-base md:text-lg font-bold text-gray-800 hover:text-unsoed-blue transition line-clamp-1">
+                                                    <?= esc($eo['ebook_title']) ?>
+                                                </a>
+                                            <?php else: ?>
+                                                <a href="<?= BASEURL ?>/ebook/detail/<?= esc($eo['ebook_id']) ?>" class="text-base md:text-lg font-bold text-gray-800 hover:text-unsoed-blue transition line-clamp-1">
+                                                    <?= esc($eo['ebook_title']) ?>
+                                                </a>
+                                            <?php endif; ?>
                                             <p class="text-xs text-gray-500 mt-1 flex items-center gap-3">
                                                 <span><i class="fas fa-file-pdf text-red-500 mr-1"></i> Format PDF</span>
                                                 <?php if(!empty($eo['file_size'])): ?>
@@ -150,7 +156,8 @@
                                                    class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm whitespace-nowrap">
                                                     <i class="fas fa-cloud-download-alt text-lg"></i> Unduh File E-Book
                                                 </a>
-                                                <a href="<?= BASEURL ?>/ebook/detail/<?= esc($eo['ebook_id']) ?>#reviews-section" onclick="sessionStorage.setItem('openReviewModal', '1');"
+                                                <?php $link = isset($eo['ebook_slug']) ? $eo['ebook_slug'] : $eo['ebook_id']; ?>
+                                                <a href="<?= BASEURL ?>/ebook/detail/<?= esc($link) ?>#reviews-section" onclick="sessionStorage.setItem('openReviewModal', '1');"
                                                    class="w-full sm:w-auto px-5 py-3 bg-unsoed-yellow hover:bg-yellow-500 text-gray-900 font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm whitespace-nowrap">
                                                     <i class="fas fa-star"></i> Tulis Ulasan
                                                 </a>
@@ -165,7 +172,8 @@
                                                 </div>
                                             <?php endif; ?>
 
-                                            <a href="<?= BASEURL ?>/ebook/detail/<?= esc($eo['ebook_id']) ?>" title="Lihat Detail E-Book"
+                                            <?php $link = isset($eo['ebook_slug']) ? $eo['ebook_slug'] : $eo['ebook_id']; ?>
+                                            <a href="<?= BASEURL ?>/ebook/detail/<?= esc($link) ?>" title="Lihat Detail E-Book"
                                                class="p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl transition flex items-center justify-center">
                                                 <i class="fas fa-external-link-alt text-sm"></i>
                                             </a>

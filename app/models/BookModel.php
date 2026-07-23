@@ -15,8 +15,8 @@ class BookModel {
             SELECT books.*, 
                    categories.name as category_name, 
                    parent.name as parent_category_name,
-                   COALESCE(rev.avg_rating, 4.8) AS avg_rating,
-                   COALESCE(rev.review_count, 12) AS review_count
+                   COALESCE(rev.avg_rating, 0) AS avg_rating,
+                   COALESCE(rev.review_count, 0) AS review_count
             FROM books 
             JOIN categories ON books.category_id = categories.id 
             LEFT JOIN categories parent ON categories.parent_id = parent.id 
@@ -28,14 +28,14 @@ class BookModel {
     
     public function getLatestBooks($limit = 4)
     {
-        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(rev.avg_rating, 4.8) AS avg_rating, COALESCE(rev.review_count, 12) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id ORDER BY books.created_at DESC LIMIT :limit');
+        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(rev.avg_rating, 0) AS avg_rating, COALESCE(rev.review_count, 0) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id ORDER BY books.created_at DESC LIMIT :limit');
         $this->db->bind(':limit', $limit);
         return $this->db->resultSet();
     }
 
     public function getPopularBooks($limit = 4)
     {
-        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(rev.avg_rating, 4.8) AS avg_rating, COALESCE(rev.review_count, 12) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id ORDER BY books.views DESC LIMIT :limit');
+        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(rev.avg_rating, 0) AS avg_rating, COALESCE(rev.review_count, 0) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id ORDER BY books.views DESC LIMIT :limit');
         $this->db->bind(':limit', $limit);
         return $this->db->resultSet();
     }
@@ -43,7 +43,7 @@ class BookModel {
     public function getPromoBooks($keyword = '', $author = '')
     {
         $sql = "
-            SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(rev.avg_rating, 4.8) AS avg_rating, COALESCE(rev.review_count, 12) AS review_count 
+            SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(rev.avg_rating, 0) AS avg_rating, COALESCE(rev.review_count, 0) AS review_count 
             FROM " . $this->table . " 
             JOIN categories ON books.category_id = categories.id 
             LEFT JOIN categories parent ON categories.parent_id = parent.id 
@@ -73,7 +73,7 @@ class BookModel {
 
     public function getBookById($id)
     {
-        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(rev.avg_rating, 4.8) AS avg_rating, COALESCE(rev.review_count, 12) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id WHERE books.id = :id');
+        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(rev.avg_rating, 0) AS avg_rating, COALESCE(rev.review_count, 0) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id WHERE books.id = :id');
         $this->db->bind(':id', $id);
         return $this->db->single();
     }
@@ -82,10 +82,10 @@ class BookModel {
     {
         // Check if numeric, assume ID, otherwise Slug
         if (is_numeric($identifier)) {
-            $this->db->query('SELECT books.*, categories.name as category_name, categories.slug as category_slug, parent.name as parent_category_name, COALESCE(rev.avg_rating, 4.8) AS avg_rating, COALESCE(rev.review_count, 12) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id WHERE books.id = :id');
+            $this->db->query('SELECT books.*, categories.name as category_name, categories.slug as category_slug, parent.name as parent_category_name, COALESCE(rev.avg_rating, 0) AS avg_rating, COALESCE(rev.review_count, 0) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id WHERE books.id = :id');
             $this->db->bind(':id', $identifier);
         } else {
-            $this->db->query('SELECT books.*, categories.name as category_name, categories.slug as category_slug, parent.name as parent_category_name, COALESCE(rev.avg_rating, 4.8) AS avg_rating, COALESCE(rev.review_count, 12) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id WHERE books.slug = :slug');
+            $this->db->query('SELECT books.*, categories.name as category_name, categories.slug as category_slug, parent.name as parent_category_name, COALESCE(rev.avg_rating, 0) AS avg_rating, COALESCE(rev.review_count, 0) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id WHERE books.slug = :slug');
             $this->db->bind(':slug', $identifier);
         }
         return $this->db->single();
@@ -94,7 +94,7 @@ class BookModel {
     public function getBestSellerBooks($limit = 4)
     {
         $this->db->query('
-            SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(SUM(order_items.quantity), 0) as total_sold, COALESCE(rev.avg_rating, 4.8) AS avg_rating, COALESCE(rev.review_count, 12) AS review_count
+            SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(SUM(order_items.quantity), 0) as total_sold, COALESCE(rev.avg_rating, 0) AS avg_rating, COALESCE(rev.review_count, 0) AS review_count
             FROM ' . $this->table . '
             JOIN categories ON books.category_id = categories.id
             LEFT JOIN categories parent ON categories.parent_id = parent.id
@@ -122,35 +122,42 @@ class BookModel {
 
     public function searchBooks($keyword)
     {
-        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(rev.avg_rating, 4.8) AS avg_rating, COALESCE(rev.review_count, 12) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id WHERE title LIKE :keyword OR author LIKE :keyword ORDER BY created_at DESC');
+        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(rev.avg_rating, 0) AS avg_rating, COALESCE(rev.review_count, 0) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id WHERE title LIKE :keyword OR author LIKE :keyword ORDER BY created_at DESC');
         $this->db->bind(':keyword', "%$keyword%");
         return $this->db->resultSet();
     }
 
     public function getBooksByAuthorName($author_name)
     {
-        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(rev.avg_rating, 4.8) AS avg_rating, COALESCE(rev.review_count, 12) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id WHERE books.author LIKE :author_name ORDER BY books.created_at DESC');
+        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(rev.avg_rating, 0) AS avg_rating, COALESCE(rev.review_count, 0) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id WHERE books.author LIKE :author_name ORDER BY books.created_at DESC');
         $this->db->bind(':author_name', '%' . $author_name . '%');
         return $this->db->resultSet();
     }
 
     public function getBooksByCategory($category_id)
     {
-        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(rev.avg_rating, 4.8) AS avg_rating, COALESCE(rev.review_count, 12) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id WHERE category_id = :category_id OR categories.parent_id = :category_id ORDER BY books.created_at DESC');
+        $this->db->query('SELECT books.*, categories.name as category_name, parent.name as parent_category_name, COALESCE(rev.avg_rating, 0) AS avg_rating, COALESCE(rev.review_count, 0) AS review_count FROM ' . $this->table . ' JOIN categories ON books.category_id = categories.id LEFT JOIN categories parent ON categories.parent_id = parent.id LEFT JOIN (SELECT item_id, ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS review_count FROM reviews WHERE item_type = "book" GROUP BY item_id) rev ON books.id = rev.item_id WHERE category_id = :category_id OR categories.parent_id = :category_id ORDER BY books.created_at DESC');
         $this->db->bind(':category_id', $category_id);
         return $this->db->resultSet();
     }
 
     public function addBook($data)
     {
-        $query = "INSERT INTO books (title, author, category_id, isbn, price, old_price, image, synopsis, pages, weight, publication_year, is_flashsale, stock) 
-                  VALUES (:title, :author, :category_id, :isbn, :price, :old_price, :image, :synopsis, :pages, :weight, :publication_year, :is_flashsale, :stock)";
+        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $data['title'])));
+
+        $query = "INSERT INTO books (title, slug, author, category_id, isbn, edition, dimensions, cover_type, language, price, old_price, image, synopsis, pages, weight, publication_year, is_flashsale, stock) 
+                  VALUES (:title, :slug, :author, :category_id, :isbn, :edition, :dimensions, :cover_type, :language, :price, :old_price, :image, :synopsis, :pages, :weight, :publication_year, :is_flashsale, :stock)";
         
         $this->db->query($query);
         $this->db->bind(':title', $data['title']);
+        $this->db->bind(':slug', $slug);
         $this->db->bind(':author', $data['author']);
         $this->db->bind(':category_id', $data['category_id']);
         $this->db->bind(':isbn', !empty($data['isbn']) ? $data['isbn'] : null);
+        $this->db->bind(':edition', !empty($data['edition']) ? $data['edition'] : null);
+        $this->db->bind(':dimensions', !empty($data['dimensions']) ? $data['dimensions'] : null);
+        $this->db->bind(':cover_type', !empty($data['cover_type']) ? $data['cover_type'] : null);
+        $this->db->bind(':language', !empty($data['language']) ? $data['language'] : 'Bahasa Indonesia');
         $this->db->bind(':price', $data['price']);
         $this->db->bind(':old_price', !empty($data['old_price']) ? $data['old_price'] : 0);
         $this->db->bind(':image', $data['image']);
@@ -167,11 +174,18 @@ class BookModel {
 
     public function updateBook($data)
     {
+        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $data['title'])));
+
         $query = "UPDATE books SET 
                     title = :title, 
+                    slug = :slug,
                     author = :author, 
                     category_id = :category_id, 
                     isbn = :isbn, 
+                    edition = :edition,
+                    dimensions = :dimensions,
+                    cover_type = :cover_type,
+                    language = :language,
                     price = :price, 
                     old_price = :old_price, 
                     image = :image,
@@ -185,9 +199,14 @@ class BookModel {
         
         $this->db->query($query);
         $this->db->bind(':title', $data['title']);
+        $this->db->bind(':slug', $slug);
         $this->db->bind(':author', $data['author']);
         $this->db->bind(':category_id', $data['category_id']);
         $this->db->bind(':isbn', !empty($data['isbn']) ? $data['isbn'] : null);
+        $this->db->bind(':edition', !empty($data['edition']) ? $data['edition'] : null);
+        $this->db->bind(':dimensions', !empty($data['dimensions']) ? $data['dimensions'] : null);
+        $this->db->bind(':cover_type', !empty($data['cover_type']) ? $data['cover_type'] : null);
+        $this->db->bind(':language', !empty($data['language']) ? $data['language'] : 'Bahasa Indonesia');
         $this->db->bind(':price', $data['price']);
         $this->db->bind(':old_price', !empty($data['old_price']) ? $data['old_price'] : 0);
         $this->db->bind(':image', $data['image']);
@@ -226,8 +245,8 @@ class BookModel {
             SELECT books.*, 
                    categories.name as category_name, 
                    parent.name as parent_category_name,
-                   COALESCE(rev.avg_rating, 4.8) AS avg_rating,
-                   COALESCE(rev.review_count, 12) AS review_count
+                   COALESCE(rev.avg_rating, 0) AS avg_rating,
+                   COALESCE(rev.review_count, 0) AS review_count
             FROM books 
             JOIN categories ON books.category_id = categories.id 
             LEFT JOIN categories parent ON categories.parent_id = parent.id 

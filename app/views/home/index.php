@@ -259,7 +259,7 @@ if (!function_exists('renderBookCard')) {
                     $img_src = !empty($ebook['cover_image']) ? (strpos($ebook['cover_image'], 'http') === 0 ? $ebook['cover_image'] : BASEURL . '/uploads/covers/' . $ebook['cover_image']) : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400';
             ?>
             <div class="group h-full">
-                <a href="<?= BASEURL; ?>/ebook/detail/<?= esc($ebook['id']) ?>" class="block bg-white relative h-full rounded-2xl shadow-sm hover:shadow-xl border border-purple-100/60 hover:border-purple-300/50 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+                <a href="<?= BASEURL; ?>/ebook/detail/<?= esc($ebook['slug']) ?>" class="block bg-white relative h-full rounded-2xl shadow-sm hover:shadow-xl border border-purple-100/60 hover:border-purple-300/50 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
                     <div class="relative overflow-hidden aspect-[3/4] bg-gray-50">
                         <img src="<?= esc($img_src) ?>" alt="<?= htmlspecialchars($ebook['title'] ?? $ebook['book_title'] ?? '') ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out">
                         
@@ -321,7 +321,7 @@ if (!function_exists('renderBookCard')) {
             <?php else:
                 foreach ($tokoh_penulis as $index => $penulis): 
                     $author_name = $penulis['name'] ?? $penulis['author'] ?? 'Penulis';
-                    $photo = !empty($penulis['photo']) ? $penulis['photo'] : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&h=300&q=80';
+                    $photo = !empty($penulis['photo']) ? $penulis['photo'] : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
                     $affiliation = $penulis['affiliation'] ?? '';
                     $author_param = !empty($penulis['id']) ? $penulis['id'] : urlencode($author_name);
             ?>

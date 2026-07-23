@@ -41,7 +41,7 @@ class AuthorModel {
         $query = "INSERT INTO authors (name, photo, affiliation, bio) VALUES (:name, :photo, :affiliation, :bio)";
         $this->db->query($query);
         $this->db->bind(':name', $data['name']);
-        $this->db->bind(':photo', !empty($data['photo']) ? $data['photo'] : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&h=400&q=80');
+        $this->db->bind(':photo', !empty($data['photo']) ? $data['photo'] : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y');
         $this->db->bind(':affiliation', !empty($data['affiliation']) ? $data['affiliation'] : '');
         $this->db->bind(':bio', !empty($data['bio']) ? $data['bio'] : '');
 
@@ -54,7 +54,7 @@ class AuthorModel {
         $query = "UPDATE authors SET name = :name, photo = :photo, affiliation = :affiliation, bio = :bio WHERE id = :id";
         $this->db->query($query);
         $this->db->bind(':name', $data['name']);
-        $this->db->bind(':photo', !empty($data['photo']) ? $data['photo'] : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&h=400&q=80');
+        $this->db->bind(':photo', !empty($data['photo']) ? $data['photo'] : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y');
         $this->db->bind(':affiliation', !empty($data['affiliation']) ? $data['affiliation'] : '');
         $this->db->bind(':bio', !empty($data['bio']) ? $data['bio'] : '');
         $this->db->bind(':id', $data['id']);
@@ -84,7 +84,7 @@ class AuthorModel {
             $query = "INSERT INTO authors (name, photo, affiliation, bio) VALUES (:name, :photo, :affiliation, :bio)";
             $this->db->query($query);
             $this->db->bind(':name', $name);
-            $this->db->bind(':photo', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&h=400&q=80');
+            $this->db->bind(':photo', 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y');
             $this->db->bind(':affiliation', 'Penulis Eksternal');
             $this->db->bind(':bio', 'Biografi belum tersedia.');
             $this->db->execute();

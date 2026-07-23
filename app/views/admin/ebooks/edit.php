@@ -29,7 +29,7 @@
             <label class="block text-sm font-bold text-gray-800">
                 <i class="fas fa-book text-unsoed-blue mr-1.5"></i> Hubungan dengan Buku Fisik di Katalog
             </label>
-            <select name="book_id" id="selectBookId" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue transition text-sm font-semibold">
+            <select name="book_id" id="selectBookId" onchange="toggleAuthorField()" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue transition text-sm font-semibold">
                 <option value="">-- Standalone E-Book (Tidak Terhubung) --</option>
                 <?php foreach($data['books'] as $b): ?>
                     <option value="<?= esc($b['id']) ?>" <?= ($data['ebook']['book_id'] == $b['id']) ? 'selected' : '' ?>>
@@ -45,6 +45,22 @@
                     Judul E-Book / Publikasi Digital <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="title" required value="<?= htmlspecialchars($data['ebook']['title']) ?>" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue transition text-sm font-semibold">
+            </div>
+
+            <?php
+            $currentAuthors = [];
+            if (!empty($data['ebook']['author'])) {
+                $currentAuthors = array_map('trim', explode(';', $data['ebook']['author']));
+            }
+            ?>
+            <div class="md:col-span-2" id="authorContainer" style="<?= empty($data['ebook']['book_id']) ? 'display:block;' : 'display:none;' ?>">
+                <label for="author" class="block text-sm font-bold text-gray-700 mb-2">Penulis (Khusus Standalone E-Book) <span class="text-red-500">*</span></label>
+                <select name="author[]" id="author" multiple="multiple" class="select2-multiple w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue transition text-sm font-semibold" <?= empty($data['ebook']['book_id']) ? 'required' : '' ?>>
+                    <?php foreach($data['authors'] as $auth): ?>
+                        <option value="<?= htmlspecialchars($auth['name']) ?>" <?= in_array(trim($auth['name']), $currentAuthors) ? 'selected' : '' ?>><?= htmlspecialchars($auth['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="text-xs text-gray-500 mt-1">* Abaikan jika Anda memilih buku fisik di atas (penulis akan disalin otomatis).</p>
             </div>
 
             <div>
@@ -160,6 +176,17 @@
 </div>
 
 <script>
+function toggleAuthorField() {
+    const select = document.getElementById('selectBookId');
+    if(select.value !== "") {
+        document.getElementById('authorContainer').style.display = 'none';
+        document.getElementById('author').removeAttribute('required');
+    } else {
+        document.getElementById('authorContainer').style.display = 'block';
+        document.getElementById('author').setAttribute('required', 'required');
+    }
+}
+
 function toggleFreePrice() {
     const check = document.getElementById('checkIsFree');
     const priceInput = document.getElementById('inputEbookPrice');

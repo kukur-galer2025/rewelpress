@@ -19,7 +19,7 @@
     <?php else: ?>
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
             <?php foreach ($data['authors'] as $penulis): ?>
-                <?php $photo = !empty($penulis['photo']) ? $penulis['photo'] : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&h=300&q=80'; ?>
+                <?php $photo = !empty($penulis['photo']) ? $penulis['photo'] : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'; ?>
                 <a href="<?= BASEURL; ?>/penulis/detail/<?= urlencode($penulis['name']) ?>" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col group p-4 text-center">
                     <div class="aspect-square w-full rounded-xl overflow-hidden bg-gray-100 mb-3 relative">
                         <img src="<?= esc($photo) ?>" alt="<?= htmlspecialchars($penulis['name']) ?>" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105">

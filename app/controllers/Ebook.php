@@ -14,7 +14,9 @@ class Ebook extends Controller {
         $data['judul'] = 'Katalog E-Book & Publikasi Digital - Unsoed Press';
         $data['ebooks'] = $this->model('EbookModel')->getFilteredEbooks($keyword, $author, $per_page, $offset);
         $data['total_ebooks'] = $this->model('EbookModel')->getFilteredEbooksCount($keyword, $author);
+        $data['categories'] = $this->model('CategoryModel')->getHierarchicalCategories();
         $data['authors'] = $this->model('EbookModel')->getEbookAuthors();
+        $data['active_category'] = null;
         $data['keyword'] = $keyword;
         $data['active_author'] = $author;
         $data['per_page'] = $per_page;
@@ -26,17 +28,57 @@ class Ebook extends Controller {
         $this->view('templates/footer');
     }
 
-    /**
-     * Halaman detail e-book: info spesifikasi, tombol beli/unduh berdasarkan status user
-     */
-    public function detail($id = null)
+    public function category($id_or_slug = null)
     {
-        if (!$id) {
+        if(is_null($id_or_slug)) {
             header('Location: ' . BASEURL . '/ebook');
             exit;
         }
 
-        $ebook = $this->model('EbookModel')->getEbookById($id);
+        $category = $this->model('CategoryModel')->getCategoryByIdOrSlug($id_or_slug);
+        if(!$category) {
+            header('Location: ' . BASEURL . '/ebook');
+            exit;
+        }
+        $id = $category['id'];
+
+        $keyword = isset($_GET['q']) ? trim($_GET['q']) : '';
+        $author = isset($_GET['author']) ? trim($_GET['author']) : '';
+        $per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        if (!in_array($per_page, [5, 10, 15, 20])) $per_page = 10;
+        $offset = ($page - 1) * $per_page;
+
+        $data['judul'] = 'E-Book Kategori: ' . $category['name'] . ' - Unsoed Press';
+        $data['ebooks'] = $this->model('EbookModel')->getFilteredEbooks($keyword, $author, $per_page, $offset, $id);
+        $data['total_ebooks'] = $this->model('EbookModel')->getFilteredEbooksCount($keyword, $author, $id);
+        $data['categories'] = $this->model('CategoryModel')->getHierarchicalCategories();
+        $data['authors'] = $this->model('EbookModel')->getEbookAuthors();
+        
+        $data['active_category'] = $id;
+        $data['active_category_slug'] = $category['slug'];
+        $data['keyword'] = $keyword;
+        $data['active_author'] = $author;
+        $data['per_page'] = $per_page;
+        $data['current_page'] = $page;
+        $data['total_pages'] = ceil($data['total_ebooks'] / $per_page);
+        
+        $this->view('templates/header', $data);
+        $this->view('ebook/index', $data);
+        $this->view('templates/footer');
+    }
+
+    /**
+     * Halaman detail e-book: info spesifikasi, tombol beli/unduh berdasarkan status user
+     */
+    public function detail($identifier = null)
+    {
+        if (!$identifier) {
+            header('Location: ' . BASEURL . '/ebook');
+            exit;
+        }
+
+        $ebook = $this->model('EbookModel')->getEbookById($identifier);
         if (!$ebook || $ebook['status'] !== 'active') {
             header('Location: ' . BASEURL . '/ebook');
             exit;
@@ -56,17 +98,17 @@ class Ebook extends Controller {
         $data['can_review'] = $reviewModel->canUserReview($user_id, 'ebook', $ebook['id']);
 
         // Increment view counter
-        $this->model('EbookModel')->incrementViews($id);
+        $this->model('EbookModel')->incrementViews($ebook['id']);
         $data['has_access'] = false;
         $data['user_logged_in'] = isset($_SESSION['user_id']);
         $data['existing_order'] = null;
 
         if ($data['user_logged_in']) {
-            $data['has_access'] = $this->model('EbookModel')->hasUserAccessToEbook($_SESSION['user_id'], $id);
+            $data['has_access'] = $this->model('EbookModel')->hasUserAccessToEbook($_SESSION['user_id'], $ebook['id']);
 
             // Cek apakah sudah ada order aktif (pending/paid)
             if (!$data['has_access']) {
-                $data['existing_order'] = $this->model('EbookOrderModel')->getActiveOrderByUserAndEbook($_SESSION['user_id'], $id);
+                $data['existing_order'] = $this->model('EbookOrderModel')->getActiveOrderByUserAndEbook($_SESSION['user_id'], $ebook['id']);
             }
         }
 

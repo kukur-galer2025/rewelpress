@@ -72,13 +72,18 @@
                         <div class="flex items-end gap-4 mb-2">
                             <span class="text-4xl font-extrabold text-unsoed-blue">Rp <?= number_format($data['buku']['price'], 0, ',', '.') ?></span>
                             <?php if($data['buku']['old_price'] > 0): ?>
-                                <span class="text-xl text-gray-400 line-through mb-1">Rp <?= number_format($data['buku']['old_price'], 0, ',', '.') ?></span>
+                                <span class="text-xl text-red-500 line-through mb-1">Rp <?= number_format($data['buku']['old_price'], 0, ',', '.') ?></span>
                             <?php endif; ?>
                         </div>
                         <p class="text-sm text-green-600 font-medium"><i class="fas fa-check-circle mr-1"></i> Stok Tersedia</p>
                     </div>
 
                     <!-- Action Buttons -->
+                    <?php if(isset($_GET['error']) && $_GET['error'] == 'stock'): ?>
+                    <div class="mb-4 bg-red-100 border border-red-200 text-red-600 px-4 py-3 rounded-2xl shadow-sm text-sm font-bold flex items-center gap-2.5">
+                        <i class="fas fa-exclamation-circle text-lg"></i> Gagal menambahkan: Kuantitas melebihi sisa stok yang tersedia.
+                    </div>
+                    <?php endif; ?>
                     <div class="flex flex-wrap gap-4 mb-10 pb-10 border-b border-gray-200">
                         <form action="<?= BASEURL; ?>/cart/add/<?= $data['buku']['id'] ?>" method="POST" class="flex items-center gap-4">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
@@ -86,8 +91,8 @@
                                 <button type="button" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600 transition" onclick="document.getElementById('qty').value = Math.max(1, parseInt(document.getElementById('qty').value) - 1)">
                                     <i class="fas fa-minus text-xs"></i>
                                 </button>
-                                <input type="number" name="qty" id="qty" value="1" min="1" class="w-10 text-center font-bold text-gray-800 bg-transparent outline-none appearance-none">
-                                <button type="button" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600 transition" onclick="document.getElementById('qty').value = parseInt(document.getElementById('qty').value) + 1">
+                                <input type="number" name="qty" id="qty" value="1" min="1" max="<?= $data['buku']['stock'] ?>" class="w-10 text-center font-bold text-gray-800 bg-transparent outline-none appearance-none">
+                                <button type="button" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600 transition" onclick="let inp=document.getElementById('qty'); if(parseInt(inp.value) < <?= $data['buku']['stock'] ?>) { inp.value = parseInt(inp.value) + 1; } else { alert('Maksimal stok yang tersedia adalah <?= $data['buku']['stock'] ?>'); }">
                                     <i class="fas fa-plus text-xs"></i>
                                 </button>
                             </div>
@@ -113,29 +118,21 @@
                             <!-- Left Col -->
                             <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)] transition-shadow duration-300 space-y-4">
                                 <div class="flex justify-between items-center border-b border-gray-50 pb-3 group">
-                                    <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-book-open text-unsoed-blue/70 w-5"></i> Judul Buku</span>
-                                    <span class="text-gray-900 font-bold text-right ml-4 truncate w-48 group-hover:text-unsoed-blue transition-colors" title="<?= htmlspecialchars($data['buku']['title']) ?>"><?= $data['buku']['title'] ?></span>
-                                </div>
-                                <div class="flex justify-between items-center border-b border-gray-50 pb-3 group">
-                                    <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-user-edit text-unsoed-blue/70 w-5"></i> Penulis</span>
-                                    <span class="text-gray-900 font-bold text-right ml-4 group-hover:text-unsoed-blue transition-colors"><?= $data['buku']['author'] ?></span>
-                                </div>
-                                <div class="flex justify-between items-center border-b border-gray-50 pb-3 group">
                                     <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-building text-unsoed-blue/70 w-5"></i> Penerbit</span>
                                     <span class="text-gray-900 font-bold text-right ml-4 group-hover:text-unsoed-blue transition-colors">Unsoed Press</span>
                                 </div>
-                                <div class="flex justify-between items-center pb-1 group">
+                                <div class="flex justify-between items-center border-b border-gray-50 pb-3 group">
                                     <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-calendar-alt text-unsoed-blue/70 w-5"></i> Tahun Terbit</span>
                                     <span class="text-gray-900 font-bold text-right ml-4 group-hover:text-unsoed-blue transition-colors"><?= !empty($data['buku']['publication_year']) ? $data['buku']['publication_year'] : date('Y', strtotime($data['buku']['created_at'])) ?></span>
+                                </div>
+                                <div class="flex justify-between items-center pb-1 group">
+                                    <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-barcode text-unsoed-blue/70 w-5"></i> ISBN</span>
+                                    <span class="text-gray-900 font-bold text-right ml-4 group-hover:text-unsoed-blue transition-colors"><?= !empty($data['buku']['isbn']) ? $data['buku']['isbn'] : '-' ?></span>
                                 </div>
                             </div>
                             
                             <!-- Right Col -->
                             <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)] transition-shadow duration-300 space-y-4">
-                                <div class="flex justify-between items-center border-b border-gray-50 pb-3 group">
-                                    <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-barcode text-unsoed-blue/70 w-5"></i> ISBN</span>
-                                    <span class="text-gray-900 font-bold text-right ml-4 group-hover:text-unsoed-blue transition-colors"><?= !empty($data['buku']['isbn']) ? $data['buku']['isbn'] : '-' ?></span>
-                                </div>
                                 <div class="flex justify-between items-center border-b border-gray-50 pb-3 group">
                                     <span class="text-gray-500 font-medium flex items-center gap-2"><i class="fas fa-file-alt text-unsoed-blue/70 w-5"></i> Hal & Bahasa</span>
                                     <span class="text-gray-900 font-bold text-right ml-4 group-hover:text-unsoed-blue transition-colors">
@@ -184,6 +181,21 @@
                             <div class="mb-6 p-4 bg-green-50 text-green-700 rounded-xl border border-green-200 flex items-center gap-3">
                                 <i class="fas fa-check-circle"></i> <?= $_SESSION['flash_success']; unset($_SESSION['flash_success']); ?>
                             </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($_SESSION['review_success'])): ?>
+                        <!-- Review Success Modal -->
+                        <div id="reviewSuccessModal" class="fixed inset-0 z-[60] overflow-y-auto bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                            <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden text-center p-8 transform transition-all scale-100 opacity-100 animate-[pulse_0.5s_ease-in-out]">
+                                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-white shadow-lg">
+                                    <i class="fas fa-check text-4xl text-green-500"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-2">Terima Kasih!</h3>
+                                <p class="text-gray-500 mb-6"><?= $_SESSION['review_success']; ?></p>
+                                <button type="button" onclick="document.getElementById('reviewSuccessModal').classList.add('hidden')" class="w-full btn-primary py-3">Tutup</button>
+                            </div>
+                        </div>
+                        <?php unset($_SESSION['review_success']); ?>
                         <?php endif; ?>
                         <?php if (isset($_SESSION['flash_error'])): ?>
                             <div class="mb-6 p-4 bg-red-50 text-red-700 rounded-xl border border-red-200 flex items-center gap-3">
@@ -244,7 +256,7 @@
 
 <!-- Review Modal -->
 <div id="reviewModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden transform transition-all">
+    <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden transform transition-all">
         <div class="p-6 border-b border-gray-100 flex justify-between items-center">
             <h3 class="text-xl font-bold text-gray-900">Tulis Ulasan</h3>
             <button type="button" onclick="document.getElementById('reviewModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 transition">

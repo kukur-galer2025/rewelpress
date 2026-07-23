@@ -843,6 +843,7 @@ class Admin extends Controller {
         $data['judul'] = 'Tambah E-Book Baru - Unsoed Press';
         $data['books'] = $this->model('BookModel')->getAllBooks();
         $data['categories'] = $this->model('CategoryModel')->getHierarchicalCategories();
+        $data['authors'] = $this->model('AuthorModel')->getAllAuthors();
 
         $this->view('templates/admin_header', $data);
         $this->view('admin/ebooks/create', $data);
@@ -853,6 +854,18 @@ class Admin extends Controller {
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $postData = $_POST;
+
+            if (isset($_POST['author'])) {
+                if (is_array($_POST['author'])) {
+                    foreach($_POST['author'] as $a) {
+                        $this->model('AuthorModel')->addAuthorIfNotExists($a);
+                    }
+                    $postData['author'] = implode('; ', $_POST['author']);
+                } else {
+                    $this->model('AuthorModel')->addAuthorIfNotExists($_POST['author']);
+                    $postData['author'] = $_POST['author'];
+                }
+            }
 
             // Handle Upload File PDF Utama E-Book
             if (isset($_FILES['file_pdf_upload']) && $_FILES['file_pdf_upload']['error'] == 0) {
@@ -895,6 +908,7 @@ class Admin extends Controller {
         $data['ebook'] = $this->model('EbookModel')->getEbookById($id);
         $data['books'] = $this->model('BookModel')->getAllBooks();
         $data['categories'] = $this->model('CategoryModel')->getHierarchicalCategories();
+        $data['authors'] = $this->model('AuthorModel')->getAllAuthors();
 
         if (!$data['ebook']) {
             header('Location: ' . BASEURL . '/admin/ebooks');
@@ -910,6 +924,18 @@ class Admin extends Controller {
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $postData = $_POST;
+
+            if (isset($_POST['author'])) {
+                if (is_array($_POST['author'])) {
+                    foreach($_POST['author'] as $a) {
+                        $this->model('AuthorModel')->addAuthorIfNotExists($a);
+                    }
+                    $postData['author'] = implode('; ', $_POST['author']);
+                } else {
+                    $this->model('AuthorModel')->addAuthorIfNotExists($_POST['author']);
+                    $postData['author'] = $_POST['author'];
+                }
+            }
 
             // Handle Upload File PDF Utama E-Book
             if (isset($_FILES['file_pdf_upload']) && $_FILES['file_pdf_upload']['error'] == 0) {

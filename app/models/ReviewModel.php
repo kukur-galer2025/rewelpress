@@ -26,7 +26,7 @@ class ReviewModel {
     public function getRatingStats($item_type, $item_id)
     {
         $this->db->query("
-            SELECT COALESCE(ROUND(AVG(rating), 1), 4.8) AS avg_rating,
+            SELECT COALESCE(ROUND(AVG(rating), 1), 0) AS avg_rating,
                    COUNT(*) AS total_reviews
             FROM {$this->table}
             WHERE item_type = :item_type AND item_id = :item_id
@@ -35,11 +35,10 @@ class ReviewModel {
         $this->db->bind(':item_id', $item_id);
         $result = $this->db->single();
 
-        // Jika belum ada ulasan di database untuk item tersebut, berikan fallback realistis (misal 4.8 & 5 ulasan)
         if (empty($result) || $result['total_reviews'] == 0) {
             return [
-                'avg_rating' => 4.8,
-                'total_reviews' => rand(5, 18)
+                'avg_rating' => 0,
+                'total_reviews' => 0
             ];
         }
 

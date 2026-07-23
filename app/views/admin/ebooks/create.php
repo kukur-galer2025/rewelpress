@@ -50,6 +50,16 @@
                 <input type="text" name="title" id="inputTitle" required placeholder="Contoh: Metodologi Penelitian Sosial (Edisi Digital)" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue transition text-sm font-semibold">
             </div>
 
+            <div class="md:col-span-2" id="authorContainer">
+                <label for="author" class="block text-sm font-bold text-gray-700 mb-2">Penulis (Khusus Standalone E-Book) <span class="text-red-500">*</span></label>
+                <select name="author[]" id="author" multiple="multiple" class="select2-multiple w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue transition text-sm font-semibold" required>
+                    <?php foreach($data['authors'] as $auth): ?>
+                        <option value="<?= htmlspecialchars($auth['name']) ?>"><?= htmlspecialchars($auth['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="text-xs text-gray-500 mt-1">* Abaikan jika Anda memilih buku fisik di atas (penulis akan disalin otomatis).</p>
+            </div>
+
             <div>
                 <label for="parent_category" class="block text-sm font-bold text-gray-700 mb-2">Kategori Utama (Opsional, khusus Standalone)</label>
                 <select id="parent_category" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-unsoed-blue/30 focus:border-unsoed-blue transition text-sm">
@@ -168,6 +178,14 @@ function autoFillFromBook() {
         // Set diskon 30% dari harga normal
         const diskonPrice = Math.round(price * 0.7 / 100) * 100;
         document.getElementById('inputEbookPrice').value = diskonPrice > 0 ? diskonPrice : 0;
+        
+        // Sembunyikan field penulis khusus
+        document.getElementById('authorContainer').style.display = 'none';
+        document.getElementById('author').removeAttribute('required');
+    } else {
+        // Tampilkan kembali field penulis
+        document.getElementById('authorContainer').style.display = 'block';
+        document.getElementById('author').setAttribute('required', 'required');
     }
 }
 

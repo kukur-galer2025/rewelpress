@@ -49,7 +49,9 @@ class Order extends Controller {
             $book = $bookModel->getBookById($book_id);
             if($book) {
                 if ($book['stock'] < $qty) {
-                    die('Maaf, stok untuk buku "' . htmlspecialchars($book['title']) . '" tidak mencukupi. Sisa stok: ' . $book['stock']);
+                    $_SESSION['checkout_error'] = 'Maaf, stok untuk buku "' . htmlspecialchars($book['title']) . '" tidak mencukupi. Sisa stok: ' . $book['stock'];
+                    header('Location: ' . BASEURL . '/cart');
+                    exit;
                 }
                 $book['qty'] = $qty;
                 $book['subtotal'] = $book['price'] * $qty;

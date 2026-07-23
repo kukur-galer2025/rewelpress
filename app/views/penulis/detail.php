@@ -20,7 +20,7 @@
             <div>
                 <h3 class="text-xl font-serif font-bold text-gray-800 mb-4 pb-2 border-b-2 border-gray-200 inline-block">Photograph</h3>
                 <div class="w-full aspect-[3/4] bg-gray-100 overflow-hidden rounded-xl shadow-md border border-gray-200 relative group">
-                    <?php $photo = !empty($data['author']['photo']) ? $data['author']['photo'] : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&h=400&q=80'; ?>
+                    <?php $photo = !empty($data['author']['photo']) ? $data['author']['photo'] : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'; ?>
                     <img src="<?= esc($photo) ?>" alt="<?= htmlspecialchars($data['author']['name']) ?>" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500">
                 </div>
             </div>

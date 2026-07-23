@@ -300,6 +300,21 @@ if (!empty($e['cover_image'])) {
                         <i class="fas fa-check-circle"></i> <?= $_SESSION['flash_success']; unset($_SESSION['flash_success']); ?>
                     </div>
                 <?php endif; ?>
+
+                <?php if (isset($_SESSION['review_success'])): ?>
+                <!-- Review Success Modal -->
+                <div id="reviewSuccessModal" class="fixed inset-0 z-[60] overflow-y-auto bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden text-center p-8 transform transition-all scale-100 opacity-100 animate-[pulse_0.5s_ease-in-out]">
+                        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-white shadow-lg">
+                            <i class="fas fa-check text-4xl text-green-500"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Terima Kasih!</h3>
+                        <p class="text-gray-500 mb-6"><?= $_SESSION['review_success']; ?></p>
+                        <button type="button" onclick="document.getElementById('reviewSuccessModal').classList.add('hidden')" class="w-full btn-primary py-3">Tutup</button>
+                    </div>
+                </div>
+                <?php unset($_SESSION['review_success']); ?>
+                <?php endif; ?>
                 <?php if (isset($_SESSION['flash_error'])): ?>
                     <div class="mb-6 p-4 bg-red-50 text-red-700 rounded-xl border border-red-200 flex items-center gap-3">
                         <i class="fas fa-exclamation-circle"></i> <?= $_SESSION['flash_error']; unset($_SESSION['flash_error']); ?>
@@ -357,7 +372,7 @@ if (!empty($e['cover_image'])) {
 
 <!-- Review Modal -->
 <div id="reviewModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden transform transition-all">
+    <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden transform transition-all">
         <div class="p-6 border-b border-gray-100 flex justify-between items-center">
             <h3 class="text-xl font-bold text-gray-900">Tulis Ulasan</h3>
             <button type="button" onclick="document.getElementById('reviewModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 transition">

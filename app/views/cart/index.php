@@ -1,8 +1,26 @@
 <!-- Page Header -->
+<?php if(isset($_SESSION['checkout_error'])): ?>
+<div id="checkoutErrorModal" class="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative text-center">
+        <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-5 text-red-500 text-4xl">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-3">Checkout Gagal</h3>
+        <p class="text-gray-600 mb-8"><?= $_SESSION['checkout_error'] ?></p>
+        <button type="button" onclick="document.getElementById('checkoutErrorModal').remove()" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3.5 rounded-xl transition shadow-lg">
+            Kembali ke Keranjang
+        </button>
+    </div>
+</div>
+<?php unset($_SESSION['checkout_error']); ?>
+<?php endif; ?>
 <div class="bg-unsoed-darkblue py-10 relative overflow-hidden">
     <div class="absolute inset-0 bg-gradient-to-r from-unsoed-darkblue to-unsoed-blue"></div>
     <div class="container mx-auto px-4 relative z-10">
-        <h1 class="text-3xl font-serif font-bold text-white mb-2">Keranjang Belanja</h1>
+        <div class="flex items-center gap-3 mb-2">
+            <h1 class="text-3xl font-serif font-bold text-white">Keranjang Belanja</h1>
+            <span class="bg-teal-500/80 backdrop-blur border border-teal-400 text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-widest shadow-sm"><i class="fas fa-book mr-1"></i> Beli Buku Fisik</span>
+        </div>
         <p class="text-gray-300 text-sm">Tinjau kembali buku pilihan Anda sebelum melakukan pembayaran.</p>
     </div>
 </div>
@@ -20,11 +38,16 @@
                 <a href="<?= BASEURL; ?>" class="btn-primary inline-block"><i class="fas fa-shopping-bag mr-2"></i> Mulai Belanja</a>
             </div>
         <?php else: ?>
-            <div class="flex flex-col lg:flex-row gap-8">
+            <div class="flex flex-col lg:flex-row gap-8" id="mainCartContainer">
                 <!-- Cart Items List -->
                 <div class="lg:w-2/3">
                     <form action="<?= BASEURL; ?>/cart/update" method="POST" id="cartForm">
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><div class="glass rounded-3xl p-6 shadow-xl border border-white mb-6">
+                            <?php if(isset($_GET['error']) && $_GET['error'] == 'stock'): ?>
+                            <div class="mb-4 bg-red-100 border border-red-200 text-red-600 px-4 py-3 rounded-2xl shadow-sm text-sm font-bold flex items-center gap-2.5">
+                                <i class="fas fa-exclamation-circle text-lg"></i> Kuantitas disesuaikan. Beberapa item melebihi maksimal stok yang tersedia.
+                            </div>
+                            <?php endif; ?>
                             <div class="flex justify-between items-center border-b border-gray-200 pb-4 mb-6">
                                 <h3 class="font-bold text-lg text-gray-800">Daftar Produk (<?= count($data['cart_items']) ?>)</h3>
                                 <a href="<?= BASEURL; ?>/cart/clear" class="text-sm text-red-500 hover:text-red-700 font-medium transition" onclick="return confirm('Apakah Anda yakin ingin mengosongkan keranjang?')">
@@ -52,16 +75,19 @@
                                                 <span class="text-sm text-gray-400 line-through font-medium">Rp <?= number_format($item['old_price'], 0, ',', '.') ?></span>
                                             <?php endif; ?>
                                         </div>
+                                        <div class="mt-1 flex items-center gap-2">
+                                            <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold rounded-md"><i class="fas fa-box-open mr-1"></i> Sisa Stok: <?= esc($item['stock']) ?></span>
+                                        </div>
                                     </div>
 
                                     <!-- Qty & Action -->
                                     <div class="flex flex-col sm:items-end gap-3 w-full sm:w-auto">
                                         <div class="flex items-center border border-gray-300 rounded-lg bg-gray-50 px-2 py-1">
-                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-unsoed-blue transition" onclick="document.getElementById('qty_<?= esc($item['id']) ?>').value = Math.max(1, parseInt(document.getElementById('qty_<?= esc($item['id']) ?>').value) - 1)">
+                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-unsoed-blue transition" onclick="let inp = document.getElementById('qty_<?= esc($item['id']) ?>'); let old = inp.value; inp.value = Math.max(1, parseInt(inp.value) - 1); if(old !== inp.value) updateCartAjax();">
                                                 <i class="fas fa-minus text-xs"></i>
                                             </button>
-                                            <input type="number" name="qty[<?= esc($item['id']) ?>]" id="qty_<?= esc($item['id']) ?>" value="<?= esc($item['qty']) ?>" min="1" class="w-12 text-center font-bold text-gray-800 bg-transparent outline-none appearance-none">
-                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-unsoed-blue transition" onclick="document.getElementById('qty_<?= esc($item['id']) ?>').value = parseInt(document.getElementById('qty_<?= esc($item['id']) ?>').value) + 1">
+                                            <input type="number" name="qty[<?= esc($item['id']) ?>]" id="qty_<?= esc($item['id']) ?>" value="<?= esc($item['qty']) ?>" min="1" max="<?= esc($item['stock']) ?>" class="w-12 text-center font-bold text-gray-800 bg-transparent outline-none appearance-none" onchange="updateCartAjax();">
+                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-unsoed-blue transition" onclick="let inp=document.getElementById('qty_<?= esc($item['id']) ?>'); if(parseInt(inp.value) < <?= esc($item['stock']) ?>) { inp.value = parseInt(inp.value) + 1; updateCartAjax(); } else { alert('Maksimal stok yang tersedia adalah <?= esc($item['stock']) ?>'); }">
                                                 <i class="fas fa-plus text-xs"></i>
                                             </button>
                                         </div>
@@ -77,11 +103,7 @@
                                 <?php endforeach; ?>
                             </div>
 
-                            <div class="mt-8 flex justify-end">
-                                <button type="submit" class="px-6 py-2 bg-gray-800 text-white font-medium rounded-lg hover:bg-gray-700 transition shadow-md flex items-center gap-2">
-                                    <i class="fas fa-sync-alt"></i> Perbarui Keranjang
-                                </button>
-                            </div>
+                            <!-- Auto updated via JS, no submit button needed -->
                         </div>
                     </form>
                 </div>
@@ -154,21 +176,53 @@
                         <h3 class="font-bold text-lg text-gray-800 border-b border-gray-200 pb-4 mb-6">Ringkasan Belanja</h3>
                         
                         <?php 
-                        $discount = !empty($data['applied_voucher']) ? floatval($data['applied_voucher']['discount_amount']) : 0;
-                        $final_price = max(0, $data['total_price'] - $discount);
+                        $total_regular_price = 0;
+                        $total_product_discount = 0;
+                        foreach($data['cart_items'] as $item) {
+                            $qty = $item['qty'];
+                            $regular = (isset($item['old_price']) && $item['old_price'] > 0 && $item['old_price'] > $item['price']) ? $item['old_price'] : $item['price'];
+                            $total_regular_price += ($regular * $qty);
+                            $total_product_discount += (($regular - $item['price']) * $qty);
+                        }
+
+                        $voucher_discount = !empty($data['applied_voucher']) ? floatval($data['applied_voucher']['discount_amount']) : 0;
+                        $final_price = max(0, $data['total_price'] - $voucher_discount);
                         ?>
 
                         <div class="space-y-4 mb-6 text-sm">
-                            <div class="flex justify-between text-gray-600">
-                                <span>Total Harga (<?= count($data['cart_items']) ?> Barang)</span>
-                                <span class="font-semibold">Rp <?= number_format($data['total_price'], 0, ',', '.') ?></span>
+                            <!-- Daftar Item -->
+                            <div class="space-y-2.5 pb-4 border-b border-gray-100">
+                                <?php foreach($data['cart_items'] as $item): ?>
+                                    <div class="flex justify-between text-gray-600 text-xs items-start gap-3">
+                                        <div class="flex flex-col min-w-0">
+                                            <span class="truncate font-semibold text-gray-700" title="<?= esc($item['title']) ?>"><?= esc($item['title']) ?></span>
+                                            <span class="text-[10px] text-gray-400">@ Rp <?= number_format($item['price'], 0, ',', '.') ?> &times; <?= esc($item['qty']) ?></span>
+                                        </div>
+                                        <span class="font-bold text-gray-700 whitespace-nowrap">Rp <?= number_format($item['subtotal'], 0, ',', '.') ?></span>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
-                            <?php if($discount > 0): ?>
+
+                            <div class="flex justify-between text-gray-600">
+                                <span>Total Harga Normal</span>
+                                <span class="font-semibold">Rp <?= number_format($total_regular_price, 0, ',', '.') ?></span>
+                            </div>
+                            <?php if($total_product_discount > 0): ?>
                             <div class="flex justify-between text-green-600 font-bold">
-                                <span>Diskon (<?= htmlspecialchars($data['applied_voucher']['code']) ?>)</span>
-                                <span>- Rp <?= number_format($discount, 0, ',', '.') ?></span>
+                                <span>Diskon Harga Produk</span>
+                                <span>- Rp <?= number_format($total_product_discount, 0, ',', '.') ?></span>
                             </div>
                             <?php endif; ?>
+                            <?php if($voucher_discount > 0): ?>
+                            <div class="flex justify-between text-green-600 font-bold">
+                                <span>Diskon Promo (<?= htmlspecialchars($data['applied_voucher']['code']) ?>)</span>
+                                <span>- Rp <?= number_format($voucher_discount, 0, ',', '.') ?></span>
+                            </div>
+                            <?php endif; ?>
+                            <div class="flex justify-between text-gray-600 pt-2 border-t border-gray-100">
+                                <span>Subtotal Harga Final</span>
+                                <span class="font-bold text-gray-800">Rp <?= number_format($data['total_price'], 0, ',', '.') ?></span>
+                            </div>
                             <div class="flex justify-between text-gray-600">
                                 <span>Biaya Pengiriman</span>
                                 <span class="text-gray-500 italic text-xs text-right max-w-[150px]">Bayar di Tujuan (Kurir) / Gratis (Ambil Sendiri)</span>
@@ -222,4 +276,36 @@
 
     </div>
 </section>
+
+<script>
+function updateCartAjax() {
+    let form = document.getElementById('cartForm');
+    let formData = new FormData(form);
+    
+    let container = document.getElementById('mainCartContainer');
+    if(container) container.style.opacity = '0.5';
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        redirect: 'follow'
+    })
+    .then(response => response.text())
+    .then(html => {
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(html, 'text/html');
+        let newCart = doc.getElementById('mainCartContainer');
+        if(newCart && container) {
+            container.innerHTML = newCart.innerHTML;
+            container.style.opacity = '1';
+        } else {
+            window.location.reload();
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        window.location.reload();
+    });
+}
+</script>
 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">

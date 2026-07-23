@@ -76,6 +76,7 @@ class EbookOrderModel {
         $this->db->query('
             SELECT ebook_orders.*,
                    ebooks.title as ebook_title,
+                   ebooks.slug as ebook_slug,
                    ebooks.file_pdf, ebooks.file_size, ebooks.page_count, ebooks.is_free,
                    ebooks.ebook_price, ebooks.book_id,
                    books.image as cover_image,
@@ -98,6 +99,7 @@ class EbookOrderModel {
         $this->db->query('
             SELECT ebook_orders.*,
                    ebooks.title as ebook_title,
+                   ebooks.slug as ebook_slug,
                    ebooks.file_size, ebooks.page_count,
                    books.image as cover_image
             FROM ebook_orders

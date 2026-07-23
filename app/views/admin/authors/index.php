@@ -58,7 +58,7 @@
                         <td class="p-4 text-center font-medium text-gray-500"><?= $no++ ?></td>
                         <td class="p-4">
                             <div class="w-14 h-14 rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm flex-shrink-0">
-                                <?php $photo = !empty($author['photo']) ? $author['photo'] : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&h=200&q=80'; ?>
+                                <?php $photo = !empty($author['photo']) ? $author['photo'] : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'; ?>
                                 <img src="<?= esc($photo) ?>" alt="<?= htmlspecialchars($author['name']) ?>" class="w-full h-full object-cover">
                             </div>
                         </td>

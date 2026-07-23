@@ -2,10 +2,10 @@
 <!-- Header Banner -->
 <div class="bg-gradient-to-r from-unsoed-darkblue to-blue-900 py-12 text-white relative overflow-hidden shadow-md">
     <div class="container mx-auto px-4 max-w-4xl relative z-10">
-        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-unsoed-yellow text-xs font-extrabold uppercase tracking-widest mb-3 border border-white/15">
-            <i class="fas fa-lock"></i> Checkout E-Book Digital
-        </span>
-        <h1 class="text-3xl font-serif font-bold tracking-tight">Konfirmasi Pesanan Anda</h1>
+        <div class="flex items-center gap-3 mb-2">
+            <h1 class="text-3xl font-serif font-bold tracking-tight text-white">Konfirmasi Pesanan Anda</h1>
+            <span class="bg-indigo-500/80 backdrop-blur border border-indigo-400 text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-widest shadow-sm"><i class="fas fa-laptop-code mr-1"></i> Beli E-Book Digital</span>
+        </div>
         <p class="text-blue-200 text-sm mt-1">Periksa kembali rincian publikasi e-book dan terapkan kode promo jika tersedia.</p>
     </div>
 </div>

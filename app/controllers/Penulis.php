@@ -32,7 +32,7 @@ class Penulis extends Controller {
                 $author = [
                     'id' => 0,
                     'name' => $author_name,
-                    'photo' => 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&h=400&q=80',
+                    'photo' => 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
                     'affiliation' => 'Penulis Unsoed Press',
                     'bio' => 'Penulis dan akademisi yang telah berkarya serta menerbitkan literatur bersama Unsoed Press.'
                 ];

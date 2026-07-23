@@ -2,7 +2,10 @@
 <div class="bg-unsoed-darkblue py-10 relative overflow-hidden">
     <div class="absolute inset-0 bg-gradient-to-r from-unsoed-darkblue to-unsoed-blue"></div>
     <div class="container mx-auto px-4 relative z-10">
-        <h1 class="text-3xl font-serif font-bold text-white mb-2">Selesaikan Pembayaran Anda</h1>
+        <div class="flex items-center gap-3 mb-2">
+            <h1 class="text-3xl font-serif font-bold text-white">Selesaikan Pembayaran Anda</h1>
+            <span class="bg-teal-500/80 backdrop-blur border border-teal-400 text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-widest shadow-sm"><i class="fas fa-book mr-1"></i> Beli Buku Fisik</span>
+        </div>
         <p class="text-gray-300 text-sm">Pesanan #<?= esc($data['order']['id']) ?></p>
     </div>
 </div>

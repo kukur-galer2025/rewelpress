@@ -9,8 +9,9 @@ class Review extends Controller {
             $slug = isset($_POST['slug']) ? $_POST['slug'] : '';
             $rating = isset($_POST['rating']) ? (int)$_POST['rating'] : 5;
             $comment = !empty($_POST['comment']) ? trim($_POST['comment']) : '';
-
-            $redirectUrl = (!empty($slug)) ? (($item_type == 'ebook') ? BASEURL . '/ebook/detail/' . $slug : BASEURL . '/book/detail/' . $slug) . '#reviews-section' : BASEURL;
+            
+            $redirectIdentifier = $slug;
+            $redirectUrl = (!empty($redirectIdentifier)) ? (($item_type == 'ebook') ? BASEURL . '/ebook/detail/' . $redirectIdentifier : BASEURL . '/book/detail/' . $redirectIdentifier) . '#reviews-section' : BASEURL;
 
             // 1. Cek apakah user sudah login
             if (!isset($_SESSION['user_id'])) {
@@ -43,7 +44,7 @@ class Review extends Controller {
                     'comment' => $comment
                 ]);
 
-                $_SESSION['flash_success'] = 'Terima kasih! Ulasan Anda sebagai Pembeli Terverifikasi berhasil dikirim.';
+                $_SESSION['review_success'] = 'Terima kasih! Ulasan Anda sebagai Pembeli Terverifikasi berhasil dikirim.';
             }
 
             header('Location: ' . $redirectUrl);

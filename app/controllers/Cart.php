@@ -93,15 +93,25 @@ class Cart extends Controller {
         if($_SERVER['REQUEST_METHOD'] == 'POST') {
             $qty = isset($_POST['qty']) ? (int)$_POST['qty'] : 1;
             
+            $book = $this->model('BookModel')->getBookById($id);
+            if(!$book) {
+                header('Location: ' . BASEURL . '/cart');
+                exit;
+            }
+
             if(!isset($_SESSION['cart'])) {
                 $_SESSION['cart'] = [];
             }
 
-            if(isset($_SESSION['cart'][$id])) {
-                $_SESSION['cart'][$id] += $qty;
-            } else {
-                $_SESSION['cart'][$id] = $qty;
+            $current_qty = isset($_SESSION['cart'][$id]) ? $_SESSION['cart'][$id] : 0;
+            $new_qty = $current_qty + $qty;
+
+            if($new_qty > $book['stock']) {
+                header('Location: ' . BASEURL . '/book/detail/' . $book['slug'] . '?error=stock');
+                exit;
             }
+
+            $_SESSION['cart'][$id] = $new_qty;
         }
         
         header('Location: ' . BASEURL . '/cart');
@@ -121,12 +131,24 @@ class Cart extends Controller {
     public function update()
     {
         if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['qty'])) {
+            $bookModel = $this->model('BookModel');
+            $stock_error = false;
             foreach($_POST['qty'] as $id => $qty) {
                 if((int)$qty > 0) {
-                    $_SESSION['cart'][$id] = (int)$qty;
+                    $book = $bookModel->getBookById($id);
+                    if ($book && (int)$qty > $book['stock']) {
+                        $_SESSION['cart'][$id] = $book['stock'];
+                        $stock_error = true;
+                    } else {
+                        $_SESSION['cart'][$id] = (int)$qty;
+                    }
                 } else {
                     unset($_SESSION['cart'][$id]);
                 }
+            }
+            if ($stock_error) {
+                header('Location: ' . BASEURL . '/cart?error=stock');
+                exit;
             }
         }
         

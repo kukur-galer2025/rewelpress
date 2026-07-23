@@ -174,70 +174,87 @@
 
                     <div id="bookGrid" class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         <?php foreach($data['buku'] as $buku): ?>
-                            <a href="<?= BASEURL; ?>/book/detail/<?= esc($buku['slug']) ?>" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col group border border-gray-100 relative">
-                                <!-- Badge Promo Overlay -->
-                                <div class="absolute top-3 right-3 z-20 flex justify-end items-start pointer-events-none">
+                            <?php 
+                                $discount = 0;
+                                if(isset($buku['old_price']) && $buku['old_price'] > $buku['price']) {
+                                    $discount = round((($buku['old_price'] - $buku['price']) / $buku['old_price']) * 100);
+                                }
+                                $img_src = !empty($buku['image']) ? $buku['image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400';
+                                $category = !empty($buku['category_name']) ? $buku['category_name'] : 'Umum';
+                                $avgRating = isset($buku['avg_rating']) ? $buku['avg_rating'] : 4.8;
+                                $stock = isset($buku['stock']) ? (int)$buku['stock'] : 0;
+                                $soldCount = max(15, $stock * 3 + 12);
+                            ?>
+                            <a href="<?= BASEURL; ?>/book/detail/<?= esc($buku['slug']) ?>" class="group flex flex-col bg-white rounded-2xl shadow-sm hover:shadow-2xl hover:shadow-unsoed-blue/20 hover:-translate-y-2 transition-all duration-500 border border-gray-100 hover:border-unsoed-blue/30 overflow-hidden relative h-full">
+                                
+                                <!-- Badges -->
+                                <div class="absolute top-3 left-3 z-20 flex flex-col gap-1 pointer-events-none">
                                     <?php if(isset($buku['is_flashsale']) && $buku['is_flashsale'] == 1): ?>
-                                        <span class="bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-md shadow-md animate-pulse flex items-center gap-1">
-                                            <i class="fas fa-bolt"></i> FLASH SALE
-                                        </span>
-                                    <?php elseif($buku['old_price'] > $buku['price']): ?>
-                                        <?php $disc = round((($buku['old_price'] - $buku['price']) / $buku['old_price']) * 100); ?>
-                                        <span class="bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded-md shadow-md animate-pulse">
-                                            -<?= esc($disc) ?>%
-                                        </span>
+                                        <span class="bg-gradient-to-r from-red-600 to-rose-500 text-white text-[9px] font-black px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1 uppercase tracking-wider"><i class="fas fa-bolt"></i> Flash Sale</span>
                                     <?php endif; ?>
                                 </div>
                                 
-                                <div class="relative w-full pt-[140%] bg-gray-100 overflow-hidden">
-                                    <?php $img_src = !empty($buku['image']) ? $buku['image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400'; ?>
-                                    <img src="<?= esc($img_src) ?>" alt="<?= htmlspecialchars($buku['title']) ?>" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                    <?php if(isset($buku['stock']) && $buku['stock'] <= 0): ?>
-                                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
-                                            <span class="bg-black/80 text-white font-bold text-sm px-4 py-2 rounded-lg border border-gray-600 backdrop-blur-sm">STOK HABIS</span>
+                                <div class="absolute top-3 right-3 z-20 pointer-events-none">
+                                    <?php if($discount > 0): ?>
+                                        <span class="bg-red-50 text-red-600 border border-red-200 text-[10px] font-bold px-2 py-1 rounded-lg shadow-sm">-<?= $discount ?>%</span>
+                                    <?php endif; ?>
+                                </div>
+
+                                <!-- Image Container -->
+                                <div class="relative w-full aspect-[3/4] bg-gray-50 overflow-hidden shrink-0">
+                                    <img src="<?= esc($img_src) ?>" alt="<?= htmlspecialchars($buku['title']) ?>" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
+                                    <?php if($stock <= 0): ?>
+                                        <div class="absolute inset-0 bg-white/70 backdrop-blur-[2px] flex items-center justify-center z-10">
+                                            <span class="bg-gray-900 text-white font-bold text-xs px-4 py-1.5 rounded-full shadow-lg tracking-wider">HABIS</span>
                                         </div>
                                     <?php endif; ?>
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                </div>
-                                
-                                <div class="p-5 flex flex-col flex-grow">
-                                    <p class="text-[10px] text-unsoed-yellow font-bold uppercase tracking-wider mb-1 line-clamp-1">
-                                        <?= !empty($buku['parent_category_name']) ? $buku['parent_category_name'] . ' &bull; ' : '' ?><?= esc($buku['category_name']) ?>
-                                    </p>
-                                    <h3 class="font-bold text-gray-800 text-sm md:text-base leading-snug mb-1 line-clamp-2 group-hover:text-unsoed-blue transition-colors"><?= esc($buku['title']) ?></h3>
-                                    <p class="text-xs text-gray-500 mb-2 line-clamp-1"><i class="fas fa-pen-nib mr-1 text-gray-300"></i> <?= esc($buku['author']) ?></p>
                                     
-                                    <!-- Rating Bar & Tag (Shopee Style) -->
-                                    <?php 
-                                        $avgRating = isset($buku['avg_rating']) ? $buku['avg_rating'] : 4.8;
-                                        $stock = isset($buku['stock']) ? (int)$buku['stock'] : 0;
-                                        $soldCount = max(15, $stock * 3 + 12);
-                                    ?>
-                                    <div class="flex items-center gap-1.5 mt-1.5">
-                                        <div class="flex items-center gap-1 text-[11px] font-bold text-amber-500"><i class="fas fa-star"></i> <span><?= $avgRating ?></span></div>
-                                        <?php if($buku['old_price'] > 0): ?>
-                                            <?php $disc = round((($buku['old_price'] - $buku['price']) / $buku['old_price']) * 100); ?>
-                                            <span class="px-1 py-[1px] border border-red-500 text-red-600 rounded-[2px] text-[8px] font-medium leading-tight tracking-tight">Hemat <?= $disc ?>%</span>
-                                        <?php elseif($stock <= 5 && $stock > 0): ?>
-                                            <span class="px-1 py-[1px] border border-amber-500 text-amber-600 rounded-[2px] text-[8px] font-medium leading-tight tracking-tight">Stok Terbatas</span>
-                                        <?php endif; ?>
+                                    <!-- Center button overlay -->
+                                    <div class="absolute inset-0 bg-unsoed-darkblue/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex items-center justify-center">
+                                        <span class="bg-unsoed-yellow text-unsoed-darkblue hover:bg-white text-[11px] font-bold px-5 py-2.5 rounded-full shadow-2xl flex items-center gap-2 transform scale-75 group-hover:scale-100 transition-all duration-500 delay-75"><i class="fas fa-shopping-bag"></i> Lihat Detail</span>
                                     </div>
+                                </div>
 
-                                    <!-- Shopee style bottom price row (with Unsoed Blue color) & sold count -->
-                                    <div class="flex items-baseline justify-between mt-auto pt-2 border-t border-gray-100/60">
-                                        <?php if($buku['old_price'] > 0): ?>
-                                            <div class="flex flex-col">
-                                                <span class="text-[10px] text-gray-400 line-through leading-none">Rp<?= number_format($buku['old_price'], 0, ',', '.') ?></span>
-                                                <div class="flex items-baseline text-unsoed-blue font-extrabold leading-none mt-0.5">
-                                                    <span class="text-xs font-bold mr-0.5">Rp</span><span class="text-base md:text-lg"><?= number_format($buku['price'], 0, ',', '.') ?></span>
-                                                </div>
+                                <!-- Content -->
+                                <div class="p-4 flex flex-col flex-grow">
+                                    
+                                    <!-- Category & Rating -->
+                                    <div class="flex justify-between items-center mb-1">
+                                        <p class="text-[10px] text-unsoed-blue font-bold uppercase tracking-wider line-clamp-1 flex-1 pr-2"><?= esc($category) ?></p>
+                                        <div class="flex items-center gap-1 text-[11px] font-bold text-amber-500 shrink-0"><i class="fas fa-star"></i> <?= $avgRating ?></div>
+                                    </div>
+                                    
+                                    <!-- Title & Author -->
+                                    <h3 class="font-bold text-gray-900 text-sm md:text-[14px] leading-snug mb-1 line-clamp-2 group-hover:text-unsoed-blue transition-colors" title="<?= htmlspecialchars($buku['title']) ?>"><?= esc($buku['title']) ?></h3>
+                                    
+                                    <?php 
+                                        $authorStr = isset($buku['author']) ? $buku['author'] : 'Penulis';
+                                        $authors = explode(';', $authorStr);
+                                        $displayAuthor = trim($authors[0]);
+                                        if(count($authors) > 1) {
+                                            $displayAuthor .= ' dkk.';
+                                        }
+                                    ?>
+                                    <p class="text-[11px] text-gray-500 mb-3 flex items-start gap-1.5"><i class="fas fa-user-edit text-gray-300 mt-0.5 shrink-0"></i> <span class="line-clamp-1" title="<?= esc($authorStr) ?>"><?= esc($displayAuthor) ?></span></p>
+                                    
+                                    <!-- Price Area -->
+                                    <div class="mt-auto pt-3 border-t border-gray-100/80 flex flex-col gap-1.5">
+                                        <?php if($discount > 0): ?>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-[10px] text-gray-400 line-through">Rp<?= number_format($buku['old_price'], 0, ',', '.') ?></span>
+                                                <span class="text-[10px] text-gray-400 font-medium"><?= $soldCount ?>+ terjual</span>
+                                            </div>
+                                            <div class="flex items-baseline text-unsoed-blue font-extrabold leading-none">
+                                                <span class="text-xs mr-0.5">Rp</span><span class="text-base md:text-lg"><?= number_format($buku['price'], 0, ',', '.') ?></span>
                                             </div>
                                         <?php else: ?>
-                                            <div class="flex items-baseline text-unsoed-blue font-extrabold leading-none">
-                                                <span class="text-xs font-bold mr-0.5">Rp</span><span class="text-base md:text-lg"><?= number_format($buku['price'], 0, ',', '.') ?></span>
+                                            <div class="flex items-end justify-between mt-2">
+                                                <div class="flex items-baseline text-unsoed-blue font-extrabold leading-none">
+                                                    <span class="text-xs mr-0.5">Rp</span><span class="text-base md:text-lg"><?= number_format($buku['price'], 0, ',', '.') ?></span>
+                                                </div>
+                                                <span class="text-[10px] text-gray-400 font-medium mb-0.5"><?= $soldCount ?>+ terjual</span>
                                             </div>
                                         <?php endif; ?>
-                                        <span class="text-[11px] text-gray-500 font-medium"><?= $soldCount ?>+ terjual</span>
                                     </div>
                                 </div>
                             </a>

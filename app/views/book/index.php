@@ -192,7 +192,7 @@
                                 $stock = isset($buku['stock']) ? (int)$buku['stock'] : 0;
                                 $soldCount = max(15, $stock * 3 + 12);
                             ?>
-                            <a href="<?= BASEURL; ?>/book/detail/<?= esc($buku['slug']) ?>" class="group flex flex-col bg-white rounded-xl border border-gray-200 hover:border-gray-800 hover:shadow-xl transition-all duration-300 overflow-hidden relative h-full">
+                            <a href="<?= BASEURL; ?>/book/detail/<?= !empty($buku['slug']) ? esc($buku['slug']) : esc($buku['id']) ?>" class="group flex flex-col bg-white rounded-xl border border-gray-200 hover:border-gray-800 hover:shadow-xl transition-all duration-300 overflow-hidden relative h-full">
                                 
                                 <!-- Badges -->
                                 <div class="absolute top-3 left-3 z-20 flex flex-col gap-1 pointer-events-none">

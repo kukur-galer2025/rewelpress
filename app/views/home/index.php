@@ -18,7 +18,8 @@ if (!function_exists('renderBookCard')) {
         $stock = isset($buku['stock']) ? (int)$buku['stock'] : 0;
         $soldCount = max(15, $stock * 3 + 12);
         
-        echo '<a href="'. BASEURL . '/book/detail/' . $buku['slug'] . '" class="group flex flex-col bg-white rounded-2xl shadow-sm hover:shadow-2xl hover:shadow-unsoed-blue/20 hover:-translate-y-2 transition-all duration-500 border border-gray-100 hover:border-unsoed-blue/30 overflow-hidden relative h-full">';
+        $detail_param = !empty($buku['slug']) ? esc($buku['slug']) : esc($buku['id']);
+        echo '<a href="'. BASEURL . '/book/detail/' . $detail_param . '" class="group flex flex-col bg-white rounded-2xl shadow-sm hover:shadow-2xl hover:shadow-unsoed-blue/20 hover:-translate-y-2 transition-all duration-500 border border-gray-100 hover:border-unsoed-blue/30 overflow-hidden relative h-full">';
         
         // Badges
         echo '<div class="absolute top-3 left-3 z-20 flex flex-col gap-1 pointer-events-none">';

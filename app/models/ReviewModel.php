@@ -68,7 +68,7 @@ class ReviewModel {
                 JOIN orders o ON o.id = oi.order_id
                 WHERE o.user_id = :user_id 
                   AND oi.book_id = :item_id 
-                  AND o.status IN ('paid', 'confirmed', 'selesai', 'delivered')
+                  AND o.status IN ('confirmed', 'selesai', 'delivered')
                 ORDER BY o.created_at DESC
                 LIMIT 1
             ");
@@ -85,7 +85,7 @@ class ReviewModel {
                 FROM ebook_orders 
                 WHERE user_id = :user_id 
                   AND ebook_id = :item_id 
-                  AND status IN ('paid', 'confirmed', 'selesai')
+                  AND status IN ('confirmed', 'selesai')
                 ORDER BY created_at DESC
                 LIMIT 1
             ");
@@ -101,10 +101,9 @@ class ReviewModel {
                 SELECT o.id AS order_id
                 FROM order_items oi
                 JOIN orders o ON o.id = oi.order_id
-                JOIN ebooks e ON e.book_id = oi.book_id
                 WHERE o.user_id = :user_id 
-                  AND e.id = :item_id 
-                  AND o.status IN ('paid', 'confirmed', 'selesai')
+                  AND oi.book_id = (SELECT book_id FROM ebooks WHERE id = :item_id)
+                  AND o.status IN ('confirmed', 'selesai', 'delivered')
                 ORDER BY o.created_at DESC
                 LIMIT 1
             ");

@@ -13,6 +13,13 @@
     </div>
 </div>
 
+<?php if(isset($_GET['msg']) && $_GET['msg'] == 'invoice_sent'): ?>
+    <div class="mb-6 px-4 py-3 rounded-2xl shadow-sm font-bold flex items-center gap-2.5 bg-green-100 border border-green-400 text-green-700">
+        <i class="fas fa-check-circle text-lg"></i>
+        Invoice (Faktur Tagihan) berhasil dikirim ulang ke email pelanggan!
+    </div>
+<?php endif; ?>
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     
     <div class="lg:col-span-2 space-y-8">

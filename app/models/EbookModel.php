@@ -15,7 +15,7 @@ class EbookModel {
             SELECT ebooks.*, 
                    books.title as book_title, 
                    COALESCE(ebooks.author, books.author) as book_author, 
-                   books.image as cover_image, 
+                   COALESCE(ebooks.cover_image, books.image) as cover_image, 
                    books.isbn,
                    books.price as normal_price,
                    COALESCE(cat_ebook.name, cat_book.name) as category_name,
@@ -37,7 +37,7 @@ class EbookModel {
             SELECT ebooks.*, 
                    books.title as book_title, 
                    COALESCE(ebooks.author, books.author) as book_author, 
-                   books.image as cover_image, 
+                   COALESCE(ebooks.cover_image, books.image) as cover_image, 
                    books.isbn,
                    books.price as normal_price,
                    books.synopsis,
@@ -61,7 +61,7 @@ class EbookModel {
             SELECT ebooks.*, 
                    books.title as book_title, 
                    COALESCE(ebooks.author, books.author) as book_author, 
-                   books.image as cover_image, 
+                   COALESCE(ebooks.cover_image, books.image) as cover_image, 
                    books.isbn,
                    books.price as normal_price,
                    books.synopsis,
@@ -87,7 +87,7 @@ class EbookModel {
             SELECT ebooks.*, 
                    books.title as book_title, 
                    COALESCE(ebooks.author, books.author) as book_author, 
-                   books.image as cover_image, 
+                   COALESCE(ebooks.cover_image, books.image) as cover_image, 
                    books.isbn,
                    books.slug as book_slug,
                    COALESCE(cat_ebook.name, cat_book.name) as category_name,
@@ -116,8 +116,8 @@ class EbookModel {
         $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $data['title'])));
 
         $this->db->query('
-            INSERT INTO ebooks (book_id, category_id, title, slug, author, file_pdf, preview_pdf, file_size, page_count, ebook_price, is_free, status, is_flashsale, downloads_count, created_at) 
-            VALUES (:book_id, :category_id, :title, :slug, :author, :file_pdf, :preview_pdf, :file_size, :page_count, :ebook_price, :is_free, :status, :is_flashsale, 0, NOW())
+            INSERT INTO ebooks (book_id, category_id, title, slug, author, file_pdf, preview_pdf, cover_image, file_size, page_count, ebook_price, is_free, status, is_flashsale, downloads_count, created_at) 
+            VALUES (:book_id, :category_id, :title, :slug, :author, :file_pdf, :preview_pdf, :cover_image, :file_size, :page_count, :ebook_price, :is_free, :status, :is_flashsale, 0, NOW())
         ');
 
         $book_id = !empty($data['book_id']) ? (int)$data['book_id'] : null;
@@ -130,6 +130,7 @@ class EbookModel {
         $this->db->bind(':author', isset($data['author']) ? trim($data['author']) : null);
         $this->db->bind(':file_pdf', trim($data['file_pdf'] ?? ''));
         $this->db->bind(':preview_pdf', trim($data['preview_pdf'] ?? ''));
+        $this->db->bind(':cover_image', trim($data['cover_image'] ?? ''));
         $this->db->bind(':file_size', trim($data['file_size'] ?? '15 MB'));
         $this->db->bind(':page_count', !empty($data['page_count']) ? (int)$data['page_count'] : 150);
         
@@ -169,6 +170,9 @@ class EbookModel {
         if (!empty($data['preview_pdf'])) {
             $query .= ', preview_pdf = :preview_pdf';
         }
+        if (!empty($data['cover_image'])) {
+            $query .= ', cover_image = :cover_image';
+        }
 
         $query .= ' WHERE id = :id';
 
@@ -204,14 +208,29 @@ class EbookModel {
         if (!empty($data['preview_pdf'])) {
             $this->db->bind(':preview_pdf', trim($data['preview_pdf']));
         }
+        if (!empty($data['cover_image'])) {
+            $this->db->bind(':cover_image', trim($data['cover_image']));
+        }
 
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
+
+    public function toggleStatus($id)
+    {
+        $ebook = $this->getEbookById($id);
+        if (!$ebook) return 0;
+        $newStatus = ($ebook['status'] === 'active') ? 'inactive' : 'active';
+        $this->db->query("UPDATE ebooks SET status = :status WHERE id = :id");
+        $this->db->bind(':status', $newStatus);
+        $this->db->bind(':id', $id);
         $this->db->execute();
         return $this->db->rowCount();
     }
 
     public function deleteEbook($id)
     {
-        $this->db->query('DELETE FROM ebooks WHERE id = :id');
+        $this->db->query('UPDATE ebooks SET status = "inactive" WHERE id = :id');
         $this->db->bind(':id', (int)$id);
         $this->db->execute();
         return $this->db->rowCount();
@@ -277,7 +296,7 @@ class EbookModel {
             SELECT DISTINCT e.*, 
                    b.title as book_title, 
                    COALESCE(e.author, b.author) as book_author, 
-                   b.image as cover_image, 
+                   COALESCE(e.cover_image, b.image) as cover_image, 
                    COALESCE(cat_e.name, cat_b.name) as category_name
             FROM ebooks e
             LEFT JOIN books b ON e.book_id = b.id
@@ -307,7 +326,7 @@ class EbookModel {
             SELECT ebooks.*, 
                    books.title as book_title, 
                    COALESCE(ebooks.author, books.author) as book_author, 
-                   books.image as cover_image, 
+                   COALESCE(ebooks.cover_image, books.image) as cover_image, 
                    books.isbn,
                    books.price as normal_price,
                    books.synopsis,
@@ -345,6 +364,28 @@ class EbookModel {
         }
         $this->db->bind(':limit', (int)$limit);
         $this->db->bind(':offset', (int)$offset);
+        return $this->db->resultSet();
+    }
+
+    public function searchEbooks($keyword)
+    {
+        $this->db->query('
+            SELECT ebooks.*, 
+                   books.title as book_title, 
+                   COALESCE(ebooks.author, books.author) as book_author, 
+                   COALESCE(ebooks.cover_image, books.image) as cover_image, 
+                   books.isbn,
+                   books.price as normal_price,
+                   books.synopsis,
+                   COALESCE(cat_ebook.name, cat_book.name) as category_name
+            FROM ' . $this->table . '
+            LEFT JOIN books ON ebooks.book_id = books.id
+            LEFT JOIN categories cat_ebook ON ebooks.category_id = cat_ebook.id
+            LEFT JOIN categories cat_book ON books.category_id = cat_book.id
+            WHERE ebooks.status = "active" AND (ebooks.title LIKE :keyword OR books.title LIKE :keyword OR COALESCE(ebooks.author, books.author) LIKE :keyword)
+            ORDER BY ebooks.created_at DESC
+        ');
+        $this->db->bind(':keyword', "%$keyword%");
         return $this->db->resultSet();
     }
 

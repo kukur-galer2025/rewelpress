@@ -257,10 +257,20 @@ if (!function_exists('renderBookCard')) {
                 <div class="col-span-full text-center py-6 text-gray-400 text-xs italic">Belum ada koleksi E-Book digital.</div>
             <?php else:
                 foreach ($latest_ebooks as $ebook):
-                    $img_src = !empty($ebook['cover_image']) ? (strpos($ebook['cover_image'], 'http') === 0 ? $ebook['cover_image'] : BASEURL . '/uploads/covers/' . $ebook['cover_image']) : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400';
+                    if (!empty($ebook['cover_image'])) {
+                        if (strpos($ebook['cover_image'], 'http') === 0) {
+                            $img_src = $ebook['cover_image'];
+                        } else if (strpos($ebook['cover_image'], 'cover_ebook_') === 0) {
+                            $img_src = BASEURL . '/assets/uploads/covers/' . $ebook['cover_image'];
+                        } else {
+                            $img_src = BASEURL . '/assets/uploads/' . $ebook['cover_image'];
+                        }
+                    } else {
+                        $img_src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400';
+                    }
             ?>
             <div class="group h-full">
-                <a href="<?= BASEURL; ?>/ebook/detail/<?= esc($ebook['slug']) ?>" class="block bg-white relative h-full rounded-2xl shadow-sm hover:shadow-xl border border-purple-100/60 hover:border-purple-300/50 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+                <a href="<?= BASEURL; ?>/ebook/detail/<?= esc($ebook['id']) ?>" class="block bg-white relative h-full rounded-2xl shadow-sm hover:shadow-xl border border-purple-100/60 hover:border-purple-300/50 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
                     <div class="relative overflow-hidden aspect-[3/4] bg-gray-50">
                         <img src="<?= esc($img_src) ?>" alt="<?= htmlspecialchars($ebook['title'] ?? $ebook['book_title'] ?? '') ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out">
                         

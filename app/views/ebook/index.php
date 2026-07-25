@@ -238,15 +238,20 @@
 
                                 $coverSrc = 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80';
                                 if(!empty($cover)) {
-                                    $coverSrc = (strpos($cover, 'http') === 0) ? $cover : BASEURL . '/uploads/covers/' . $cover;
+                                    if (strpos($cover, 'http') === 0) {
+                                        $coverSrc = $cover;
+                                    } else if (strpos($cover, 'cover_ebook_') === 0) {
+                                        $coverSrc = BASEURL . '/assets/uploads/covers/' . $cover;
+                                    } else {
+                                        $coverSrc = BASEURL . '/assets/uploads/' . $cover;
+                                    }
                                 }
                                 
                                 $penulisArr = explode(';', $penulis);
                                 $displayPenulis = trim($penulisArr[0]);
                                 if(count($penulisArr) > 1) $displayPenulis .= ' dkk.';
 
-                                $ebookSlug = isset($ebook['slug']) ? $ebook['slug'] : '';
-                                $detailLink = $ebookSlug ? BASEURL . '/ebook/detail/' . $ebookSlug : BASEURL . '/ebook';
+                                $detailLink = $isRealEbook ? (BASEURL . '/ebook/detail/' . $ebookId) : (BASEURL . '/book/detail/' . ($book['slug'] ?? $book['id']));
                             ?>
                             <a href="<?= $detailLink ?>" class="max-w-[280px] mx-auto w-full group flex flex-col bg-white rounded-xl border border-gray-200 hover:border-gray-800 hover:shadow-xl transition-all duration-300 overflow-hidden relative h-full">
                                 

@@ -141,8 +141,10 @@ class Book extends Controller {
         
         if($keyword !== '') {
             $data['buku'] = $this->model('BookModel')->searchBooks($keyword);
+            $data['ebooks'] = $this->model('EbookModel')->searchEbooks($keyword);
         } else {
             $data['buku'] = [];
+            $data['ebooks'] = [];
         }
 
         $this->view('templates/header', $data);

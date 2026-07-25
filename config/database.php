@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('Asia/Jakarta');
+
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
@@ -8,7 +10,7 @@ define('BASEURL', 'http://localhost/rewelpress');
 // Google OAuth Configuration
 define('GOOGLE_CLIENT_ID', '188521249663-qemfcplc9quceqv16iea66skg9qaodbh.apps.googleusercontent.com');
 define('GOOGLE_CLIENT_SECRET', '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');
-define('GOOGLE_REDIRECT_URI', BASEURL . '/auth/google_callback');
+define('GOOGLE_REDIRECT_URI', 'http://localhost/rewelpress/auth/google_callback');
 
 // SMTP Configuration (for PHPMailer)
 define('SMTP_HOST', 'smtp.gmail.com');

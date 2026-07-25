@@ -102,7 +102,7 @@ class OrderModel {
     
     public function getAllOrders()
     {
-        $this->db->query('SELECT orders.*, users.name as user_name FROM orders JOIN users ON orders.user_id = users.id ORDER BY orders.created_at DESC');
+        $this->db->query('SELECT orders.*, users.name as user_name, users.email as user_email FROM orders JOIN users ON orders.user_id = users.id ORDER BY orders.created_at DESC');
         return $this->db->resultSet();
     }
 

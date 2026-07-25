@@ -240,7 +240,7 @@
                                                     ?>
                                                 </div>
                                             </div>
-                                            <p class="text-gray-700 leading-relaxed"><?= nl2br(htmlspecialchars($rev['comment'])) ?></p>
+                                            <p class="text-gray-700 leading-relaxed"><?= nl2br(htmlspecialchars($rev['comment'] ?? '')) ?></p>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>

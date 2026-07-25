@@ -1,0 +1,13 @@
+/public/assets/uploads/*
+!/public/assets/uploads/index.html
+/public/assets/uploads/covers/*
+!/public/assets/uploads/covers/index.html
+/public/assets/uploads/ebooks/*
+!/public/assets/uploads/ebooks/index.html
+/public/assets/uploads/news/*
+!/public/assets/uploads/news/index.html
+testauth.php
+testdb.php
+testmail.php
+cleanup.php
+check_books.php

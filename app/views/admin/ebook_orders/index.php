@@ -3,6 +3,9 @@
         <h1 class="text-3xl font-bold text-gray-800">Pesanan E-Book Masuk</h1>
         <p class="text-gray-500 mt-1">Verifikasi pembayaran dan buka akses unduh e-book untuk pembeli.</p>
     </div>
+    <a href="<?= BASEURL; ?>/admin/export_ebook_pdf" target="_blank" class="bg-red-500 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm hover:bg-red-600 transition flex items-center gap-2 text-sm">
+        <i class="fas fa-file-pdf"></i> Export PDF
+    </a>
 </div>
 
 <?php if(isset($_GET['msg'])): ?>
@@ -114,6 +117,10 @@ $totalConfirmed = count($statusGroups['confirmed']);
                     </td>
                     <td class="p-4 text-center">
                         <div class="flex items-center justify-center gap-2">
+                            <a href="<?= BASEURL; ?>/admin/ebook_order_detail/<?= esc($ord['id']) ?>" class="inline-flex items-center gap-1 px-3 py-2 bg-gray-100 text-gray-600 hover:bg-unsoed-yellow hover:text-white rounded-xl text-xs font-bold transition shadow-sm">
+                                <i class="fas fa-eye"></i> Detail
+                            </a>
+                            
                             <?php if($ord['status'] === 'paid'): ?>
                                 <!-- KONFIRMASI -->
                                 <a href="<?= BASEURL ?>/admin/confirm_ebook_order/<?= esc($ord['id']) ?>"
@@ -126,12 +133,6 @@ $totalConfirmed = count($statusGroups['confirmed']);
                                         class="inline-flex items-center gap-1 px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold transition shadow-sm">
                                     <i class="fas fa-times"></i> Tolak
                                 </button>
-                            <?php elseif($ord['status'] === 'confirmed'): ?>
-                                <span class="text-xs text-green-600 font-bold flex items-center gap-1">
-                                    <i class="fas fa-check-circle"></i> Terverifikasi
-                                </span>
-                            <?php else: ?>
-                                <span class="text-xs text-gray-400 italic">–</span>
                             <?php endif; ?>
                         </div>
                     </td>

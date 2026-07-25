@@ -127,7 +127,7 @@
         </div>
 
         <!-- Upload File -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="border-2 border-dashed border-gray-200 rounded-2xl p-5 text-center hover:border-unsoed-blue transition bg-gray-50/50">
                 <i class="fas fa-file-pdf text-3xl text-red-500 mb-2 block"></i>
                 <label class="block text-sm font-bold text-gray-800 mb-1">Ganti File E-Book (.pdf)</label>
@@ -150,6 +150,27 @@
                     </span>
                 <?php endif; ?>
                 <input type="file" name="preview_pdf_upload" accept=".pdf" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-green-600 file:text-white hover:file:bg-green-700">
+            </div>
+
+            <style>
+                .btn-file-yellow::file-selector-button {
+                    background-color: #f59e0b;
+                    color: white;
+                }
+                .btn-file-yellow:hover::file-selector-button {
+                    background-color: #d97706;
+                }
+            </style>
+            <div class="border-2 border-dashed border-gray-200 rounded-2xl p-5 text-center hover:border-unsoed-yellow transition bg-gray-50/50" id="coverUploadContainer" style="<?= !empty($data['ebook']['book_id']) ? 'display:none;' : 'display:block;' ?>">
+                <i class="fas fa-image text-3xl text-unsoed-yellow mb-2 block"></i>
+                <label class="block text-sm font-bold text-gray-800 mb-1">Ganti Foto Sampul (.jpg)</label>
+                <p class="text-xs text-gray-400 mb-2">Biarkan kosong jika tidak diganti.</p>
+                <?php if(!empty($data['ebook']['cover_image'])): ?>
+                    <span class="inline-block text-[10px] bg-yellow-100 text-yellow-700 px-2 py-1 rounded font-bold mb-3">
+                        Sampul aktif: <?= htmlspecialchars($data['ebook']['cover_image']) ?>
+                    </span>
+                <?php endif; ?>
+                <input type="file" name="cover_image_upload" accept=".jpg,.jpeg,.png,.webp" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold btn-file-yellow transition-colors">
             </div>
         </div>
 
@@ -181,9 +202,11 @@ function toggleAuthorField() {
     if(select.value !== "") {
         document.getElementById('authorContainer').style.display = 'none';
         document.getElementById('author').removeAttribute('required');
+        if(document.getElementById('coverUploadContainer')) document.getElementById('coverUploadContainer').style.display = 'none';
     } else {
         document.getElementById('authorContainer').style.display = 'block';
         document.getElementById('author').setAttribute('required', 'required');
+        if(document.getElementById('coverUploadContainer')) document.getElementById('coverUploadContainer').style.display = 'block';
     }
 }
 

@@ -7,9 +7,13 @@ $existingOrder = $data['existing_order']; // order pending/paid yang sudah ada
 
 $coverSrc = 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80';
 if (!empty($e['cover_image'])) {
-    $coverSrc = (strpos($e['cover_image'], 'http') === 0)
-        ? $e['cover_image']
-        : BASEURL . '/uploads/covers/' . $e['cover_image'];
+    if (strpos($e['cover_image'], 'http') === 0) {
+        $coverSrc = $e['cover_image'];
+    } else if (strpos($e['cover_image'], 'cover_ebook_') === 0) {
+        $coverSrc = BASEURL . '/assets/uploads/covers/' . $e['cover_image'];
+    } else {
+        $coverSrc = BASEURL . '/assets/uploads/' . $e['cover_image'];
+    }
 }
 ?>
 
@@ -358,7 +362,7 @@ if (!empty($e['cover_image'])) {
                                             ?>
                                         </div>
                                     </div>
-                                    <p class="text-gray-700 leading-relaxed"><?= nl2br(htmlspecialchars($rev['comment'])) ?></p>
+                                    <p class="text-gray-700 leading-relaxed"><?= nl2br(htmlspecialchars($rev['comment'] ?? '')) ?></p>
                                 </div>
                             </div>
                         <?php endforeach; ?>

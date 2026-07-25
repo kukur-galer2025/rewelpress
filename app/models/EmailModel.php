@@ -25,7 +25,7 @@ class EmailModel {
             $mail->addAddress($to);
 
             //Content
-            $mail->isHTML(false);
+            $mail->isHTML(true);
             $mail->Subject = $subject;
             $mail->Body    = $body;
 

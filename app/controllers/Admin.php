@@ -143,6 +143,16 @@ class Admin extends Controller {
         $this->view('templates/admin_footer');
     }
 
+    public function toggle_book_status($id)
+    {
+        if($this->model('BookModel')->toggleStatus($id) > 0) {
+            header('Location: ' . BASEURL . '/admin/books?msg=success_status');
+        } else {
+            header('Location: ' . BASEURL . '/admin/books?msg=error');
+        }
+        exit;
+    }
+
     public function delete_book($id)
     {
         if($this->model('BookModel')->deleteBook($id) > 0) {
@@ -298,9 +308,13 @@ class Admin extends Controller {
         foreach($orders as $o) {
             if ($o['status'] == 'confirmed') $totalRev += $o['total_amount'];
             
+            $pelangganName = isset($o['user_name']) ? $o['user_name'] : 'Unknown';
+            $pelangganEmail = isset($o['user_email']) ? $o['user_email'] : '';
+            $pelanggan = $pelangganName . ($pelangganEmail ? " <br><small>($pelangganEmail)</small>" : "");
+
             $html .= '<tr>';
             $html .= '<td>#INV-' . $o['id'] . '</td>';
-            $html .= '<td>' . htmlspecialchars($o['email']) . '</td>';
+            $html .= '<td>' . $pelanggan . '</td>';
             $html .= '<td>' . date('d M Y H:i', strtotime($o['created_at'])) . '</td>';
             $html .= '<td>Rp ' . number_format($o['total_amount'], 0, ',', '.') . '</td>';
             $html .= '<td>' . strtoupper($o['status']) . '</td>';
@@ -331,6 +345,46 @@ class Admin extends Controller {
         $this->view('templates/admin_footer');
     }
 
+    public function resend_invoice($id)
+    {
+        $order = $this->model('OrderModel')->getOrderById($id);
+        if (!$order || empty($order['email'])) {
+            header('Location: ' . BASEURL . '/admin/orders');
+            exit;
+        }
+
+        require_once '../app/models/EmailModel.php';
+        $emailModel = new EmailModel();
+        
+        $subject = 'Invoice Pesanan #INV-' . $order['id'] . ' - Unsoed Press';
+        
+        $body = '<h2>Invoice Pesanan #INV-' . $order['id'] . '</h2>';
+        $body .= '<p>Halo <strong>' . htmlspecialchars($order['user_name']) . '</strong>,</p>';
+        $body .= '<p>Terima kasih telah berbelanja di Unsoed Press. Berikut adalah rincian pesanan Anda:</p>';
+        $body .= '<table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse; max-width:600px;">';
+        $body .= '<tr><th align="left">Buku</th><th align="center">Qty</th><th align="right">Harga</th></tr>';
+        
+        if (isset($order['items'])) {
+            foreach($order['items'] as $item) {
+                $body .= '<tr>';
+                $body .= '<td>' . htmlspecialchars($item['title']) . '</td>';
+                $body .= '<td align="center">' . $item['quantity'] . '</td>';
+                $body .= '<td align="right">Rp ' . number_format($item['price'], 0, ',', '.') . '</td>';
+                $body .= '</tr>';
+            }
+        }
+        $body .= '<tr><th colspan="2" align="right">Total Bayar</th><th align="right">Rp ' . number_format($order['total_amount'], 0, ',', '.') . '</th></tr>';
+        $body .= '</table>';
+        $body .= '<p>Status Pesanan: <strong>' . strtoupper($order['status']) . '</strong></p>';
+        $body .= '<p>Salam hangat,<br>Tim Unsoed Press</p>';
+        
+        $emailModel->sendEmail($order['email'], $subject, $body);
+        
+        // Redirect kembali ke detail dengan notif sukses
+        header('Location: ' . BASEURL . '/admin/order_detail/' . $id . '?msg=invoice_sent');
+        exit;
+    }
+
     public function update_order($id, $status)
     {
         // allowed status: confirmed, rejected
@@ -341,35 +395,7 @@ class Admin extends Controller {
         exit;
     }
 
-    public function resend_invoice($id)
-    {
-        $order = $this->model('OrderModel')->getOrderById($id);
-        if ($order) {
-            require_once '../app/models/EmailModel.php';
-            $emailModel = new EmailModel();
-            
-            $subject = "Invoice Pesanan #" . $order['id'] . " - Unsoed Press";
-            $message = "Terima kasih telah berbelanja di Unsoed Press.\n\nTotal Tagihan: Rp " . number_format($order['total_amount'], 0, ',', '.') . "\n";
-            if (isset($order['delivery_method']) && $order['delivery_method'] == 'shipping') {
-                $message .= "Metode Pengiriman: Kirim via Kurir (Ongkir Bayar di Tujuan)\nAlamat: " . $order['shipping_address'] . "\n\n";
-            } else {
-                $message .= "Metode Pengiriman: Ambil di Tempat (Kantor Unsoed Press)\n\n";
-            }
-            if ($order['status'] == 'pending') {
-                $message .= "Status Pesanan: BELUM BAYAR\nSilakan selesaikan pembayaran Anda dengan masuk ke menu Riwayat Pesanan di website kami.";
-            } elseif ($order['status'] == 'paid') {
-                $message .= "Status Pesanan: MENUNGGU KONFIRMASI\nPembayaran Anda sedang dalam pengecekan oleh Admin.";
-            } elseif ($order['status'] == 'confirmed') {
-                $message .= "Status Pesanan: LUNAS TERKONFIRMASI\nPembayaran telah diterima! Pesanan Anda sedang disiapkan. Jika ambil di tempat, silakan kunjungi kantor kami.";
-            } else {
-                $message .= "Status Pesanan: DITOLAK\nPesanan ini tidak valid atau telah dibatalkan.";
-            }
-            
-            $emailModel->sendEmail($order['email'], $subject, $message);
-        }
-        header('Location: ' . BASEURL . '/admin/order_detail/' . $id);
-        exit;
-    }
+
 
     // --- MANAJEMEN BERITA ---
 
@@ -893,6 +919,19 @@ class Admin extends Controller {
                 }
             }
 
+            // Handle Upload File Cover (Standalone)
+            if (isset($_FILES['cover_image_upload']) && $_FILES['cover_image_upload']['error'] == 0) {
+                $target_dir = "../public/assets/uploads/covers/";
+                if (!file_exists($target_dir)) {
+                    mkdir($target_dir, 0777, true);
+                }
+                $file_ext = pathinfo($_FILES["cover_image_upload"]["name"], PATHINFO_EXTENSION);
+                $new_filename = uniqid('cover_ebook_') . '.' . $file_ext;
+                if (move_uploaded_file($_FILES["cover_image_upload"]["tmp_name"], $target_dir . $new_filename)) {
+                    $postData['cover_image'] = $new_filename;
+                }
+            }
+
             if ($this->model('EbookModel')->addEbook($postData) > 0) {
                 header('Location: ' . BASEURL . '/admin/ebooks?msg=success_add');
             } else {
@@ -963,6 +1002,19 @@ class Admin extends Controller {
                 }
             }
 
+            // Handle Upload File Cover (Standalone)
+            if (isset($_FILES['cover_image_upload']) && $_FILES['cover_image_upload']['error'] == 0) {
+                $target_dir = "../public/assets/uploads/covers/";
+                if (!file_exists($target_dir)) {
+                    mkdir($target_dir, 0777, true);
+                }
+                $file_ext = pathinfo($_FILES["cover_image_upload"]["name"], PATHINFO_EXTENSION);
+                $new_filename = uniqid('cover_ebook_') . '.' . $file_ext;
+                if (move_uploaded_file($_FILES["cover_image_upload"]["tmp_name"], $target_dir . $new_filename)) {
+                    $postData['cover_image'] = $new_filename;
+                }
+            }
+
             if ($this->model('EbookModel')->updateEbook($postData) > 0) {
                 header('Location: ' . BASEURL . '/admin/ebooks?msg=success_update');
             } else {
@@ -970,6 +1022,16 @@ class Admin extends Controller {
             }
             exit;
         }
+    }
+
+    public function toggle_ebook_status($id)
+    {
+        if ($this->model('EbookModel')->toggleStatus($id) > 0) {
+            header('Location: ' . BASEURL . '/admin/ebooks?msg=success_status');
+        } else {
+            header('Location: ' . BASEURL . '/admin/ebooks?msg=error');
+        }
+        exit;
     }
 
     public function delete_ebook($id)
@@ -994,6 +1056,55 @@ class Admin extends Controller {
         $this->view('templates/admin_footer');
     }
 
+    public function export_ebook_pdf()
+    {
+        require_once '../vendor/autoload.php';
+        $orders = $this->model('EbookOrderModel')->getAllEbookOrders();
+        
+        $html = '<!DOCTYPE html><html><head><title>Laporan Pesanan E-Book</title>';
+        $html .= '<style>
+            body { font-family: sans-serif; font-size: 12px; }
+            table { w-full; border-collapse: collapse; margin-top: 20px; width: 100%; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #f4f4f4; }
+            h2 { text-align: center; color: #b91c1c; }
+        </style></head><body>';
+        $html .= '<h2>Laporan Penjualan E-Book - Unsoed Press</h2>';
+        $html .= '<p>Tanggal Cetak: ' . date('d M Y H:i') . '</p>';
+        $html .= '<table>';
+        $html .= '<tr><th>ID Pesanan</th><th>Pelanggan</th><th>E-Book</th><th>Tanggal</th><th>Total</th><th>Status</th></tr>';
+        
+        $totalRev = 0;
+        foreach($orders as $o) {
+            if ($o['status'] == 'confirmed') $totalRev += $o['amount'];
+            
+            $pelangganName = isset($o['user_name']) ? $o['user_name'] : 'Unknown';
+            $pelangganEmail = isset($o['user_email']) ? $o['user_email'] : '';
+            $pelanggan = $pelangganName . ($pelangganEmail ? " <br><small>($pelangganEmail)</small>" : "");
+
+            $html .= '<tr>';
+            $html .= '<td>#EBO-' . $o['id'] . '</td>';
+            $html .= '<td>' . $pelanggan . '</td>';
+            $html .= '<td>' . htmlspecialchars($o['ebook_title'] ?? '-') . '</td>';
+            $html .= '<td>' . date('d M Y H:i', strtotime($o['created_at'])) . '</td>';
+            $html .= '<td>Rp ' . number_format($o['amount'], 0, ',', '.') . '</td>';
+            $html .= '<td>' . strtoupper($o['status']) . '</td>';
+            $html .= '</tr>';
+        }
+        
+        $html .= '</table>';
+        $html .= '<p style="margin-top: 20px; font-weight: bold; text-align: right;">Total Pendapatan (Confirmed): Rp ' . number_format($totalRev, 0, ',', '.') . '</p>';
+        $html .= '</body></html>';
+
+        $dompdf = new \Dompdf\Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        
+        $dompdf->stream("Laporan_Pesanan_Ebook_" . date('Ymd') . ".pdf", array("Attachment" => 0));
+        exit;
+    }
+
     public function ebook_order_detail($id)
     {
         $data['judul'] = 'Detail Pesanan E-Book - Unsoed Press';
@@ -1007,6 +1118,47 @@ class Admin extends Controller {
         $this->view('templates/admin_header', $data);
         $this->view('admin/ebook_orders/detail', $data);
         $this->view('templates/admin_footer');
+    }
+
+    public function resend_ebook_invoice($id)
+    {
+        $order = $this->model('EbookOrderModel')->getEbookOrderById($id);
+        if (!$order || empty($order['user_email'])) {
+            header('Location: ' . BASEURL . '/admin/ebook_orders');
+            exit;
+        }
+
+        require_once '../app/models/EmailModel.php';
+        $emailModel = new EmailModel();
+        
+        $subject = 'Invoice Pesanan E-Book #EBO-' . $order['id'] . ' - Unsoed Press';
+        
+        $body = '<h2>Invoice Pesanan E-Book #EBO-' . $order['id'] . '</h2>';
+        $body .= '<p>Halo <strong>' . htmlspecialchars($order['user_name']) . '</strong>,</p>';
+        $body .= '<p>Terima kasih telah berbelanja E-Book di Unsoed Press. Berikut adalah rincian pesanan E-Book Anda:</p>';
+        $body .= '<table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse; max-width:600px;">';
+        $body .= '<tr><th align="left">E-Book</th><th align="right">Harga Asli</th><th align="right">Diskon</th></tr>';
+        
+        $body .= '<tr>';
+        $body .= '<td>' . htmlspecialchars($order['ebook_title']) . '</td>';
+        $body .= '<td align="right">Rp ' . number_format($order['ebook_price'], 0, ',', '.') . '</td>';
+        if (!empty($order['voucher_code'])) {
+            $body .= '<td align="right" style="color:red;">- Rp ' . number_format($order['discount_amount'], 0, ',', '.') . '<br><small>(' . htmlspecialchars($order['voucher_code']) . ')</small></td>';
+        } else {
+            $body .= '<td align="right">-</td>';
+        }
+        $body .= '</tr>';
+        
+        $body .= '<tr><th colspan="2" align="right">Total Bayar</th><th align="right">Rp ' . number_format($order['amount'], 0, ',', '.') . '</th></tr>';
+        $body .= '</table>';
+        $body .= '<p>Status Pesanan: <strong>' . strtoupper($order['status']) . '</strong></p>';
+        $body .= '<p>Salam hangat,<br>Tim Unsoed Press</p>';
+        
+        $emailModel->sendEmail($order['user_email'], $subject, $body);
+        
+        // Redirect kembali ke detail dengan notif sukses
+        header('Location: ' . BASEURL . '/admin/ebook_order_detail/' . $id . '?msg=invoice_sent');
+        exit;
     }
 
     public function confirm_ebook_order($id)

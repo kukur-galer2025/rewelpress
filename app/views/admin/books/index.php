@@ -34,7 +34,14 @@
                         <?php $img_src = !empty($buku['image']) ? $buku['image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400'; ?>
                         <img src="<?= esc($img_src) ?>" alt="<?= esc($buku['title']) ?>" class="w-12 h-16 object-cover rounded shadow-sm">
                         <div>
-                            <p class="font-bold text-gray-800 line-clamp-1"><?= esc($buku['title']) ?></p>
+                            <div class="flex items-center gap-2">
+                                <p class="font-bold text-gray-800 line-clamp-1"><?= esc($buku['title']) ?></p>
+                                <?php if(isset($buku['status']) && $buku['status'] !== 'published'): ?>
+                                    <span class="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-bold rounded uppercase tracking-wider flex-shrink-0 border border-gray-200">
+                                        <i class="fas fa-archive mr-1"></i> Nonaktif
+                                    </span>
+                                <?php endif; ?>
+                            </div>
                             <p class="text-sm text-gray-500"><?= esc($buku['author']) ?></p>
                             <?php if(isset($buku['avg_rating'])): ?>
                             <p class="text-[11px] font-bold text-amber-500 mt-1 flex items-center gap-1">
@@ -80,9 +87,15 @@
                             <a href="<?= BASEURL; ?>/admin/edit_book/<?= esc($buku['id']) ?>" class="w-8 h-8 rounded bg-gray-100 hover:bg-unsoed-yellow hover:text-white flex items-center justify-center text-gray-500 transition" title="Edit Stok & Info">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <a href="<?= BASEURL; ?>/admin/delete_book/<?= esc($buku['id']) ?>" class="w-8 h-8 rounded bg-gray-100 hover:bg-red-500 hover:text-white flex items-center justify-center text-gray-500 transition" onclick="return confirmAction(this.href, 'Hapus Buku', 'Yakin ingin menghapus buku ini? Data tidak dapat dikembalikan.')" title="Hapus">
-                                <i class="fas fa-trash"></i>
-                            </a>
+                            <?php if(isset($buku['status']) && $buku['status'] === 'inactive'): ?>
+                                <a href="<?= BASEURL; ?>/admin/toggle_book_status/<?= esc($buku['id']) ?>" class="w-8 h-8 rounded bg-green-50 hover:bg-green-500 hover:text-white flex items-center justify-center text-green-500 transition" onclick="return confirmAction(this.href, 'Aktifkan Buku', 'Yakin ingin mempublikasikan kembali buku ini?')" title="Aktifkan (Publish)">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            <?php else: ?>
+                                <a href="<?= BASEURL; ?>/admin/toggle_book_status/<?= esc($buku['id']) ?>" class="w-8 h-8 rounded bg-gray-100 hover:bg-gray-500 hover:text-white flex items-center justify-center text-gray-500 transition" onclick="return confirmAction(this.href, 'Nonaktifkan Buku', 'Yakin ingin menyembunyikan/mengarsipkan buku ini dari etalase?')" title="Nonaktifkan (Arsip)">
+                                    <i class="fas fa-eye-slash"></i>
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </td>
                 </tr>

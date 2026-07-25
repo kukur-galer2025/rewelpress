@@ -75,7 +75,19 @@
                         <?php foreach($data['my_ebooks'] as $ebook): ?>
                             <div class="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col hover:shadow-xl transition-all duration-300 group">
                                 <div class="relative w-full aspect-[3/4] bg-gray-100 rounded-xl overflow-hidden mb-4">
-                                    <?php $img_src = !empty($ebook['cover_image']) ? $ebook['cover_image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400'; ?>
+                                    <?php 
+                                        if (!empty($ebook['cover_image'])) {
+                                            if (strpos($ebook['cover_image'], 'http') === 0) {
+                                                $img_src = $ebook['cover_image'];
+                                            } else if (strpos($ebook['cover_image'], 'cover_ebook_') === 0) {
+                                                $img_src = BASEURL . '/assets/uploads/covers/' . $ebook['cover_image'];
+                                            } else {
+                                                $img_src = BASEURL . '/assets/uploads/' . $ebook['cover_image'];
+                                            }
+                                        } else {
+                                            $img_src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400';
+                                        }
+                                    ?>
                                     <img src="<?= esc($img_src) ?>" alt="<?= esc($ebook['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                                         <a href="<?= BASEURL; ?>/ebook/download/<?= esc($ebook['id']) ?>" class="w-full text-center px-4 py-2 bg-unsoed-yellow text-white font-bold rounded-lg hover:bg-yellow-500 transition shadow-lg flex items-center justify-center gap-2">

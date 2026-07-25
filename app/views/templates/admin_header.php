@@ -91,11 +91,21 @@
                     </div>
                 </a>
 
+                <?php
+                    $bookOrderCount = 0;
+                    try {
+                        require_once dirname(dirname(dirname(__FILE__))) . '/models/OrderModel.php';
+                        $bookOrderCount = (new OrderModel())->getPendingOrdersCount();
+                    } catch(Exception $e) {}
+                ?>
                 <a href="<?= BASEURL; ?>/admin/orders" class="flex items-center justify-between px-3.5 h-11 rounded-xl text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 transition-all <?= (strpos($uri, '/admin/orders') !== false || strpos($uri, '/admin/order_detail') !== false) ? 'bg-unsoed-blue font-bold text-white shadow-md' : '' ?>">
                     <div class="flex items-center gap-3 min-w-0">
                         <i class="fas fa-shopping-cart w-5 text-center flex-shrink-0"></i>
                         <span class="truncate whitespace-nowrap">Pesanan Buku</span>
                     </div>
+                    <?php if($bookOrderCount > 0): ?>
+                        <span class="bg-yellow-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full flex-shrink-0 ml-1 animate-pulse"><?= esc($bookOrderCount) ?></span>
+                    <?php endif; ?>
                 </a>
 
                 <?php

@@ -108,9 +108,13 @@
                             <div class="w-12 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200 shadow-sm">
                                 <?php if(!empty($ebook['cover_image'])): ?>
                                     <?php
-                                        $imgSrc = (strpos($ebook['cover_image'], 'http') === 0)
-                                            ? $ebook['cover_image']
-                                            : BASEURL . '/uploads/covers/' . $ebook['cover_image'];
+                                        if (strpos($ebook['cover_image'], 'http') === 0) {
+                                            $imgSrc = $ebook['cover_image'];
+                                        } else if (strpos($ebook['cover_image'], 'cover_ebook_') === 0) {
+                                            $imgSrc = BASEURL . '/assets/uploads/covers/' . $ebook['cover_image'];
+                                        } else {
+                                            $imgSrc = BASEURL . '/assets/uploads/' . $ebook['cover_image'];
+                                        }
                                     ?>
                                     <img src="<?= esc($imgSrc) ?>" class="w-full h-full object-cover">
                                 <?php else: ?>
@@ -180,9 +184,15 @@
                             <a href="<?= BASEURL; ?>/admin/edit_ebook/<?= esc($ebook['id']) ?>" class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition flex items-center justify-center shadow-sm" title="Edit E-Book">
                                 <i class="fas fa-edit text-sm"></i>
                             </a>
-                            <a href="<?= BASEURL; ?>/admin/delete_ebook/<?= esc($ebook['id']) ?>" onclick="return confirmAction(this.href, 'Hapus E-Book', 'Apakah Anda yakin ingin menghapus E-Book <?= htmlspecialchars(addslashes($ebook['title'])) ?> ini secara permanen?')" class="w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition flex items-center justify-center shadow-sm" title="Hapus E-Book">
-                                <i class="fas fa-trash-alt text-sm"></i>
-                            </a>
+                            <?php if($ebook['status'] == 'inactive'): ?>
+                                <a href="<?= BASEURL; ?>/admin/toggle_ebook_status/<?= esc($ebook['id']) ?>" onclick="return confirmAction(this.href, 'Aktifkan E-Book', 'Apakah Anda yakin ingin mengaktifkan dan menampilkan E-Book <?= htmlspecialchars(addslashes($ebook['title'])) ?> kembali di etalase?')" class="w-9 h-9 rounded-xl bg-green-50 text-green-600 hover:bg-green-600 hover:text-white transition flex items-center justify-center shadow-sm" title="Aktifkan (Publish)">
+                                    <i class="fas fa-eye text-sm"></i>
+                                </a>
+                            <?php else: ?>
+                                <a href="<?= BASEURL; ?>/admin/toggle_ebook_status/<?= esc($ebook['id']) ?>" onclick="return confirmAction(this.href, 'Nonaktifkan E-Book', 'Apakah Anda yakin ingin menonaktifkan/mengarsipkan E-Book <?= htmlspecialchars(addslashes($ebook['title'])) ?> ini dari etalase?')" class="w-9 h-9 rounded-xl bg-gray-100 text-gray-500 hover:bg-gray-600 hover:text-white transition flex items-center justify-center shadow-sm" title="Nonaktifkan (Arsip)">
+                                    <i class="fas fa-eye-slash text-sm"></i>
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </td>
                 </tr>

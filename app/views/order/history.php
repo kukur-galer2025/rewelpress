@@ -72,7 +72,13 @@
                             <?php
                                 $coverSrc = 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=300&q=80';
                                 if (!empty($eo['cover_image'])) {
-                                    $coverSrc = (strpos($eo['cover_image'], 'http') === 0) ? $eo['cover_image'] : BASEURL . '/uploads/covers/' . $eo['cover_image'];
+                                    if (strpos($eo['cover_image'], 'http') === 0) {
+                                        $coverSrc = $eo['cover_image'];
+                                    } else if (strpos($eo['cover_image'], 'cover_ebook_') === 0) {
+                                        $coverSrc = BASEURL . '/assets/uploads/covers/' . $eo['cover_image'];
+                                    } else {
+                                        $coverSrc = BASEURL . '/assets/uploads/' . $eo['cover_image'];
+                                    }
                                 }
                             ?>
                             <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition">
@@ -261,7 +267,13 @@
                                     <div class="flex items-center justify-between bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
                                         <div class="flex items-center gap-3">
                                             <div class="w-10 h-14 bg-gray-100 border border-gray-200 rounded flex-shrink-0 overflow-hidden shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
-                                                <img src="<?= !empty($item['image']) ? $item['image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400' ?>" class="w-full h-full object-cover">
+                                                <?php 
+                                                    $itemImg = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400';
+                                                    if (!empty($item['image'])) {
+                                                        $itemImg = (strpos($item['image'], 'http') === 0) ? $item['image'] : BASEURL . '/assets/uploads/' . $item['image'];
+                                                    }
+                                                ?>
+                                                <img src="<?= esc($itemImg) ?>" class="w-full h-full object-cover">
                                             </div>
                                             <div>
                                                 <a href="<?= BASEURL ?>/book/detail/<?= $item['book_id'] ?>" class="text-sm font-bold text-gray-800 hover:text-unsoed-blue line-clamp-1"><?= htmlspecialchars($item['title']) ?></a>

@@ -85,7 +85,7 @@
                     </div>
                     <?php endif; ?>
                     <div class="flex flex-wrap gap-4 mb-10 pb-10 border-b border-gray-200">
-                        <form action="<?= BASEURL; ?>/cart/add/<?= $data['buku']['id'] ?>" method="POST" class="flex items-center gap-4">
+                        <form action="<?= BASEURL; ?>/cart/add/book/<?= $data['buku']['id'] ?>" method="POST" class="flex items-center gap-4">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <div class="flex items-center border border-gray-300 rounded-full bg-white px-2 py-1 h-12 w-32">
                                 <button type="button" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600 transition" onclick="document.getElementById('qty').value = Math.max(1, parseInt(document.getElementById('qty').value) - 1)">

@@ -79,14 +79,15 @@ class ReviewModel {
                 return ['can_review' => true, 'order_id' => $res['order_id'], 'reason' => ''];
             }
         } elseif ($item_type === 'ebook') {
-            // Cek langsung pesanan ebook
+            // Cek dari tabel orders & order_items yang sudah di-unifikasi (unified cart)
             $this->db->query("
-                SELECT id AS order_id
-                FROM ebook_orders 
-                WHERE user_id = :user_id 
-                  AND ebook_id = :item_id 
-                  AND status IN ('confirmed', 'selesai')
-                ORDER BY created_at DESC
+                SELECT o.id AS order_id
+                FROM order_items oi
+                JOIN orders o ON o.id = oi.order_id
+                WHERE o.user_id = :user_id 
+                  AND oi.ebook_id = :item_id 
+                  AND o.status IN ('confirmed', 'selesai', 'delivered')
+                ORDER BY o.created_at DESC
                 LIMIT 1
             ");
             $this->db->bind(':user_id', $user_id);
@@ -96,13 +97,13 @@ class ReviewModel {
                 return ['can_review' => true, 'order_id' => $res['order_id'], 'reason' => ''];
             }
 
-            // Cek juga jika membeli buku cetak yang terhubung ke ebook ini
+            // Backward compat: Cek juga jika membeli buku cetak yang terhubung ke ebook ini
             $this->db->query("
                 SELECT o.id AS order_id
                 FROM order_items oi
                 JOIN orders o ON o.id = oi.order_id
                 WHERE o.user_id = :user_id 
-                  AND oi.book_id = (SELECT book_id FROM ebooks WHERE id = :item_id)
+                  AND oi.book_id = (SELECT book_id FROM ebooks WHERE id = :item_id LIMIT 1)
                   AND o.status IN ('confirmed', 'selesai', 'delivered')
                 ORDER BY o.created_at DESC
                 LIMIT 1

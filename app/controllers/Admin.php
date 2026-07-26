@@ -302,7 +302,7 @@ class Admin extends Controller {
         $html .= '<h2>Laporan Pesanan - Unsoed Press</h2>';
         $html .= '<p>Tanggal Cetak: ' . date('d M Y H:i') . '</p>';
         $html .= '<table>';
-        $html .= '<tr><th>ID Pesanan</th><th>Pelanggan</th><th>Tanggal</th><th>Total</th><th>Status</th></tr>';
+        $html .= '<tr><th>ID Pesanan</th><th>Pelanggan</th><th>Tanggal</th><th>Item (Buku & E-Book)</th><th>Total</th><th>Status</th></tr>';
         
         $totalRev = 0;
         foreach($orders as $o) {
@@ -312,10 +312,25 @@ class Admin extends Controller {
             $pelangganEmail = isset($o['user_email']) ? $o['user_email'] : '';
             $pelanggan = $pelangganName . ($pelangganEmail ? " <br><small>($pelangganEmail)</small>" : "");
 
+            // Fetch the full order details including items
+            $fullOrder = $this->model('OrderModel')->getOrderById($o['id']);
+            
+            // Mengumpulkan item pesanan
+            $itemsHtml = '';
+            if(!empty($fullOrder['items'])) {
+                $itemsHtml = '<ul style="margin:0; padding-left:15px; font-size:10px;">';
+                foreach($fullOrder['items'] as $item) {
+                    $tipe = ($item['item_type'] === 'ebook') ? '[E-Book]' : '[Fisik]';
+                    $itemsHtml .= '<li>' . $tipe . ' ' . htmlspecialchars($item['title']) . ' (x' . $item['quantity'] . ')</li>';
+                }
+                $itemsHtml .= '</ul>';
+            }
+
             $html .= '<tr>';
             $html .= '<td>#INV-' . $o['id'] . '</td>';
             $html .= '<td>' . $pelanggan . '</td>';
             $html .= '<td>' . date('d M Y H:i', strtotime($o['created_at'])) . '</td>';
+            $html .= '<td>' . $itemsHtml . '</td>';
             $html .= '<td>Rp ' . number_format($o['total_amount'], 0, ',', '.') . '</td>';
             $html .= '<td>' . strtoupper($o['status']) . '</td>';
             $html .= '</tr>';

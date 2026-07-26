@@ -32,9 +32,18 @@ class OrderModel {
 
             // 2. Insert Order Items
             foreach($cart_items as $item) {
-                $this->db->query('INSERT INTO order_items (order_id, book_id, quantity, price) VALUES (:order_id, :book_id, :qty, :price)');
+                $this->db->query('INSERT INTO order_items (order_id, item_type, book_id, ebook_id, quantity, price) VALUES (:order_id, :item_type, :book_id, :ebook_id, :qty, :price)');
                 $this->db->bind(':order_id', $order_id);
-                $this->db->bind(':book_id', $item['id']);
+                $this->db->bind(':item_type', $item['cart_type']);
+                
+                if ($item['cart_type'] === 'book') {
+                    $this->db->bind(':book_id', $item['id']);
+                    $this->db->bind(':ebook_id', null);
+                } else {
+                    $this->db->bind(':book_id', null);
+                    $this->db->bind(':ebook_id', $item['id']);
+                }
+                
                 $this->db->bind(':qty', $item['qty']);
                 $this->db->bind(':price', $item['price']);
                 $this->db->execute();
@@ -72,7 +81,14 @@ class OrderModel {
         $order = $this->db->single();
 
         if($order) {
-            $this->db->query('SELECT order_items.*, books.title, books.image FROM order_items JOIN books ON order_items.book_id = books.id WHERE order_id = :order_id');
+            $this->db->query('SELECT order_items.*, 
+                                COALESCE(books.title, ebooks.title) as title, 
+                                COALESCE(books.image, eb_books.image) as image 
+                              FROM order_items 
+                              LEFT JOIN books ON order_items.book_id = books.id 
+                              LEFT JOIN ebooks ON order_items.ebook_id = ebooks.id 
+                              LEFT JOIN books eb_books ON ebooks.book_id = eb_books.id
+                              WHERE order_id = :order_id');
             $this->db->bind(':order_id', $id);
             $order['items'] = $this->db->resultSet();
         }

@@ -49,7 +49,19 @@
             </div>
             <div>
                 <p class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Pengiriman</p>
-                <?php if(isset($data['order']['delivery_method'])): ?>
+                <?php 
+                $hasPhysical = false;
+                if(!empty($data['order']['items'])) {
+                    foreach($data['order']['items'] as $item) {
+                        if($item['item_type'] === 'book') $hasPhysical = true;
+                    }
+                }
+                ?>
+                <?php if(!$hasPhysical): ?>
+                    <p class="font-bold text-green-600 text-sm mb-1">
+                        <i class="fas fa-cloud-download-alt w-4"></i> Pengiriman Digital
+                    </p>
+                <?php elseif(isset($data['order']['delivery_method'])): ?>
                     <p class="font-bold text-gray-800 text-sm mb-1">
                         <?= $data['order']['delivery_method'] == 'shipping' ? '<i class="fas fa-truck text-unsoed-blue w-4"></i> Kurir (DFOD)' : '<i class="fas fa-store text-amber-500 w-4"></i> Ambil Sendiri' ?>
                     </p>
@@ -78,9 +90,20 @@
                     <?php foreach($data['order']['items'] as $item): ?>
                     <tr>
                         <td class="p-4 pl-6 flex items-center gap-4">
-                            <?php $img_src = !empty($item['image']) ? $item['image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400'; ?>
-                            <img src="<?= esc($img_src) ?>" class="w-10 h-14 object-cover rounded shadow-sm">
-                            <span class="font-semibold text-gray-800 line-clamp-1"><?= esc($item['title']) ?></span>
+                            <div class="relative w-10 h-14 flex-shrink-0">
+                                <?php if($item['item_type'] === 'ebook'): ?>
+                                    <span class="absolute top-0 right-0 bg-red-500 text-white text-[6px] font-bold px-1 py-0.5 rounded-bl-sm z-10">PDF</span>
+                                <?php endif; ?>
+                                <?php 
+                                    $img_src = !empty($item['image']) ? $item['image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400'; 
+                                    $img_src = (strpos($img_src, 'http') === 0) ? $img_src : BASEURL . '/assets/uploads/' . (strpos($img_src, 'cover_ebook_') === 0 ? 'covers/' : '') . $img_src;
+                                ?>
+                                <img src="<?= esc($img_src) ?>" class="w-full h-full object-cover rounded shadow-sm">
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="font-semibold text-gray-800 line-clamp-1"><?= esc($item['title']) ?></span>
+                                <span class="text-[10px] uppercase font-bold text-gray-400"><?= $item['item_type'] === 'ebook' ? 'E-Book Digital' : 'Buku Fisik' ?></span>
+                            </div>
                         </td>
                         <td class="p-4 text-center text-sm text-gray-600">Rp <?= number_format($item['price'], 0, ',', '.') ?></td>
                         <td class="p-4 text-center font-bold text-gray-800"><?= esc($item['quantity']) ?></td>

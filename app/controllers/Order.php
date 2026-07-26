@@ -44,19 +44,43 @@ class Order extends Controller {
         $total_amount = 0;
         $cart_items = [];
         $bookModel = $this->model('BookModel');
+        $ebookModel = $this->model('EbookModel');
 
-        foreach($_SESSION['cart'] as $book_id => $qty) {
-            $book = $bookModel->getBookById($book_id);
-            if($book) {
-                if ($book['stock'] < $qty) {
-                    $_SESSION['checkout_error'] = 'Maaf, stok untuk buku "' . htmlspecialchars($book['title']) . '" tidak mencukupi. Sisa stok: ' . $book['stock'];
-                    header('Location: ' . BASEURL . '/cart');
-                    exit;
+        if(isset($_SESSION['cart']['book'])) {
+            foreach($_SESSION['cart']['book'] as $book_id => $qty) {
+                $book = $bookModel->getBookById($book_id);
+                if($book) {
+                    if ($book['stock'] < $qty) {
+                        $_SESSION['checkout_error'] = 'Maaf, stok untuk buku "' . htmlspecialchars($book['title']) . '" tidak mencukupi. Sisa stok: ' . $book['stock'];
+                        header('Location: ' . BASEURL . '/cart');
+                        exit;
+                    }
+                    $book['cart_type'] = 'book';
+                    $book['qty'] = $qty;
+                    $book['subtotal'] = $book['price'] * $qty;
+                    $total_amount += $book['subtotal'];
+                    $cart_items[] = $book;
                 }
-                $book['qty'] = $qty;
-                $book['subtotal'] = $book['price'] * $qty;
-                $total_amount += $book['subtotal'];
-                $cart_items[] = $book;
+            }
+        }
+
+        if(isset($_SESSION['cart']['ebook'])) {
+            foreach($_SESSION['cart']['ebook'] as $ebook_id => $qty) {
+                $ebook = $ebookModel->getEbookById($ebook_id);
+                if($ebook) {
+                    $hasAccess = $ebookModel->hasConfirmedAccess($_SESSION['user_id'], $ebook_id);
+                    if ($hasAccess) {
+                        $_SESSION['checkout_error'] = 'Anda sudah memiliki E-Book "' . htmlspecialchars($ebook['title']) . '".';
+                        header('Location: ' . BASEURL . '/cart');
+                        exit;
+                    }
+                    $ebook['cart_type'] = 'ebook';
+                    $ebook['qty'] = 1;
+                    $ebook['price'] = $ebook['ebook_price'];
+                    $ebook['subtotal'] = $ebook['price'];
+                    $total_amount += $ebook['subtotal'];
+                    $cart_items[] = $ebook;
+                }
             }
         }
 
@@ -79,7 +103,9 @@ class Order extends Controller {
         if($order_id) {
             // Decrease stock
             foreach($cart_items as $item) {
-                $bookModel->decreaseStock($item['id'], $item['qty']);
+                if ($item['cart_type'] === 'book') {
+                    $bookModel->decreaseStock($item['id'], $item['qty']);
+                }
             }
 
             // Clear cart & voucher

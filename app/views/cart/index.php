@@ -56,18 +56,29 @@
                             </div>
 
                             <div class="space-y-6">
-                                <?php foreach($data['cart_items'] as $item): ?>
+                                <?php 
+                                $has_physical_book = false;
+                                foreach($data['cart_items'] as $item): 
+                                    if ($item['cart_type'] === 'book') {
+                                        $has_physical_book = true;
+                                    }
+                                ?>
                                 <div class="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-gray-100 last:border-0 last:pb-0">
                                     
                                     <!-- Book Image -->
-                                    <a href="<?= BASEURL; ?>/book/detail/<?= esc($item['slug']) ?>" class="w-24 shrink-0 rounded-xl overflow-hidden shadow-md">
+                                    <a href="<?= BASEURL; ?>/<?= $item['cart_type'] ?>/detail/<?= esc($item['slug']) ?>" class="w-24 shrink-0 rounded-xl overflow-hidden shadow-md relative">
+                                        <?php if($item['cart_type'] === 'ebook'): ?>
+                                            <span class="absolute top-0 right-0 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-bl-lg z-10">E-BOOK</span>
+                                        <?php endif; ?>
                                         <?php $img_src = !empty($item['image']) ? $item['image'] : 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400'; ?>
                                         <img src="<?= esc($img_src) ?>" alt="<?= esc($item['title']) ?>" class="w-full h-auto object-cover aspect-[3/4] hover:scale-110 transition duration-500">
                                     </a>
 
                                     <!-- Book Info -->
                                     <div class="flex-grow w-full">
-                                        <a href="<?= BASEURL; ?>/book/detail/<?= esc($item['slug']) ?>" class="text-lg font-bold text-gray-800 hover:text-unsoed-blue transition line-clamp-2 mb-1"><?= esc($item['title']) ?></a>
+                                        <a href="<?= BASEURL; ?>/<?= $item['cart_type'] ?>/detail/<?= esc($item['slug']) ?>" class="text-lg font-bold text-gray-800 hover:text-unsoed-blue transition line-clamp-2 mb-1">
+                                            <?= esc($item['title']) ?>
+                                        </a>
                                         <p class="text-sm text-gray-500 mb-3"><?= esc($item['author']) ?></p>
                                         <div class="flex items-center gap-2">
                                             <h4 class="text-unsoed-blue font-extrabold text-lg">Rp <?= number_format($item['price'], 0, ',', '.') ?></h4>
@@ -76,24 +87,36 @@
                                             <?php endif; ?>
                                         </div>
                                         <div class="mt-1 flex items-center gap-2">
-                                            <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold rounded-md"><i class="fas fa-box-open mr-1"></i> Sisa Stok: <?= esc($item['stock']) ?></span>
+                                            <?php if($item['cart_type'] === 'book'): ?>
+                                                <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold rounded-md"><i class="fas fa-box-open mr-1"></i> Sisa Stok: <?= esc($item['stock']) ?></span>
+                                            <?php else: ?>
+                                                <span class="px-2 py-0.5 bg-green-50 text-green-600 text-[10px] font-bold rounded-md border border-green-200"><i class="fas fa-file-pdf mr-1"></i> PDF Digital</span>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
 
                                     <!-- Qty & Action -->
                                     <div class="flex flex-col sm:items-end gap-3 w-full sm:w-auto">
+                                        <?php if($item['cart_type'] === 'book'): ?>
                                         <div class="flex items-center border border-gray-300 rounded-lg bg-gray-50 px-2 py-1">
-                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-unsoed-blue transition" onclick="let inp = document.getElementById('qty_<?= esc($item['id']) ?>'); let old = inp.value; inp.value = Math.max(1, parseInt(inp.value) - 1); if(old !== inp.value) updateCartAjax();">
+                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-unsoed-blue transition" onclick="let inp = document.getElementById('qty_<?= $item['cart_type'] ?>_<?= esc($item['id']) ?>'); let old = inp.value; inp.value = Math.max(1, parseInt(inp.value) - 1); if(old !== inp.value) updateCartAjax();">
                                                 <i class="fas fa-minus text-xs"></i>
                                             </button>
-                                            <input type="number" name="qty[<?= esc($item['id']) ?>]" id="qty_<?= esc($item['id']) ?>" value="<?= esc($item['qty']) ?>" min="1" max="<?= esc($item['stock']) ?>" class="w-12 text-center font-bold text-gray-800 bg-transparent outline-none appearance-none" onchange="updateCartAjax();">
-                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-unsoed-blue transition" onclick="let inp=document.getElementById('qty_<?= esc($item['id']) ?>'); if(parseInt(inp.value) < <?= esc($item['stock']) ?>) { inp.value = parseInt(inp.value) + 1; updateCartAjax(); } else { alert('Maksimal stok yang tersedia adalah <?= esc($item['stock']) ?>'); }">
+                                            <input type="number" name="qty[<?= $item['cart_type'] ?>_<?= esc($item['id']) ?>]" id="qty_<?= $item['cart_type'] ?>_<?= esc($item['id']) ?>" value="<?= esc($item['qty']) ?>" min="1" max="<?= esc($item['stock']) ?>" class="w-12 text-center font-bold text-gray-800 bg-transparent outline-none appearance-none" onchange="updateCartAjax();">
+                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-unsoed-blue transition" onclick="let inp=document.getElementById('qty_<?= $item['cart_type'] ?>_<?= esc($item['id']) ?>'); if(parseInt(inp.value) < <?= esc($item['stock']) ?>) { inp.value = parseInt(inp.value) + 1; updateCartAjax(); } else { alert('Maksimal stok yang tersedia adalah <?= esc($item['stock']) ?>'); }">
                                                 <i class="fas fa-plus text-xs"></i>
                                             </button>
                                         </div>
+                                        <?php else: ?>
+                                        <!-- Ebook Qty (Fixed to 1) -->
+                                        <div class="flex items-center border border-gray-200 rounded-lg bg-gray-50 px-2 py-1 opacity-75">
+                                            <span class="w-24 text-center font-bold text-gray-600 text-sm py-1.5">Qty: 1</span>
+                                            <input type="hidden" name="qty[<?= $item['cart_type'] ?>_<?= esc($item['id']) ?>]" value="1">
+                                        </div>
+                                        <?php endif; ?>
                                         <div class="flex justify-between items-center w-full mt-2 sm:mt-0">
                                             <span class="text-sm font-bold text-gray-700 sm:hidden">Subtotal: Rp <?= number_format($item['subtotal'], 0, ',', '.') ?></span>
-                                            <a href="<?= BASEURL; ?>/cart/remove/<?= esc($item['id']) ?>" class="text-sm text-red-400 hover:text-red-600 transition flex items-center gap-1 bg-red-50 px-3 py-1 rounded-full">
+                                            <a href="<?= BASEURL; ?>/cart/remove/<?= $item['cart_type'] ?>/<?= esc($item['id']) ?>" class="text-sm text-red-400 hover:text-red-600 transition flex items-center gap-1 bg-red-50 px-3 py-1 rounded-full">
                                                 <i class="fas fa-times"></i> Hapus
                                             </a>
                                         </div>
@@ -237,7 +260,8 @@
                         </div>
 
                         <form action="<?= BASEURL; ?>/order/checkout" method="POST" class="mb-0" onsubmit="document.getElementById('checkoutBtn').disabled = true; document.getElementById('checkoutBtn').innerHTML = '<i class=\'fas fa-spinner fa-spin mr-2\'></i> Memproses...';">
-<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><!-- Metode Pengiriman -->
+<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">                            <!-- Metode Pengiriman -->
+                            <?php if($has_physical_book): ?>
                             <div class="mb-6 bg-gray-50 p-4 rounded-2xl border border-gray-200">
                                 <h4 class="font-bold text-gray-800 text-sm mb-3">Metode Pengiriman Buku Fisik</h4>
                                 <div class="space-y-3">
@@ -260,6 +284,16 @@
                                     </div>
                                 </div>
                             </div>
+                            <?php else: ?>
+                            <input type="hidden" name="delivery_method" value="pickup">
+                            <div class="mb-6 bg-green-50 p-4 rounded-2xl border border-green-200 text-green-700 text-sm flex items-start gap-3">
+                                <i class="fas fa-check-circle mt-0.5 text-lg"></i>
+                                <div>
+                                    <strong class="block mb-1">Pengiriman Digital</strong>
+                                    Keranjang Anda hanya berisi E-Book. Produk digital akan langsung tersedia untuk diunduh setelah pembayaran dikonfirmasi. Tidak ada biaya pengiriman.
+                                </div>
+                            </div>
+                            <?php endif; ?>
 
                             <button type="submit" id="checkoutBtn" class="btn-primary w-full text-center block text-lg py-4 shadow-xl">
                                 Lanjut ke Pembayaran <i class="fas fa-chevron-right ml-2 text-sm"></i>

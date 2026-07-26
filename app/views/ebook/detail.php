@@ -234,12 +234,14 @@ if (!empty($e['cover_image'])) {
                     </a>
 
                 <?php else: ?>
-                    <!-- LOGIN + BELUM BELI: tombol beli sekarang menuju checkout -->
-                    <a href="<?= BASEURL ?>/ebook/checkout/<?= esc($e['id']) ?>"
-                       class="flex-1 py-4 bg-gradient-to-r from-unsoed-blue to-blue-700 hover:from-blue-800 hover:to-blue-900 text-white rounded-2xl font-bold text-center transition shadow-lg flex items-center justify-center gap-2">
-                        <i class="fas fa-shopping-cart text-xl"></i>
-                        Beli E-Book — Rp <?= number_format($e['ebook_price'], 0, ',', '.') ?>
-                    </a>
+                    <!-- LOGIN + BELUM BELI: tombol beli sekarang menuju cart -->
+                    <form action="<?= BASEURL ?>/cart/add/ebook/<?= esc($e['id']) ?>" method="POST" class="flex-1">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                        <button type="submit" class="w-full py-4 bg-gradient-to-r from-unsoed-blue to-blue-700 hover:from-blue-800 hover:to-blue-900 text-white rounded-2xl font-bold text-center transition shadow-lg flex items-center justify-center gap-2">
+                            <i class="fas fa-cart-plus text-xl"></i>
+                            Tambah ke Keranjang - Rp <?= number_format($e['ebook_price'], 0, ',', '.') ?>
+                        </button>
+                    </form>
                 <?php endif; ?>
 
                 <!-- Tombol Pratinjau Sampel (jika ada file preview) -->
@@ -266,7 +268,7 @@ if (!empty($e['cover_image'])) {
                 <ol class="space-y-2.5 text-sm text-gray-600 pl-1">
                     <li class="flex items-start gap-3">
                         <span class="w-5 h-5 rounded-full bg-unsoed-blue text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-                        <span>Klik <strong>"Beli E-Book"</strong> di atas. Sistem akan membuat pesanan untuk Anda.</span>
+                        <span>Klik <strong>"Tambah ke Keranjang"</strong> di atas. Kemudian lanjutkan proses Checkout.</span>
                     </li>
                     <li class="flex items-start gap-3">
                         <span class="w-5 h-5 rounded-full bg-unsoed-blue text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>

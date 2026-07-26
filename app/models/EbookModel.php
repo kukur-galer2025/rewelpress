@@ -258,10 +258,14 @@ class EbookModel {
         // Gratis: selalu ada akses
         if ($ebook['is_free'] == 1 || floatval($ebook['ebook_price']) == 0) return true;
 
-        // Cek ebook_orders langsung (primary flow untuk semua ebook)
+        // Cek tabel orders & order_items (unified cart)
         $this->db->query("
-            SELECT COUNT(*) as cnt FROM ebook_orders
-            WHERE user_id = :user_id AND ebook_id = :ebook_id AND status = 'confirmed'
+            SELECT COUNT(*) as cnt
+            FROM orders o
+            JOIN order_items oi ON o.id = oi.order_id
+            WHERE o.user_id = :user_id 
+              AND oi.ebook_id = :ebook_id 
+              AND o.status = 'confirmed'
         ");
         $this->db->bind(':user_id', (int)$user_id);
         $this->db->bind(':ebook_id', (int)$ebook_id);
@@ -287,6 +291,11 @@ class EbookModel {
         return false;
     }
 
+    // Alias for compatibility
+    public function hasConfirmedAccess($user_id, $ebook_id) {
+        return $this->hasUserAccessToEbook($user_id, $ebook_id);
+    }
+
     /**
      * Ambil semua E-book yang sudah dibeli (confirmed) oleh user tertentu.
      */
@@ -302,10 +311,11 @@ class EbookModel {
             LEFT JOIN books b ON e.book_id = b.id
             LEFT JOIN categories cat_e ON e.category_id = cat_e.id
             LEFT JOIN categories cat_b ON b.category_id = cat_b.id
-            LEFT JOIN ebook_orders eo ON eo.ebook_id = e.id AND eo.user_id = :user_id AND eo.status = 'confirmed'
+            LEFT JOIN order_items oie ON oie.ebook_id = e.id
+            LEFT JOIN orders oe ON oe.id = oie.order_id AND oe.user_id = :user_id AND oe.status = 'confirmed'
             LEFT JOIN order_items oi ON oi.book_id = e.book_id
             LEFT JOIN orders o ON o.id = oi.order_id AND o.user_id = :user_id AND o.status = 'confirmed'
-            WHERE (eo.id IS NOT NULL OR (o.id IS NOT NULL AND e.book_id IS NOT NULL))
+            WHERE (oe.id IS NOT NULL OR (o.id IS NOT NULL AND e.book_id IS NOT NULL))
               AND e.status = 'active'
             ORDER BY e.title ASC
         ");

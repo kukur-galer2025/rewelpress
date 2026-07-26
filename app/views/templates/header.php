@@ -230,8 +230,13 @@
                         <i class="fas fa-shopping-cart text-xl"></i>
                         <?php 
                             $cart_count = 0;
-                            if(isset($_SESSION['cart'])) {
-                                foreach($_SESSION['cart'] as $qty) {
+                            if(isset($_SESSION['cart']['book'])) {
+                                foreach($_SESSION['cart']['book'] as $qty) {
+                                    $cart_count += $qty;
+                                }
+                            }
+                            if(isset($_SESSION['cart']['ebook'])) {
+                                foreach($_SESSION['cart']['ebook'] as $qty) {
                                     $cart_count += $qty;
                                 }
                             }
